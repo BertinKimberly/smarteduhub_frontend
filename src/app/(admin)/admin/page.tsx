@@ -1,0 +1,228 @@
+"use client";
+import DashboardNavbar from "@/components/DashboardNavbar";
+import { Brain, Rocket, Upload } from "lucide-react";
+import React from "react";
+import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import AdminOveralChart from "@/components/AdminOveralChart";
+import { Calendar } from "@/components/ui/calendar";
+import TopStudentsTable from "@/components/TopStudentsTable";
+import Image from "next/image";
+import bold from "@/icons/bold.png"
+import medal from "@/icons/medal.png"
+import school from "@/icons/school.png"
+
+const AdminPage = () => {
+   const [date, setDate] = React.useState<Date | undefined>(new Date());
+
+   return (
+      <div className="p-2 flex flex-col gap-6">
+         <DashboardNavbar title="Admin Dashboard" />
+         <div className="flex justify-between">
+            <div>
+               <h3 className="text-main">Welcome Erik Ten Hag</h3>
+               <small>Pleased that you are back</small>
+            </div>
+            <div className="bg-main p-1 flex gap-2 items-center rounded-lg text-white px-2">
+               <Upload size={12} />
+               <span>Upload Curriculum</span>
+            </div>
+            <div className="bg-main p-1 flex gap-2 items-center rounded-lg text-white px-2">
+               <Brain size={12} />
+               <span>Analyze Curriculum</span>
+            </div>
+         </div>
+
+         <div className="flex flex-col gap-2 w-[40%]">
+            <h4>Curriculum Progress</h4>
+            <Progress value={40} />
+         </div>
+
+         <div className="flex gap-6 lg:gap-10 flex-col md:flex-row">
+            <div className="bg-background border border-main rounded-lg p-2 py-4 flex flex-col gap-1 justify-between">
+               <p className="font-bold ">Overall Performance</p>
+               <div className="flex items-center gap-2 py-3">
+                  <Rocket className="text-main" />
+                  <span className="text-green-500">8.7%</span>of the profit
+               </div>
+               <div className="flex justify-center">
+                  <small className="w-5/6">All the corners of the school</small>
+                  <span>...</span>
+               </div>
+            </div>
+            <div className="bg-background border border-main rounded-lg p-2 py-4 flex flex-col gap-1 justify-center">
+               <p className="font-bold ">Overall Performance</p>
+               <div className="flex items-center gap-2 py-3">
+                  <Rocket className="text-main" />
+                  <span className="text-green-500">8.7%</span>of the profit
+               </div>
+               <div className="flex justify-center">
+                  <small className="w-5/6">All the corners of the school</small>
+                  <span>...</span>
+               </div>
+            </div>
+
+            <div className="flex gap-4 flex-col">
+               <div className="border p-3 flex gap-8 rounded-lg xl:w-[300px] justify-between">
+                  <div>
+                     <p>Students</p>
+                     <h5>2.6k</h5>
+                     <small>80% increase</small>
+                  </div>
+                  <div>
+                     <Link href="/admin/students">View All</Link>
+                     <div style={{ width: 50, height: 50, margin: "0 auto" }}>
+                        <CircularProgressbar
+                           value={80}
+                           text={`80%`}
+                           styles={buildStyles({
+                              textColor: "#000",
+                              pathColor: "#ffeb3b",
+                              trailColor: "#d6d6d6",
+                           })}
+                        />
+                     </div>
+                  </div>
+               </div>
+               <div className="border p-3 flex gap-8 rounded-lg xl:w-[300px] justify-between">
+                  <div>
+                     <p>Lessons</p>
+                     <h5>40</h5>
+                     <small>90% increase</small>
+                  </div>
+                  <div>
+                     <Link href="/admin/courses">View All</Link>
+                     <div style={{ width: 50, height: 50, margin: "0 auto" }}>
+                        <CircularProgressbar
+                           value={90}
+                           text={`80%`}
+                           styles={buildStyles({
+                              textColor: "#000",
+                              pathColor: "#4caf50",
+                              trailColor: "#d6d6d6",
+                           })}
+                        />
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div className="flex gap-4 flex-col">
+               <div className="border p-3 flex gap-8 rounded-lg xl:w-[300px] justify-between">
+                  <div>
+                     <p>AI Score</p>
+                     <h5>20</h5>
+                     <small>80% increase</small>
+                  </div>
+                  <div>
+                     <Link href="/admin/students">View All</Link>
+                     <div style={{ width: 50, height: 50, margin: "0 auto" }}>
+                        <CircularProgressbar
+                           value={80}
+                           text={`80%`}
+                           styles={buildStyles({
+                              textColor: "#000",
+                              pathColor: "#4caf50",
+                              trailColor: "#d6d6d6",
+                           })}
+                        />
+                     </div>
+                  </div>
+               </div>
+               <div className="border p-3 flex gap-8 rounded-lg xl:w-[300px] justify-between">
+                  <div>
+                     <p>Books Used</p>
+                     <h5>23.6k</h5>
+                     <small>20% Available</small>
+                  </div>
+                  <div>
+                     <Link href="/admin/courses">View All</Link>
+                     <div style={{ width: 50, height: 50, margin: "0 auto" }}>
+                        <CircularProgressbar
+                           value={20}
+                           text={`80%`}
+                           styles={buildStyles({
+                              textColor: "#000",
+                              pathColor: "#ff9800",
+                              trailColor: "#d6d6d6",
+                           })}
+                        />
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div className="flex gap-8 flex-col md:flex-row">
+            <div className="border border-main rounded-lg p-1 w-full md:w-3/4">
+               <AdminOveralChart />
+            </div>
+            <div className="border border-main rounded-lg w-full md:w-[30%] flex items-center justify-center">
+               {" "}
+               <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  className="rounded-md"
+               />
+            </div>
+         </div>
+
+         <div className="flex flex-col md:flex-row gap-6">
+            <div className="border bg-background border-main p-4 rounded-lg w-full md:w-[60%]">
+               <p className="mb-6 font-bold">Top Perfoming students</p>
+               <TopStudentsTable />
+            </div>
+            <div className="w-full md:w-[40%]">
+
+               <div className="flex flex-col gap-4 w-full">
+<span>More Info</span>
+                  <div className="border shadow p-3 rounded-lg flex gap-4 items-center justify-between py-6">
+                     <Image
+                        src={bold}
+                        alt="bold"
+                     />
+                     <div>
+                        <p className="font-bold">300</p>
+                        <small>More Students this year</small>
+                     </div>
+                  </div>
+                  <div className="border shadow p-3 rounded-lg flex gap-4 items-center justify-between py-6">
+                     <Image
+                        src={school}
+                        alt="school"
+                     />
+                     <div>
+                        <p className="font-bold">6</p>
+                        <small>Courses Completed</small>
+                     </div>
+                  </div>
+                  <div className="border shadow p-3 rounded-lg flex gap-4 items-center justify-between py-6">
+                     <Image
+                        src={medal}
+                        alt="medal"
+                     />
+                     <div>
+                        <p className="font-bold">25</p>
+                        <small>Competitions Won</small>
+                     </div>
+                  </div>
+                  <div className="border shadow p-3 rounded-lg flex gap-4 items-center justify-between py-6">
+                     <Image
+                        src={medal}
+                        alt="medal"
+                     />
+                     <div>
+                        <p className="font-bold">25</p>
+                        <small>Competitions Won</small>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   );
+};
+
+export default AdminPage;
