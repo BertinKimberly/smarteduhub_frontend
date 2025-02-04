@@ -75,7 +75,7 @@ const AdminSidebar = () => {
                   {
                      icon: <MessageCircleCode />,
                      label: "Chat",
-                     link: "/chats",
+                     link: "/admin/chat",
                   },
                   {
                      icon: <Bell />,
