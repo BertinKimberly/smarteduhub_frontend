@@ -7,7 +7,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
    return (
       <div className="w-full min-h-screen flex items-center justify-center">
          <div className="container mx-auto ">{children}</div>
-         <div className="absolute bottom-0 right-0 z-20">
+         <div className="absolute -bottom-20 right-0 z-10">
             <div className="relative hidden md:block">
                <Image
                   src={LoginImg}

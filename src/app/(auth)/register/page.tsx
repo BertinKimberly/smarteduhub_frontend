@@ -54,7 +54,7 @@ const RegisterPage = () => {
 
    return (
       <div className="py-8 md:py-10">
-         <div className="bg-background rounded-lg p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20">
+         <div className="bg-background rounded-lg p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20 mx-auto">
             <Link
                className="flex gap-3 items-center justify-start"
                href="/"
@@ -70,7 +70,7 @@ const RegisterPage = () => {
             <Form {...form}>
                <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-full md:w-5/6"
+                  className="w-full md:w-5/6 z-30"
                >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
                      <FormField
@@ -172,7 +172,7 @@ const RegisterPage = () => {
                </form>
             </Form>
 
-            <div className="py-8 flex items-center justify-center gap-4">
+            <div className="py-8 flex items-center justify-center gap-4 z-30">
                <div className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full">
                   <Image
                      src={google}
