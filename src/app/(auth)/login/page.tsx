@@ -11,13 +11,19 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import logo from "@/images/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import google from "@/images/google.png";
 import github from "@/images/github.png";
 import fb from "@/images/fb.png";
+import { useLoginUser } from "@/hooks/useAuth";
+import { toast } from "react-toastify";
+import { Cookies } from "react-cookie";
+import { useSearchParams } from "next/navigation";
+
+const cookies = new Cookies();
 
 const formSchema = z.object({
    email: z.string().email("Invalid email"),
@@ -25,7 +31,15 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
 const LoginPage = () => {
+   const [isSubmitting, setIsSubmitting] = useState(false);
+
+   const searchParams = useSearchParams();
+   const redirectUrl = searchParams.get("redirectUrl");
+
+   const loginMutation = useLoginUser();
+
    const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
       mode: "onChange",
@@ -35,7 +49,35 @@ const LoginPage = () => {
       },
    });
 
-   const onSubmit = async (data: FormData) => {};
+   const onSubmit = async (data: FormData) => {
+      setIsSubmitting(true);
+      try {
+         const response = await loginMutation.mutateAsync(data);
+         console.log("Login Response:", response);
+
+         if (response?.access_token) {
+            cookies.set("auth-token", response.access_token, { path: "/" });
+
+            const payload = JSON.parse(
+               atob(response.access_token.split(".")[1])
+            );
+
+            if (redirectUrl) {
+               location.replace(redirectUrl);
+            } else {
+               payload.role === "user"
+                  ? location.replace("/dashboard")
+                  : location.replace("/admin");
+            }
+         } else {
+            toast.error(response?.error?.msg || "Login failed");
+         }
+      } catch (error) {
+         toast.error("Login failed. Please try again.");
+      } finally {
+         setIsSubmitting(false);
+      }
+   };
    return (
       <div className="py-8 md:py-10">
          <div className="bg-background rounded-lg p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20  mx-auto">

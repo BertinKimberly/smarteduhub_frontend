@@ -11,13 +11,16 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import logo from "@/images/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import google from "@/images/google.png";
-import github from "@/images/github.png"
-import fb from "@/images/fb.png"
+import github from "@/images/github.png";
+import fb from "@/images/fb.png";
+import { toast } from "react-toastify";
+import { Cookies } from "react-cookie";
+import { useRegisterUser } from "@/hooks/useAuth";
 
 // Define the schema for the registration form
 const formSchema = z
@@ -36,7 +39,11 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>;
 
+const cookies = new Cookies();
+
 const RegisterPage = () => {
+   const [isSubmitting, setIsSubmitting] = useState(false);
+
    const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
       mode: "onChange",
@@ -48,8 +55,32 @@ const RegisterPage = () => {
       },
    });
 
+   const registerMutation = useRegisterUser();
+
    const onSubmit = async (data: FormData) => {
-      // Handle registration logic here
+      setIsSubmitting(true);
+      try {
+         const response = await registerMutation.mutateAsync(data);
+         console.log("Registration Response:", response);
+
+         if (response?.access_token) {
+            cookies.set("auth-token", response.access_token, { path: "/" });
+
+            const payload = JSON.parse(
+               atob(response.access_token.split(".")[1])
+            );
+
+            payload.role === "user"
+               ? location.replace("/dashboard")
+               : location.replace("/admin");
+         } else {
+            toast.error(response?.error?.msg || "Login failed");
+         }
+      } catch (error) {
+         toast.error("Login failed. Please try again.");
+      } finally {
+         setIsSubmitting(false);
+      }
    };
 
    return (
