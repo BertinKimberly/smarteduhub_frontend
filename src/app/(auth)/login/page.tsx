@@ -146,7 +146,7 @@ const LoginPage = () => {
                      type="submit"
                      className="w-full bg-main py-6"
                   >
-                     Login
+                     {isSubmitting ? "Loading..." : "Login"}
                   </Button>
                </form>
             </Form>

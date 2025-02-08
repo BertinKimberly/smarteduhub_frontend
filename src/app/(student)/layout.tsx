@@ -2,10 +2,10 @@
 import DashboardSidebar from "@/components/DashboardSidebar";
 import React, { ReactNode } from "react";
 
-const AdminLayout = ({ children }: { children: ReactNode }) => {
+const StudentLayout = ({ children }: { children: ReactNode }) => {
    return (
       <div className="p-2 flex gap-3 overflow-hidden">
-         <DashboardSidebar role="admin"/>
+         <DashboardSidebar role="student"/>
          <div className="border border-main w-full h-screen rounded-lg overflow-y-scroll">
             {children}
          </div>
@@ -13,4 +13,4 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
    );
 };
 
-export default AdminLayout;
+export default StudentLayout;

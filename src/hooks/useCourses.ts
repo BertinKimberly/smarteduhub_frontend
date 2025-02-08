@@ -7,12 +7,14 @@ const getAllCourses = (): Promise<any> => {
 };
 
 const createCourse = (formData: any): Promise<any> => {
-   return handleApiRequest(() => authorizedAPI.post("/courses", formData));
+   return handleApiRequest(() =>
+      authorizedAPI.post("/courses", formData, { withCredentials: true })
+   );
 };
 
 const updateCourse = ({ formData, _id }: any): Promise<any> => {
    return handleApiRequest(() =>
-      authorizedAPI.put(`/courses/${_id}`, formData)
+      authorizedAPI.put(`/courses/${_id}`, formData, { withCredentials: true })
    );
 };
 
@@ -41,7 +43,7 @@ export const useUpdateCourse = () => {
    });
 };
 
-export const deleteUpdateCourse = () => {
+export const useDeleteCourse = () => {
    return useMutation<any, Error, any>({
       mutationFn: deleteCourseById,
    });

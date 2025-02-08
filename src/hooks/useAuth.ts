@@ -19,21 +19,31 @@ interface LoginData {
    password: string;
 }
 
+interface SignupData {
+   name: string;
+   email: string;
+   password: string;
+}
+
 // API call functions
 const loginUser = (userData: LoginData) => {
-   return handleApiRequest(
-      () =>
-         unauthorizedAPI.post("/auth/login", userData, {
-            withCredentials: true,
-         }) // To send cookies
+   return handleApiRequest(() =>
+      unauthorizedAPI.post("/auth/login", userData, { withCredentials: true })
    );
 };
 
-const registerUser = (userData: Partial<User>) => {
+const registerUser = (userData: SignupData) => {
    return handleApiRequest(() =>
-      authorizedAPI.post("/auth/signup", userData, { withCredentials: true })
+      unauthorizedAPI.post("/auth/signup", userData, { withCredentials: true })
    );
 };
+
+const logoutUser = () => {
+   return handleApiRequest(() =>
+      authorizedAPI.post("/auth/logout", {}, { withCredentials: true })
+   );
+};
+
 
 const removeUser = (userId: string) => {
    return handleApiRequest(() =>
@@ -49,18 +59,15 @@ const modifyUser = ({ userId, formData }: UpdateUserData) => {
    );
 };
 
-// React Query Hooks
 export const useLoginUser = () => {
-   const setUser = useAuthStore((state) => state.setUser);
-   const setRoles = useAuthStore((state) => state.setRoles);
+   const { setUser, setIsAuthenticated } = useAuthStore();
 
    return useMutation({
       mutationFn: loginUser,
       onSuccess: (data) => {
-         console.log("Login successful:", data);
-         if (data && data.success) {
-            setUser(data.data);
-            setRoles(data.data.roles);
+         if (data && data.user) {
+            setUser(data.user); // Update Zustand store with user data
+            setIsAuthenticated(true);
          }
       },
       onError: (error) => {
@@ -70,20 +77,32 @@ export const useLoginUser = () => {
 };
 
 export const useRegisterUser = () => {
-   const setUser = useAuthStore((state) => state.setUser);
-   const setRoles = useAuthStore((state) => state.setRoles);
+   const { setUser, setIsAuthenticated } = useAuthStore();
 
    return useMutation({
       mutationFn: registerUser,
       onSuccess: (data) => {
-         console.log("Signup successful:", data);
-         if (data && data.success) {
-            setUser(data.data);
-            setRoles(data.data.roles);
+         if (data && data.user) {
+            setUser(data.user); // Update Zustand store with user data
+            setIsAuthenticated(true);
          }
       },
       onError: (error) => {
          console.error("Signup error:", error);
+      },
+   });
+};
+
+export const useLogoutUser = () => {
+   const { clearUser } = useAuthStore();
+
+   return useMutation({
+      mutationFn: logoutUser,
+      onSuccess: () => {
+         clearUser(); // Clear user data from Zustand store
+      },
+      onError: (error) => {
+         console.error("Logout error:", error);
       },
    });
 };

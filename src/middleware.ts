@@ -27,9 +27,10 @@ export async function middleware(request: NextRequest) {
          // Decode the token using jwt-decode
          const decodedToken: any = jwtDecode(token.value);
          const userRole = decodedToken.role;
+         console.log("Nziko azampoza amarira", decodedToken);
 
          // Prevent logged-in users from accessing public routes
-         
+
          // if (PUBLIC_PATHS.includes(pathname)) {
          //    return userRole === "admin"
          //       ? NextResponse.redirect(new URL("/admin", request.url))
