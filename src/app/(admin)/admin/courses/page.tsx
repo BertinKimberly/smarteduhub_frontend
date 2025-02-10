@@ -46,12 +46,12 @@ const CoursesAdmin = () => {
       header: "Actions",
       cell: ({ row }) => (
         <div className="flex items-center space-x-2">
-          <Button className="bg-main" onClick={() => handleEdit(row.original)}>
+          <div className="text-main cursor-pointer" onClick={() => handleEdit(row.original)}>
             <Edit size={20} />
-          </Button>
-          <Button className="bg-red-500" onClick={() => handleDelete(row.original.id)}>
+          </div>
+          <div className="text-red-500 cursor-pointer" onClick={() => handleDelete(row.original.id)}>
             <Trash2 size={20} />
-          </Button>
+          </div>
         </div>
       ),
     },

@@ -10,6 +10,7 @@ const handleApiRequest = async (apiCall: () => Promise<any>): Promise<any> => {
       if (axios.isAxiosError(error) && error.response) {
          console.error("Error response:", error.response);
          return error.response.data;
+         
       } else {
          console.error("Unexpected error:", error);
          throw error;

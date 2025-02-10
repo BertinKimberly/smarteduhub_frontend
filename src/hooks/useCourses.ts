@@ -10,7 +10,7 @@ const createCourse = (formData: FormData): Promise<any> => {
    return handleApiRequest(() =>
       authorizedAPI.post("/courses", formData, {
          headers: {
-            "Content-Type": "multipart/form-data",  
+            "Content-Type": "multipart/form-data",
          },
          withCredentials: true,
       })
@@ -30,6 +30,16 @@ const getCourseById = ({ queryKey }: any): Promise<any> => {
 
 const deleteCourseById = (_id: string): Promise<any> => {
    return handleApiRequest(() => authorizedAPI.delete(`/courses/${_id}`));
+};
+
+const enrollInCourse = (_id: string): Promise<any> => {
+   return handleApiRequest(() =>
+      authorizedAPI.post(
+         `/courses/${_id}/enroll`,
+         {},
+         { withCredentials: true }
+      )
+   );
 };
 
 export const useGetAllCourses = () =>
@@ -53,8 +63,16 @@ export const useDeleteCourse = () => {
    });
 };
 
-export const useGetCourseById = (_id: string) =>
-   useQuery<any, Error>({
-      queryKey: ["course", _id],
+export const useGetCourseById = (id: string | null) => {
+   return useQuery({
+      queryKey: ["course", id],
       queryFn: getCourseById,
+      enabled: !!id,
    });
+};
+
+export const useEnrollInCourse = () => {
+   return useMutation<any, Error, string>({
+      mutationFn: enrollInCourse,
+   });
+};

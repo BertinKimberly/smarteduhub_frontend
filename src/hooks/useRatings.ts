@@ -29,7 +29,7 @@ const deleteRatingsById = ({ queryKey }: any): Promise<any> => {
 export const useGetAllRatings = () =>
    useQuery<any, Error>({ queryKey: ["ratings"], queryFn: getAllRatings });
 
-export const useCreateRatings = () => {
+export const useCreateRating = () => {
    return useMutation<any, Error, any>({
       mutationFn: createRating,
    });
@@ -41,7 +41,7 @@ export const useUpdateRatings = () => {
    });
 };
 
-export const deleteUpdateRatings = () => {
+export const deleteRatings = () => {
    return useMutation<any, Error, any>({
       mutationFn: deleteRatingsById,
    });
