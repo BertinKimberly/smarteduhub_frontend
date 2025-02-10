@@ -1,14 +1,19 @@
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const getAllCourses = (): Promise<any> => {
    return handleApiRequest(() => authorizedAPI.get("/courses"));
 };
 
-const createCourse = (formData: any): Promise<any> => {
+const createCourse = (formData: FormData): Promise<any> => {
    return handleApiRequest(() =>
-      authorizedAPI.post("/courses", formData, { withCredentials: true })
+      authorizedAPI.post("/courses", formData, {
+         headers: {
+            "Content-Type": "multipart/form-data",  
+         },
+         withCredentials: true,
+      })
    );
 };
 
@@ -23,9 +28,8 @@ const getCourseById = ({ queryKey }: any): Promise<any> => {
    return handleApiRequest(() => authorizedAPI.get(`/courses/${_id}`));
 };
 
-const deleteCourseById = ({ queryKey }: any): Promise<any> => {
-   const [_, _id] = queryKey;
-   return handleApiRequest(() => authorizedAPI.get(`/courses/${_id}`));
+const deleteCourseById = (_id: string): Promise<any> => {
+   return handleApiRequest(() => authorizedAPI.delete(`/courses/${_id}`));
 };
 
 export const useGetAllCourses = () =>
@@ -44,13 +48,13 @@ export const useUpdateCourse = () => {
 };
 
 export const useDeleteCourse = () => {
-   return useMutation<any, Error, any>({
+   return useMutation<any, Error, string>({
       mutationFn: deleteCourseById,
    });
 };
 
 export const useGetCourseById = (_id: string) =>
-   useQuery<any, Error, any>({
+   useQuery<any, Error>({
       queryKey: ["course", _id],
       queryFn: getCourseById,
    });

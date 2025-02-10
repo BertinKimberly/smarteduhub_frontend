@@ -1,13 +1,15 @@
-import TopStudentsTable from '@/components/TopStudentsTable'
-import React from 'react'
+import DashboardNavbar from "@/components/DashboardNavbar";
+import TopStudentsTable from "@/components/TopStudentsTable";
+import UsersTable from "@/components/UsersTable";
+import React from "react";
 
 const AdminStudentsPage = () => {
-  return (
-    <div className='p-3'>
-        <h3 className='mb-6'>All Students</h3>
-      <TopStudentsTable/>
-    </div>
-  )
-}
+   return (
+      <div className="p-3">
+         <DashboardNavbar title="Users" />
+         <UsersTable />
+      </div>
+   );
+};
 
-export default AdminStudentsPage
+export default AdminStudentsPage;

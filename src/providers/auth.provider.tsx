@@ -36,7 +36,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
 
             // Fetch full user details from API
-            const response = await authorizedAPI.get(`/auth/users/${decodedToken.id}`);
+            const response = await authorizedAPI.get(`/users/${decodedToken.id}`);
             const userData = response.data;
 
             setUser({

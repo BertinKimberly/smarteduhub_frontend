@@ -66,7 +66,7 @@ export function DataTable<TData, TValue>({
                         {headerGroup.headers.map((header) => (
                            <TableHead
                               key={header.id}
-                              className="whitespace-nowrap text-main bg-white"
+                              className="whitespace-nowrap text-main bg-submain"
                            >
                               {header.isPlaceholder
                                  ? null

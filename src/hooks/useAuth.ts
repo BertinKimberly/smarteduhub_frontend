@@ -45,20 +45,6 @@ const logoutUser = () => {
 };
 
 
-const removeUser = (userId: string) => {
-   return handleApiRequest(() =>
-      authorizedAPI.delete(`/auth/users/${userId}`, { withCredentials: true })
-   );
-};
-
-const modifyUser = ({ userId, formData }: UpdateUserData) => {
-   return handleApiRequest(() =>
-      authorizedAPI.put(`/auth/users/${userId}`, formData, {
-         withCredentials: true,
-      })
-   );
-};
-
 export const useLoginUser = () => {
    const { setUser, setIsAuthenticated } = useAuthStore();
 
@@ -103,26 +89,6 @@ export const useLogoutUser = () => {
       },
       onError: (error) => {
          console.error("Logout error:", error);
-      },
-   });
-};
-
-export const useRemoveUser = () => {
-   const queryClient = useQueryClient();
-   return useMutation<void, Error, string>({
-      mutationFn: removeUser,
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["users-by-admin"] });
-      },
-   });
-};
-
-export const useModifyUser = () => {
-   const queryClient = useQueryClient();
-   return useMutation<void, Error, UpdateUserData>({
-      mutationFn: modifyUser,
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["users-by-admin"] });
       },
    });
 };
