@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import {
    ResizableHandle,
@@ -6,20 +6,30 @@ import {
    ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { File, MoveDown, PenBox, Plus, Search } from "lucide-react";
-import { useGetAllChannels, useCreateChannel, useGetMessagesByChannel, useCreateMessage } from "@/hooks/useChats";
+import {
+   useGetAllChannels,
+   useCreateChannel,
+   useGetMessagesByChannel,
+   useCreateMessage,
+} from "@/hooks/useChats";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { useAuthStore } from "@/store/useAuthStore";
 
-
 const ChatArea = () => {
-   const { user } = useAuthStore(); 
+   const { user } = useAuthStore();
    const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
    const [message, setMessage] = useState("");
    const { data: channels } = useGetAllChannels();
    const { mutate: createChannel } = useCreateChannel();
-   const { data: messages, refetch: refetchMessages } = useGetMessagesByChannel(selectedChannel || "");
+   const { data: messages, refetch: refetchMessages } = useGetMessagesByChannel(
+      selectedChannel || ""
+   );
    const { mutate: sendMessage } = useCreateMessage();
-   const { sendMessage: sendWebSocketMessage, messages: realTimeMessages } = useWebSocket(selectedChannel);
+   const {
+      sendMessage: sendWebSocketMessage,
+      messages: realTimeMessages,
+      isConnected,
+   } = useWebSocket(selectedChannel);
 
    const handleCreateChannel = () => {
       const channelName = prompt("Enter channel name:");
@@ -27,22 +37,35 @@ const ChatArea = () => {
          createChannel({ name: channelName });
       }
    };
-
-   const handleSendMessage = () => {
+   const handleSendMessage = async () => {
       if (message.trim() && selectedChannel && user) {
-         const newMessage = { channelId: selectedChannel, content: message, userId: user.id };
+         const messageData = {
+            channel_id: selectedChannel,
+            message: message,
+            user_id: user.id,
+            timestamp: new Date().toISOString(),
+         };
 
-         sendMessage(newMessage); // Send message via API
-         sendWebSocketMessage(JSON.stringify(newMessage)); // Send message via WebSocket
-         setMessage("");
+         try {
+            await sendMessage(messageData);
+            sendWebSocketMessage(JSON.stringify(messageData));
+            setMessage("");
+            refetchMessages();
+         } catch (error) {
+            console.error("Error sending message:", error);
+         }
       }
    };
 
    useEffect(() => {
       if (selectedChannel) {
          refetchMessages();
+         console.log("Umwami naganze", messages);
       }
    }, [selectedChannel, refetchMessages]);
+
+   // Combine API messages and real-time messages
+   const allMessages = [...(messages || []), ...realTimeMessages];
 
    return (
       <ResizablePanelGroup
@@ -77,13 +100,22 @@ const ChatArea = () => {
 
                <div className="flex items-center justify-between w-full">
                   <p>Channels</p>
-                  <p className="text-red-600 underline cursor-pointer" onClick={handleCreateChannel}>Create</p>
+                  <p
+                     className="text-red-600 underline cursor-pointer"
+                     onClick={handleCreateChannel}
+                  >
+                     Create
+                  </p>
                </div>
                <div className="w-full flex flex-col gap-2">
                   {channels?.map((channel: any) => (
                      <div
                         key={channel.id}
-                        className={`rounded-lg bg-submain p-2 w-full flex items-center gap-2 cursor-pointer justify-between ${selectedChannel === channel.id ? 'border-main border-2' : ''}`}
+                        className={`rounded-lg bg-submain p-2 w-full flex items-center gap-2 cursor-pointer justify-between ${
+                           selectedChannel === channel.id
+                              ? "border-main border-2"
+                              : ""
+                        }`}
                         onClick={() => setSelectedChannel(channel.id)}
                      >
                         <div className="flex">
@@ -109,21 +141,36 @@ const ChatArea = () => {
          <ResizablePanel defaultSize={75}>
             <div className="flex h-full p-6 relative flex-col">
                <div className="border border-main rounded-t-lg p-3">
-                  <p># {channels?.find((c: any) => c.id === selectedChannel)?.name || 'general'} </p>
+                  <p>
+                     #{" "}
+                     {channels?.find((c: any) => c.id === selectedChannel)
+                        ?.name || "general"}{" "}
+                  </p>
                </div>
 
                <div className="flex flex-col gap-2 py-2 overflow-y-auto">
-                  {messages?.map((msg: any) => (
-                     <div key={msg.id} className={`flex ${msg.senderId === 'currentUserId' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`rounded-lg p-2 ${msg.senderId === 'currentUserId' ? 'bg-main text-white' : 'bg-[#F8F9FE]'} w-fit max-w-[70%]`}>
-                           <p>{msg.content}</p>
-                        </div>
-                     </div>
-                  ))}
-                  {realTimeMessages.map((msg, index) => (
-                     <div key={index} className="flex justify-end">
-                        <div className="rounded-lg p-2 bg-main text-white w-fit max-w-[70%]">
-                           <p>{msg}</p>
+                  {allMessages?.map((msg: any, index: number) => (
+                     <div
+                        key={msg.id || `rt-${index}`}
+                        className={`flex ${
+                           msg.user_id === user?.id
+                              ? "justify-end"
+                              : "justify-start"
+                        }`}
+                     >
+                        <div
+                           className={`rounded-lg p-2 ${
+                              msg.user_id === user?.id
+                                 ? "bg-main text-white"
+                                 : "bg-[#F8F9FE]"
+                           } w-fit max-w-[70%]`}
+                        >
+                           <p>{msg.message}</p>
+                           <small className="text-xs opacity-70">
+                              {msg.timestamp
+                                 ? new Date(msg.timestamp).toLocaleString()
+                                 : ""}
+                           </small>
                         </div>
                      </div>
                   ))}
@@ -140,7 +187,9 @@ const ChatArea = () => {
                      placeholder="Type a message..."
                      value={message}
                      onChange={(e) => setMessage(e.target.value)}
-                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                     onKeyPress={(e) =>
+                        e.key === "Enter" && handleSendMessage()
+                     }
                   />
                </div>
             </div>

@@ -1,41 +1,70 @@
 import { useEffect, useState } from "react";
 
+interface ChatMessage {
+   channel_id: string;
+   message: string;
+   user_id: string;
+   timestamp: string;
+}
+
 export const useWebSocket = (channelId: string | null) => {
-   const [messages, setMessages] = useState<string[]>([]);
+   const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [socket, setSocket] = useState<WebSocket | null>(null);
+   const [isConnected, setIsConnected] = useState(false);
 
    useEffect(() => {
-      if (channelId) {
-         const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${channelId}`);
-         setSocket(ws);
+      let ws: WebSocket | null = null;
 
-         ws.onopen = () => {
-            console.log("WebSocket connection established");
-         };
+      const connectWebSocket = () => {
+         if (channelId) {
+            ws = new WebSocket(
+               `ws://127.0.0.1:8000/api/v1/chat/ws/${channelId}`
+            );
+            setSocket(ws);
 
-         ws.onmessage = (event) => {
-            setMessages((prev) => [...prev, event.data]);
-         };
+            ws.onopen = () => {
+               console.log("WebSocket connection established");
+               setIsConnected(true);
+            };
 
-         ws.onerror = (error) => {
-            console.error("WebSocket error:", error);
-         };
+            ws.onmessage = (event) => {
+               try {
+                  const parsedData: ChatMessage = JSON.parse(event.data);
+                  setMessages((prev) => [...prev, parsedData]);
+               } catch (e) {
+                  console.error("Error parsing message:", e);
+               }
+            };
 
-         ws.onclose = () => {
-            console.log("WebSocket connection closed");
-         };
+            ws.onerror = (error) => {
+               console.error("WebSocket error:", error);
+               setIsConnected(false);
+            };
 
-         return () => {
+            ws.onclose = () => {
+               console.log("WebSocket connection closed");
+               setIsConnected(false);
+               setTimeout(connectWebSocket, 3000);
+            };
+         }
+      };
+
+      connectWebSocket();
+
+      return () => {
+         if (ws) {
             ws.close();
-         };
-      }
+         }
+      };
    }, [channelId]);
 
    const sendMessage = (message: string) => {
-      if (socket) {
+      if (socket && socket.readyState === WebSocket.OPEN) {
          socket.send(message);
+      } else {
+         console.error("WebSocket is not connected");
       }
    };
 
-   return { sendMessage, messages };
+   return { sendMessage, messages, isConnected };
 };

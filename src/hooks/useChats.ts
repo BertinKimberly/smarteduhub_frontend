@@ -15,12 +15,22 @@ const createChannel = (formData: any): Promise<any> => {
 };
 
 const getMessagesByChannel = ({ queryKey }: any): Promise<any> => {
-    const [_, channelId] = queryKey;
-    return handleApiRequest(() => authorizedAPI.get(`/chat/messages/${channelId}`));
- };
+   const [_, channelId] = queryKey;
+   return handleApiRequest(() =>
+      authorizedAPI.get(`/chat/messages/${channelId}`)
+   );
+};
+
+// Update the createMessage interface if you have one
+interface CreateMessageData {
+   channel_id: string;
+   message: string;
+   user_id: string;
+   timestamp: string;
+}
 
 // Send a new message
-const createMessage = (formData: any): Promise<any> => {
+const createMessage = (formData: CreateMessageData): Promise<any> => {
    return handleApiRequest(() => authorizedAPI.post("/chat", formData));
 };
 
@@ -35,11 +45,11 @@ export const useCreateChannel = () => {
 };
 
 export const useGetMessagesByChannel = (channelId: string) =>
-    useQuery<any, Error, any>({
-       queryKey: ["messages", channelId],
-       queryFn: getMessagesByChannel,
-       enabled: !!channelId, // Prevents querying if channelId is empty
-    });
+   useQuery<any, Error, any>({
+      queryKey: ["messages", channelId],
+      queryFn: getMessagesByChannel,
+      enabled: !!channelId, // Prevents querying if channelId is empty
+   });
 
 export const useCreateMessage = () => {
    return useMutation<any, Error, any>({
