@@ -1,5 +1,4 @@
 "use client";
-import DashboardNavbar from "@/components/DashboardNavbar";
 import React from "react";
 import Tilt from "react-parallax-tilt";
 import Link from "next/link";
@@ -38,9 +37,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ name, id }) => {
 
 const CoursesPage = () => {
    const { data: courses, isLoading, error } = useGetAllCourses();
-
-   console.log("courses", courses);
-   
 
    if (isLoading) return <div>Loading...</div>;
    if (error) return <div>Error loading courses</div>;

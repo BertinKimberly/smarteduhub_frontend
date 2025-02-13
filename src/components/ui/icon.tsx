@@ -1,29 +1,28 @@
-import { icons } from "lucide-react";
+import { LucideIcon, LucideProps } from "lucide-react";
+import * as icons from "lucide-react";
 
-export const Icon = ({
-   name,
-   color,
-   size,
-   className,
-}: {
-   name: keyof typeof icons;
-   color: string;
-   size: number;
-   className?: string;
-}) => {
-   const LucideIcon = icons[name as keyof typeof icons];
+type IconComponentProps = {
+  name: keyof typeof icons;
+  color?: string;
+  size?: number;
+  className?: string;
+};
 
-   // Check if the icon exists
-   if (!LucideIcon) {
-      console.error(`Icon "${name}" is not defined in the icons object.`);
-      return null; // or return a fallback component
-   }
+export const Icon = ({ name, color, size, className }: IconComponentProps) => {
+  // Get the icon component from the icons object
+  const IconComponent = icons[name] as LucideIcon;
 
-   return (
-      <LucideIcon
-         color={color}
-         size={size}
-         className={className}
-      />
-   );
+  // Check if the icon exists
+  if (!IconComponent) {
+    console.error(`Icon "${name}" is not defined in the icons object.`);
+    return null;
+  }
+
+  return (
+    <IconComponent
+      color={color}
+      size={size}
+      className={className}
+    />
+  );
 };
