@@ -1,6 +1,5 @@
 import Footer from "@/components/Footer";
 import { BenefitsSection } from "@/components/home/benefits";
-import { ContactSection } from "@/components/home/contact";
 import CoursesSlide from "@/components/home/CoursesSlide";
 import { FAQSection } from "@/components/home/faq";
 import { FeaturesSection } from "@/components/home/features";
@@ -17,7 +16,6 @@ const Home = () => {
       <BenefitsSection/>
       <FeaturesSection/>
       <TestimonialSection/>
-      <ContactSection/>
       <FAQSection/>
       <Footer/>
    </div>;

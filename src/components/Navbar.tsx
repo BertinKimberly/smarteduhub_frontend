@@ -23,7 +23,7 @@ const Navbar = () => {
                         src={Logo}
                         alt="Logo"
                      />
-                     <p className="font-bold ">Smart Eduhub</p>
+                     <p className="font-bold text-main hover:text-main/50 ">Smart Eduhub</p>
                   </Link>
 
                   {/* Desktop Links */}
