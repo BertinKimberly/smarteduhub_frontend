@@ -37,7 +37,7 @@ export default function RootLayout({
                <ReactQueryProvider>
                   <div>
                      {children}
-                     <ChatBot />
+                     {/* <ChatBot /> */}
                   </div>
                   <NpProgress />
                </ReactQueryProvider>

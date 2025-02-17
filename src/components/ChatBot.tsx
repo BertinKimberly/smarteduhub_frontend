@@ -113,7 +113,7 @@ const ChatBot = () => {
          ) : (
             <button
                onClick={() => setIsOpen(true)}
-               className="bg-white text-main p-3 rounded-full hover:bg-blue-900 shadow-lg border border-main"
+               className="bg-white text-main p-2 rounded-full hover:bg-blue-900 shadow-lg border border-main"
             >
                <IoChatbubbleEllipses size={24} />
             </button>

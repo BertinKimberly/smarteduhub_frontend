@@ -72,7 +72,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             label: "Performance",
             link: "/parent/performance",
          },
-       
+
          {
             icon: <MessageCircleCode />,
             label: "Messages",
@@ -83,8 +83,8 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
 
    return (
       <div
-         className={`hidden rounded-lg p-4 border relative border-main h-fit md:flex flex-col gap-6 ${
-            isCollapsed ? "w-fit" : "w-[250px]"
+         className={`hidden sticky top-4 rounded-lg p-4 border relative border-main h-[calc(100vh-1rem)] md:flex flex-col gap-6 ${
+            isCollapsed ? "w-fit" : "w-[240px]"
          }`}
       >
          <button
