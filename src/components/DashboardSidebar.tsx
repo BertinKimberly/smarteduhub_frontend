@@ -19,12 +19,14 @@ import {
    Users,
    Briefcase,
 } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface SidebarProps {
    role: "admin" | "student" | "parent";
 }
 
 const DashboardSidebar = ({ role }: SidebarProps) => {
+   const { user } = useAuthStore();
    const [isCollapsed, setIsCollapsed] = useState(false);
    const [isMobile, setIsMobile] = useState(false);
    const pathname = usePathname();
@@ -46,6 +48,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
    const links = {
       admin: [
          { icon: <House />, label: "Dashboard", link: "/admin" },
+         { icon: <User />, label: "Profile", link: "/admin/profile" },
          { icon: <Book />, label: "Courses", link: "/admin/courses" },
          { icon: <User2 />, label: "Users", link: "/admin/users" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/admin/chat" },
@@ -59,13 +62,14 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
       ],
       student: [
          { icon: <House />, label: "Home", link: "/student" },
+         { icon: <User />, label: "Profile", link: "/student/profile" },
          { icon: <Book />, label: "Courses", link: "/student/courses" },
          { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
-         { icon: <Users />, label: "Classmates", link: "/student/classmates" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
       ],
       parent: [
          { icon: <House />, label: "Dashboard", link: "/parent" },
+         { icon: <User />, label: "Profile", link: "/parent/profile" },
          { icon: <User2 />, label: "My Child", link: "/parent/child" },
          {
             icon: <ChartArea />,
@@ -125,13 +129,13 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             </div>
             {!isCollapsed && (
                <div className="flex flex-col">
-                  <small>James Peter</small>
-                  <small>james@gmail.com</small>
+                  <small>{user?.name}</small>
+                  <small>{user?.email}</small>
                </div>
             )}
          </div>
          <Link
-            className="flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-red-500 hover:text-white"
+            className="flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-main hover:text-white"
             href="/login"
          >
             <LogOut />

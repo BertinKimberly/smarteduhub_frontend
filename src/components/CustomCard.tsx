@@ -15,7 +15,7 @@ export default function CustomCard({
    color,
 }: CardProps) {
    return (
-      <div className="bg-input/80 rounded-lg border-[0.5px] p-4">
+      <div className="bg-submain rounded-lg border-[0.5px] p-4">
          <section className="flex flex-col gap-4">
             <div
                className="rounded-full p-2 w-8 h-8 flex items-center justify-center"

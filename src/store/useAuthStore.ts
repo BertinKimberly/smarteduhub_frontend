@@ -2,11 +2,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface User {
+export interface User {
    id: string;
    name: string;
    email: string;
    role: string;
+   phone?: string;
+   address?: string;
+   // Add any other relevant fields
 }
 
 interface AuthState {
@@ -24,7 +27,8 @@ export const useAuthStore = create(
          isAuthenticated: false,
          setUser: (user: User | null) => set({ user, isAuthenticated: !!user }),
          clearUser: () => set({ user: null, isAuthenticated: false }),
-         setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
+         setIsAuthenticated: (isAuthenticated: boolean) =>
+            set({ isAuthenticated }),
       }),
       {
          name: "auth-storage", // Unique name for localStorage

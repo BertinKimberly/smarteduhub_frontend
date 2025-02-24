@@ -17,84 +17,95 @@ import {
    ChartTooltip,
    ChartTooltipContent,
 } from "@/components/ui/chart";
+
 const chartData = [
-   { month: "January", desktop: 186, mobile: 80 },
-   { month: "February", desktop: 305, mobile: 200 },
-   { month: "March", desktop: 237, mobile: 120 },
-   { month: "April", desktop: 73, mobile: 190 },
-   { month: "May", desktop: 209, mobile: 130 },
-   { month: "June", desktop: 214, mobile: 140 },
+   { month: "January", activeUsers: 2450, courseEnrollments: 1800 },
+   { month: "February", activeUsers: 2800, courseEnrollments: 2100 },
+   { month: "March", activeUsers: 3200, courseEnrollments: 2400 },
+   { month: "April", activeUsers: 3600, courseEnrollments: 2800 },
+   { month: "May", activeUsers: 4100, courseEnrollments: 3200 },
+   { month: "June", activeUsers: 4500, courseEnrollments: 3600 },
+   { month: "July", activeUsers: 4800, courseEnrollments: 3900 },
+   { month: "August", activeUsers: 5200, courseEnrollments: 4300 },
+   { month: "September", activeUsers: 5600, courseEnrollments: 4700 },
+   { month: "October", activeUsers: 6000, courseEnrollments: 5100 },
+   { month: "November", activeUsers: 6400, courseEnrollments: 5500 },
+   { month: "December", activeUsers: 6800, courseEnrollments: 5900 },
 ];
+
 const chartConfig = {
-   desktop: {
-      label: "Desktop",
-      color: "hsl(var(--chart-1))",
+   activeUsers: {
+      label: "Active Users",
+      color: "#1782CF",
    },
-   mobile: {
-      label: "Mobile",
-      color: "hsl(var(--chart-2))",
+   courseEnrollments: {
+      label: "Course Enrollments",
+      color: "#42f554",
    },
 } satisfies ChartConfig;
 
 const AdminOveralChart = () => {
    return (
       <div>
-         <Card>
+         <Card className="border-none shadow-none">
             <CardHeader>
-               <CardTitle>Line Chart - Multiple</CardTitle>
-               <CardDescription>January - June 2024</CardDescription>
+               <CardTitle>Platform Usage Metrics</CardTitle>
+               <CardDescription>Year 2024</CardDescription>
             </CardHeader>
             <CardContent>
-               <ChartContainer
-                  config={chartConfig}
-                  className="h-[200px] w-full"
-               >
-                  <LineChart
-                     accessibilityLayer
-                     data={chartData}
-                     margin={{
-                        left: 1,
-                        right: 1,
-                     }}
+               <div className="overflow-x-auto">
+                  <ChartContainer
+                     config={chartConfig}
+                     className="h-[200px] min-w-[800px]"
                   >
-                     <CartesianGrid vertical={false} />
-                     <XAxis
-                        dataKey="month"
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={2}
-                        tickFormatter={(value) => value.slice(0, 3)}
-                     />
-                     <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent />}
-                     />
-                     <Line
-                        dataKey="desktop"
-                        type="monotone"
-                        stroke="var(--color-desktop)"
-                        strokeWidth={2}
-                        dot={false}
-                     />
-                     <Line
-                        dataKey="mobile"
-                        type="monotone"
-                        stroke="var(--color-mobile)"
-                        strokeWidth={2}
-                        dot={false}
-                     />
-                  </LineChart>
-               </ChartContainer>
+                     <LineChart
+                        accessibilityLayer
+                        data={chartData}
+                        margin={{
+                           left: 1,
+                           right: 1,
+                        }}
+                     >
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                           dataKey="month"
+                           tickLine={false}
+                           axisLine={false}
+                           tickMargin={2}
+                           tickFormatter={(value) => value.slice(0, 3)}
+                        />
+                        <ChartTooltip
+                           cursor={false}
+                           content={<ChartTooltipContent />}
+                        />
+                        <Line
+                           dataKey="activeUsers"
+                           type="monotone"
+                           stroke="#1782CF"
+                           strokeWidth={2}
+                           dot={false}
+                        />
+                        <Line
+                           dataKey="courseEnrollments"
+                           type="monotone"
+                           stroke="#EFF6FF"
+                           strokeWidth={2}
+                           dot={false}
+                        />
+                     </LineChart>
+                  </ChartContainer>
+               </div>
             </CardContent>
             <CardFooter>
                <div className="flex w-full items-start gap-2 text-sm">
                   <div className="grid gap-2">
                      <div className="flex items-center gap-2 font-medium leading-none">
-                        Trending up by 5.2% this month{" "}
+                        Growth in platform usage: 178% YoY{" "}
                         <TrendingUp className="h-4 w-4" />
                      </div>
                      <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                        Showing total visitors for the last 6 months
+                        Showing active users and course enrollments for the
+                        entire year
                      </div>
                   </div>
                </div>
