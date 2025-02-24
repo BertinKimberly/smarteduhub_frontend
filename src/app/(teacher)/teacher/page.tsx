@@ -35,12 +35,8 @@ const cardData = [
 const DashboardPage = () => {
    return (
       <div className="p-3">
-         <DashboardNavbar title="Student" />
-         <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-2 w-[20%] mt-8">
-               <small>Curriculum Progress</small>
-               <Progress value={40} />
-            </div>
+         <DashboardNavbar title="Teacher" />
+         <div className="flex flex-col gap-6 pt-10">
             <section className="grid w-full grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4 mb-6">
             {cardData.map((d, i) => (
                <CustomCard

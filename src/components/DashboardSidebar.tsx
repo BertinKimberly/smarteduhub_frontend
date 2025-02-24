@@ -22,7 +22,7 @@ import {
 import { useAuthStore } from "@/store/useAuthStore";
 
 interface SidebarProps {
-   role: "admin" | "student" | "parent";
+   role: "admin" | "student" | "parent" | "teacher";
 }
 
 const DashboardSidebar = ({ role }: SidebarProps) => {
@@ -82,6 +82,13 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             label: "Messages",
             link: "/parent/messages",
          },
+      ],
+      teacher: [
+         { icon: <House />, label: "Dashboard", link: "/teacher" },
+         { icon: <User />, label: "Profile", link: "/teacher/profile" },
+         { icon: <Briefcase />, label: "Courses", link: "/teacher/courses" },
+         { icon: <Users />, label: "Students", link: "/teacher/students" },
+         { icon: <MessageCircleCode />, label: "Chat", link: "/teacher/chat" },
       ],
    };
 

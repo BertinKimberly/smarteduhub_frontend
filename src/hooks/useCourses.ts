@@ -1,78 +1,118 @@
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Course, CourseFormData } from "@/types/course";
 
-const getAllCourses = (): Promise<any> => {
+const getAllCourses = (): Promise<Course[]> => {
    return handleApiRequest(() => authorizedAPI.get("/courses"));
 };
 
-const createCourse = (formData: FormData): Promise<any> => {
+const createCourse = (data: CourseFormData): Promise<Course> => {
+   const formData = new FormData();
+   formData.append("title", data.title);
+   formData.append("description", data.description || "");
+   formData.append("category", data.category);
+   formData.append("level", data.level);
+   if (data.file) {
+      formData.append("file", data.file);
+   }
+
    return handleApiRequest(() =>
       authorizedAPI.post("/courses", formData, {
          headers: {
             "Content-Type": "multipart/form-data",
          },
-         withCredentials: true,
       })
    );
 };
 
-const updateCourse = ({ formData, _id }: any): Promise<any> => {
+const updateCourse = ({
+   data,
+   id,
+}: {
+   data: CourseFormData;
+   id: string;
+}): Promise<Course> => {
+   return handleApiRequest(() => authorizedAPI.put(`/courses/${id}`, data));
+};
+
+const getCourseById = ({
+   queryKey,
+}: {
+   queryKey: [string, string];
+}): Promise<Course> => {
+   const [_, id] = queryKey;
+   return handleApiRequest(() => authorizedAPI.get(`/courses/${id}`));
+};
+
+const deleteCourseById = (id: string): Promise<void> => {
+   return handleApiRequest(() => authorizedAPI.delete(`/courses/${id}`));
+};
+
+const uploadCourseMaterial = ({
+   id,
+   file,
+}: {
+   id: string;
+   file: File;
+}): Promise<Course> => {
+   const formData = new FormData();
+   formData.append("file", file);
+
    return handleApiRequest(() =>
-      authorizedAPI.put(`/courses/${_id}`, formData, { withCredentials: true })
+      authorizedAPI.post(`/courses/${id}/upload`, formData, {
+         headers: {
+            "Content-Type": "multipart/form-data",
+         },
+      })
    );
 };
 
-const getCourseById = ({ queryKey }: any): Promise<any> => {
-   const [_, _id] = queryKey;
-   return handleApiRequest(() => authorizedAPI.get(`/courses/${_id}`));
+const getEnrolledCourses = (): Promise<Course[]> => {
+   return handleApiRequest(() => authorizedAPI.get("/courses/enrolled/me"));
 };
 
-const deleteCourseById = (_id: string): Promise<any> => {
-   return handleApiRequest(() => authorizedAPI.delete(`/courses/${_id}`));
-};
-
-const enrollInCourse = (_id: string): Promise<any> => {
-   return handleApiRequest(() =>
-      authorizedAPI.post(
-         `/courses/${_id}/enroll`,
-         {},
-         { withCredentials: true }
-      )
-   );
+const enrollInCourse = (id: string): Promise<Course> => {
+   return handleApiRequest(() => authorizedAPI.post(`/courses/${id}/enroll`));
 };
 
 export const useGetAllCourses = () =>
-   useQuery<any, Error>({ queryKey: ["courses"], queryFn: getAllCourses });
+   useQuery<Course[], Error>({ queryKey: ["courses"], queryFn: getAllCourses });
+
+export const useGetEnrolledCourses = () =>
+   useQuery<Course[], Error>({
+      queryKey: ["enrolledCourses"],
+      queryFn: getEnrolledCourses,
+   });
 
 export const useCreateCourse = () => {
-   return useMutation<any, Error, any>({
+   return useMutation<Course, Error, CourseFormData>({
       mutationFn: createCourse,
    });
 };
 
 export const useUpdateCourse = () => {
-   return useMutation<any, Error, any>({
+   return useMutation<Course, Error, { data: CourseFormData; id: string }>({
       mutationFn: updateCourse,
    });
 };
 
 export const useDeleteCourse = () => {
-   return useMutation<any, Error, string>({
+   return useMutation<void, Error, string>({
       mutationFn: deleteCourseById,
    });
 };
 
-export const useGetCourseById = (id: string | null) => {
+export const useGetCourseById = (id: string) => {
    return useQuery({
-      queryKey: ["course", id],
+      queryKey: ["course", id || ""],
       queryFn: getCourseById,
       enabled: !!id,
    });
 };
 
 export const useEnrollInCourse = () => {
-   return useMutation<any, Error, string>({
+   return useMutation<Course, Error, string>({
       mutationFn: enrollInCourse,
    });
 };
