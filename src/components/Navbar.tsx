@@ -5,9 +5,11 @@ import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import Logo from "@/images/logo.svg";
 import Image from "next/image";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const Navbar = () => {
    const [isMenuOpen, setIsMenuOpen] = useState(false);
+   const { isAuthenticated } = useAuthStore();
 
    return (
       <>
@@ -23,7 +25,9 @@ const Navbar = () => {
                         src={Logo}
                         alt="Logo"
                      />
-                     <p className="font-bold text-main hover:text-main/50 ">Smart Eduhub</p>
+                     <p className="font-bold text-main hover:text-main/50 ">
+                        Smart Eduhub
+                     </p>
                   </Link>
 
                   {/* Desktop Links */}
@@ -85,40 +89,59 @@ const Navbar = () => {
                            Contact
                         </Link>
                         <div className="flex w-full gap-2 items-center justify-center">
-                        <Link href="/login">
-                           <Button className="bg-main rounded-full p-4 py-6 px-8 ">
-                              Login
-                           </Button>
-                        </Link>
-
-                        <Link href="/register">
-                     <Button
-                        className="border border-main rounded-full p-4 py-6 px-8"
-                        variant="outline"
-                     >
-                        Register
-                     </Button>
-                  </Link>
+                           {isAuthenticated ? (
+                              <Link href="/dashboard">
+                                 <Button className="bg-main rounded-full p-4 py-6 px-8">
+                                    Dashboard
+                                 </Button>
+                              </Link>
+                           ) : (
+                              <>
+                                 <Link href="/login">
+                                    <Button className="bg-main rounded-full p-4 py-6 px-8">
+                                       Login
+                                    </Button>
+                                 </Link>
+                                 <Link href="/register">
+                                    <Button
+                                       className="border border-main rounded-full p-4 py-6 px-8"
+                                       variant="outline"
+                                    >
+                                       Register
+                                    </Button>
+                                 </Link>
+                              </>
+                           )}
                         </div>
                      </div>
                   </div>
                )}
 
-               {/* Call-to-Action Button */}
+               {/* Desktop Call-to-Action Buttons */}
                <div className="hidden md:flex gap-4 xl:gap-6">
-                  <Link href="/login">
-                     <Button className="bg-main rounded-full p-4 py-6 px-8">
-                        Login
-                     </Button>
-                  </Link>
-                  <Link href="/register">
-                     <Button
-                        className="border border-main rounded-full p-4 py-6 px-8"
-                        variant="outline"
-                     >
-                        Register
-                     </Button>
-                  </Link>
+                  {isAuthenticated ? (
+                     <Link href="/dashboard">
+                        <Button className="bg-main rounded-full p-4 py-6 px-8">
+                           Dashboard
+                        </Button>
+                     </Link>
+                  ) : (
+                     <>
+                        <Link href="/login">
+                           <Button className="bg-main rounded-full p-4 py-6 px-8">
+                              Login
+                           </Button>
+                        </Link>
+                        <Link href="/register">
+                           <Button
+                              className="border border-main rounded-full p-4 py-6 px-8"
+                              variant="outline"
+                           >
+                              Register
+                           </Button>
+                        </Link>
+                     </>
+                  )}
                </div>
             </div>
          </nav>

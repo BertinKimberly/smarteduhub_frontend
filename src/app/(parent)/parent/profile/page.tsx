@@ -12,55 +12,84 @@ import {
 import ProfileForm from "@/components/profile/ProfileForm";
 import { useState } from "react";
 import DashboardNavbar from "@/components/DashboardNavbar";
+import { useProfile, useUpdateProfile } from "@/hooks/useAuth";
+import { toast } from "react-toastify";
+
 
 const ProfilePage = () => {
    const { user } = useAuthStore();
    const [isEditing, setIsEditing] = useState(false);
+    const { data: profileData, isLoading } = useProfile();
+   const updateProfileMutation = useUpdateProfile();
 
-   const handleUpdateProfile = (data: Partial<typeof user>) => {
-      // TODO: Implement profile update logic
-      console.log("Updating profile:", data);
-      setIsEditing(false);
+   const handleUpdateProfile = async (data: Partial<typeof user>) => {
+      try {
+         await updateProfileMutation.mutateAsync(data);
+         setIsEditing(false);
+         toast.success("Profile updated successfully");
+      } catch (error) {
+         toast.error("Failed to update profile");
+      }
    };
 
+   const getInitials = (name: string) => {
+      return name
+         .split(" ")
+         .map((word) => word[0])
+         .join("")
+         .toUpperCase()
+         .slice(0, 2);
+   };
+
+   if (isLoading) {
+      return <div>Loading...</div>;
+   }
+
    const stats = [
-      { label: "Courses Enrolled", value: "12" },
-      { label: "Completed Courses", value: "8" },
-      { label: "Achievements", value: "15" },
-      { label: "Average Grade", value: "A" },
+      { label: "Courses Enrolled", value: profileData?.coursesEnrolled || "0" },
+      {
+         label: "Completed Courses",
+         value: profileData?.completedCourses || "0",
+      },
+      { label: "Achievements", value: profileData?.achievements || "0" },
+      { label: "Average Grade", value: profileData?.averageGrade || "N/A" },
    ];
 
    return (
       <>
          <div className="w-full space-y-6">
             <DashboardNavbar title="Profile" />
-           
+            <div className="flex justify-between items-center"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                {/* Main Profile Section */}
                <div className="md:col-span-2 space-y-6">
                   <div className="bg-white rounded-lg shadow p-6">
                      {isEditing ? (
                         <ProfileForm
-                           user={user}
+                           user={profileData}
                            onUpdate={handleUpdateProfile}
                         />
                      ) : (
                         <div className="space-y-6">
                            <div className="flex justify-between items-start">
                               <div className="flex items-center gap-4">
-                                 <div className="bg-main/10 h-24 w-24 rounded-full flex items-center justify-center">
-                                    <User
-                                       size={40}
-                                       className="text-main"
-                                    />
+                                 <div className="bg-main/10 h-24 w-24 rounded-full flex items-center justify-center text-2xl font-bold text-main">
+                                    {profileData?.name ? (
+                                       getInitials(profileData.name)
+                                    ) : (
+                                       <User
+                                          size={40}
+                                          className="text-main"
+                                       />
+                                    )}
                                  </div>
                                  <div>
                                     <h2 className="text-2xl font-semibold">
-                                       {user?.name}
+                                       {profileData?.name}
                                     </h2>
                                     <p className="text-gray-600 capitalize">
-                                       {user?.role}
+                                       {profileData?.role}
                                     </p>
                                     <button
                                        onClick={() => setIsEditing(!isEditing)}
@@ -80,7 +109,7 @@ const ProfilePage = () => {
                                     <p className="text-sm text-gray-500">
                                        Email
                                     </p>
-                                    <p>{user?.email}</p>
+                                    <p>{profileData?.email}</p>
                                  </div>
                               </div>
                               <div className="flex items-center gap-3">
@@ -89,7 +118,9 @@ const ProfilePage = () => {
                                     <p className="text-sm text-gray-500">
                                        Phone
                                     </p>
-                                    <p>{user?.phone || "Not provided"}</p>
+                                    <p>
+                                       {profileData?.phone || "Not provided"}
+                                    </p>
                                  </div>
                               </div>
                               <div className="flex items-center gap-3">
@@ -98,7 +129,9 @@ const ProfilePage = () => {
                                     <p className="text-sm text-gray-500">
                                        Address
                                     </p>
-                                    <p>{user?.address || "Not provided"}</p>
+                                    <p>
+                                       {profileData?.address || "Not provided"}
+                                    </p>
                                  </div>
                               </div>
                               <div className="flex items-center gap-3">
@@ -107,7 +140,11 @@ const ProfilePage = () => {
                                     <p className="text-sm text-gray-500">
                                        Joined
                                     </p>
-                                    <p>{new Date().toLocaleDateString()}</p>
+                                    <p>
+                                       {new Date(
+                                          profileData?.joinedDate
+                                       ).toLocaleDateString()}
+                                    </p>
                                  </div>
                               </div>
                            </div>
@@ -121,18 +158,18 @@ const ProfilePage = () => {
                         Recent Activity
                      </h3>
                      <div className="space-y-4">
-                        {[1, 2, 3].map((i) => (
+                        {profileData?.recentActivity.map((activity, index) => (
                            <div
-                              key={i}
+                              key={index}
                               className="flex items-center gap-3 border-b pb-4"
                            >
                               <Activity className="text-main" />
                               <div>
                                  <p className="font-medium">
-                                    Completed Chapter {i}
+                                    {activity.description}
                                  </p>
                                  <p className="text-sm text-gray-500">
-                                    2 days ago
+                                    {activity.date}
                                  </p>
                               </div>
                            </div>
@@ -167,18 +204,18 @@ const ProfilePage = () => {
                         Current Courses
                      </h3>
                      <div className="space-y-3">
-                        {[1, 2, 3].map((i) => (
+                        {profileData?.currentCourses.map((course, index) => (
                            <div
-                              key={i}
+                              key={index}
                               className="flex items-center gap-3"
                            >
                               <Book className="text-main" />
                               <div>
-                                 <p className="font-medium">Course {i}</p>
+                                 <p className="font-medium">{course.name}</p>
                                  <div className="w-full bg-gray-200 rounded-full h-2.5">
                                     <div
                                        className="bg-main h-2.5 rounded-full"
-                                       style={{ width: `${30 * i}%` }}
+                                       style={{ width: `${course.progress}%` }}
                                     ></div>
                                  </div>
                               </div>

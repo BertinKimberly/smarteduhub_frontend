@@ -25,6 +25,18 @@ interface SignupData {
    password: string;
 }
 
+// Add these interfaces
+interface OAuthResponse {
+   auth_url: string;
+}
+
+interface OAuthCallbackResponse {
+   access_token: string;
+   token_type: string;
+   expires_in: number;
+   user: User;
+}
+
 // API call functions
 const loginUser = (userData: LoginData) => {
    return handleApiRequest(() =>
@@ -44,6 +56,51 @@ const logoutUser = () => {
    );
 };
 
+const initiateOAuth = (provider: string, role?: string) => {
+   // For login (no role), just use provider in state
+   // For register (with role), include role in state
+   const stateString = role
+      ? `${provider}-${role}-${Math.random().toString(36).substring(7)}`
+      : `${provider}-${Math.random().toString(36).substring(7)}`;
+
+   return handleApiRequest(() =>
+      unauthorizedAPI.get<OAuthResponse>(
+         `/auth/oauth/${provider}?state=${stateString}${
+            role ? `&role=${role}` : ""
+         }`
+      )
+   );
+};
+
+const handleOAuthCallback = (provider: string, code: string) => {
+   return handleApiRequest(() =>
+      unauthorizedAPI.get<OAuthCallbackResponse>(
+         `/auth/oauth/${provider}/callback`,
+         {
+            params: { code },
+            withCredentials: true,
+         }
+      )
+   );
+};
+
+const updateUserProfile = async (userData: Partial<User>) => {
+   return handleApiRequest(() =>
+      authorizedAPI.put("/users/profile", userData, { withCredentials: true })
+   );
+};
+
+const fetchUserProfile = async () => {
+   const { user } = useAuthStore.getState();
+   if (!user?.id) {
+      throw new Error("User ID not found");
+   }
+
+   return handleApiRequest(async () => {
+      const response = await authorizedAPI.get(`/users/${user.id}`);
+      return response.data;
+   });
+};
 
 export const useLoginUser = () => {
    const { setUser, setIsAuthenticated } = useAuthStore();
@@ -90,5 +147,70 @@ export const useLogoutUser = () => {
       onError: (error) => {
          console.error("Logout error:", error);
       },
+   });
+};
+
+export const useInitiateOAuth = () => {
+   return useMutation({
+      mutationFn: ({ provider, role }: { provider: string; role?: string }) =>
+         initiateOAuth(provider, role),
+      onSuccess: (data) => {
+         if (data?.auth_url) {
+            window.location.href = data.auth_url;
+         }
+      },
+      onError: (error) => {
+         console.error("OAuth initiation error:", error);
+      },
+   });
+};
+
+export const useOAuthCallback = () => {
+   const { setUser, setIsAuthenticated } = useAuthStore();
+   const queryClient = useQueryClient();
+
+   return useMutation({
+      mutationFn: async ({
+         provider,
+         code,
+         state,
+      }: {
+         provider: string;
+         code: string;
+         state: string;
+      }) => {
+         const response = await handleOAuthCallback(provider, code);
+         if (response?.user) {
+            setUser(response.user);
+            setIsAuthenticated(true);
+         }
+         return response;
+      },
+   });
+};
+
+export const useUpdateProfile = () => {
+   const { setUser } = useAuthStore();
+   const queryClient = useQueryClient();
+
+   return useMutation({
+      mutationFn: updateUserProfile,
+      onSuccess: (data) => {
+         if (data?.user) {
+            setUser(data.user);
+            queryClient.invalidateQueries(["profile"]);
+         }
+      },
+      onError: (error) => {
+         console.error("Profile update error:", error);
+      },
+   });
+};
+
+export const useProfile = () => {
+   return useQuery({
+      queryKey: ["profile"],
+      queryFn: fetchUserProfile,
+      staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
    });
 };

@@ -28,6 +28,8 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
+import { RoleSelectionModal } from "@/components/RoleSelectionModal";
+import { useInitiateOAuth } from "@/hooks/useAuth";
 
 // Define the schema for the registration form
 const formSchema = z
@@ -53,6 +55,8 @@ const cookies = new Cookies();
 
 const RegisterPage = () => {
    const [isSubmitting, setIsSubmitting] = useState(false);
+   const [showRoleModal, setShowRoleModal] = useState(false);
+   const [selectedProvider, setSelectedProvider] = useState<string>("");
 
    const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
@@ -67,25 +71,46 @@ const RegisterPage = () => {
    });
 
    const registerMutation = useRegisterUser();
+   const initiateOAuthMutation = useInitiateOAuth();
 
-   const onSubmit = async ({ confirmPassword, ...data }: FormData) => {
+   const onSubmit = async (data: FormData) => {
       setIsSubmitting(true);
       try {
          const response = await registerMutation.mutateAsync(data);
-         console.log("Registration Response:", response);
 
-         if (response?.token.access_token) {
-            cookies.set("auth-token", response.token.access_token, {
-               path: "/",
-            });
+         if (response?.access_token) {
+            // First clear any existing tokens to prevent issues
+            cookies.remove("access_token", { path: "/" });
+            // Then set the new token
+            cookies.set("access_token", response.access_token, { path: "/" });
 
-            const payload = JSON.parse(
-               atob(response.token.access_token.split(".")[1])
-            );
+            try {
+               const payload = JSON.parse(
+                  atob(response.access_token.split(".")[1])
+               );
 
-            payload.role === "student"
-               ? location.replace("/dashboard")
-               : location.replace("/admin");
+               // Redirect based on role
+               switch (payload.role) {
+                  case "admin":
+                     location.replace("/admin");
+                     break;
+                  case "teacher":
+                     location.replace("/teacher");
+                     break;
+                  case "parent":
+                     location.replace("/parent");
+                     break;
+                  case "student":
+                     location.replace("/student");
+                     break;
+                  default:
+                     location.replace("/student");
+               }
+            } catch (error) {
+               // If token decoding fails, show error and remove the token
+               cookies.remove("access_token", { path: "/" });
+               toast.error("Authentication error. Please login again.");
+            }
          } else {
             toast.error(response?.error?.msg || "Login failed");
          }
@@ -94,6 +119,18 @@ const RegisterPage = () => {
       } finally {
          setIsSubmitting(false);
       }
+   };
+
+   const handleOAuthClick = (provider: string) => {
+      setSelectedProvider(provider);
+      setShowRoleModal(true);
+   };
+
+   const handleRoleSelect = (role: string) => {
+      initiateOAuthMutation.mutate({
+         provider: selectedProvider,
+         role: role, // Make sure role is passed here
+      });
    };
 
    return (
@@ -122,15 +159,13 @@ const RegisterPage = () => {
                      name="role"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel className="text-submain">
-                              Register As *
-                           </FormLabel>
+                           <FormLabel>Register As *</FormLabel>
                            <FormControl>
                               <Select
                                  onValueChange={field.onChange}
                                  defaultValue={field.value}
                               >
-                                 <SelectTrigger className="bg-white p-6 outline-none border border-main text-main">
+                                 <SelectTrigger className="bg-white p-6 outline-none border border-main ">
                                     <SelectValue placeholder="Select role" />
                                  </SelectTrigger>
                                  <SelectContent>
@@ -160,12 +195,10 @@ const RegisterPage = () => {
                         name="name"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel className="text-submain">
-                                 Name *
-                              </FormLabel>
+                              <FormLabel>Name *</FormLabel>
                               <FormControl>
                                  <Input
-                                    className="bg-white p-6 outline-none border border-main text-main"
+                                    className="bg-white p-6 outline-none border border-main "
                                     placeholder="name"
                                     {...field}
                                  />
@@ -183,12 +216,10 @@ const RegisterPage = () => {
                         name="email"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel className="text-submain">
-                                 Email *
-                              </FormLabel>
+                              <FormLabel>Email *</FormLabel>
                               <FormControl>
                                  <Input
-                                    className="bg-white p-6 outline-none border border-main text-main"
+                                    className="bg-white p-6 outline-none border border-main "
                                     placeholder="Email"
                                     {...field}
                                  />
@@ -206,12 +237,10 @@ const RegisterPage = () => {
                         name="password"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel className="text-submain">
-                                 Password *
-                              </FormLabel>
+                              <FormLabel>Password *</FormLabel>
                               <FormControl>
                                  <Input
-                                    className="bg-white p-6 outline-none border border-main text-main"
+                                    className="bg-white p-6 outline-none border border-main "
                                     placeholder="Password"
                                     {...field}
                                     type="password"
@@ -230,12 +259,10 @@ const RegisterPage = () => {
                         name="confirmPassword"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel className="text-submain">
-                                 Confirm Password *
-                              </FormLabel>
+                              <FormLabel>Confirm Password *</FormLabel>
                               <FormControl>
                                  <Input
-                                    className="bg-white p-6 outline-none border border-main text-main"
+                                    className="bg-white p-6 outline-none border border-main "
                                     placeholder="Confirm Password"
                                     {...field}
                                     type="password"
@@ -264,25 +291,42 @@ const RegisterPage = () => {
             </Form>
 
             <div className="py-8 flex items-center justify-center gap-4 z-30">
-               <div className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full">
+               <div
+                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                  onClick={() => handleOAuthClick("google")}
+               >
                   <Image
                      src={google}
                      alt="google"
                   />
                </div>
-               <div className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full">
+               <div
+                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                  onClick={() => handleOAuthClick("github")}
+               >
                   <Image
                      src={github}
                      alt="github"
                   />
                </div>
-               <div className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full">
+               <div
+                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                  onClick={() => handleOAuthClick("facebook")}
+               >
                   <Image
                      src={fb}
                      alt="fb"
                   />
                </div>
             </div>
+
+            <RoleSelectionModal
+               isOpen={showRoleModal}
+               onClose={() => setShowRoleModal(false)}
+               onConfirm={handleRoleSelect}
+               isRegisterPage={true}
+            />
+
             <div className="mt-6">
                <p>
                   Already have an account?

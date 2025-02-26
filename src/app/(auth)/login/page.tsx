@@ -22,6 +22,7 @@ import { useLoginUser } from "@/hooks/useAuth";
 import { toast } from "react-toastify";
 import { Cookies } from "react-cookie";
 import { useSearchParams } from "next/navigation";
+import { useInitiateOAuth } from "@/hooks/useAuth";
 
 const cookies = new Cookies();
 
@@ -39,6 +40,7 @@ const LoginPage = () => {
    const redirectUrl = searchParams.get("redirectUrl");
 
    const loginMutation = useLoginUser();
+   const initiateOAuthMutation = useInitiateOAuth();
 
    const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
@@ -53,21 +55,43 @@ const LoginPage = () => {
       setIsSubmitting(true);
       try {
          const response = await loginMutation.mutateAsync(data);
-         console.log("Login Response:", response);
 
          if (response?.access_token) {
-            cookies.set("auth-token", response.access_token, { path: "/" });
+            // First clear any existing tokens to prevent issues
+            cookies.remove("access_token", { path: "/" });
+            // Then set the new token
+            cookies.set("access_token", response.access_token, { path: "/" });
 
-            const payload = JSON.parse(
-               atob(response.access_token.split(".")[1])
-            );
+            try {
+               const payload = JSON.parse(
+                  atob(response.access_token.split(".")[1])
+               );
 
-            if (redirectUrl) {
-               location.replace(redirectUrl);
-            } else {
-               payload.role === "user"
-                  ? location.replace("/dashboard")
-                  : location.replace("/admin");
+               if (redirectUrl) {
+                  location.replace(redirectUrl);
+               } else {
+                  // Redirect based on role
+                  switch (payload.role) {
+                     case "admin":
+                        location.replace("/admin");
+                        break;
+                     case "teacher":
+                        location.replace("/teacher");
+                        break;
+                     case "parent":
+                        location.replace("/parent");
+                        break;
+                     case "student":
+                        location.replace("/student");
+                        break;
+                     default:
+                        location.replace("/student");
+                  }
+               }
+            } catch (error) {
+               // If token decoding fails, show error and remove the token
+               cookies.remove("access_token", { path: "/" });
+               toast.error("Authentication error. Please login again.");
             }
          } else {
             toast.error(response?.error?.msg || "Login failed");
@@ -78,6 +102,11 @@ const LoginPage = () => {
          setIsSubmitting(false);
       }
    };
+
+   const handleOAuthClick = (provider: string) => {
+      initiateOAuthMutation.mutate({ provider });
+   };
+
    return (
       <div className="py-8 md:py-10">
          <div className="bg-background rounded-lg p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20  mx-auto">
@@ -106,7 +135,7 @@ const LoginPage = () => {
                            <FormLabel>Email *</FormLabel>
                            <FormControl>
                               <Input
-                                 className="bg-white p-6 outline-none border border-main text-main"
+                                 className="bg-white p-6 outline-none border border-main "
                                  placeholder="Email"
                                  {...field}
                               />
@@ -127,7 +156,7 @@ const LoginPage = () => {
                            <FormLabel>Password *</FormLabel>
                            <FormControl>
                               <Input
-                                 className="bg-white p-6 outline-none border border-main text-main"
+                                 className="bg-white p-6 outline-none border border-main "
                                  placeholder="Password"
                                  {...field}
                                  type="password"
@@ -151,19 +180,28 @@ const LoginPage = () => {
                </form>
             </Form>
             <div className="py-8 flex items-center justify-center gap-4 z-30">
-               <div className="bg-white py-3 px-4 md:px-8 cursor-pointer hover:bg-background border border-white rounded-full">
+               <div
+                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                  onClick={() => handleOAuthClick("google")}
+               >
                   <Image
                      src={google}
                      alt="google"
                   />
                </div>
-               <div className="bg-white py-3 px-4 md:px-8 cursor-pointer hover:bg-background border border-white rounded-full">
+               <div
+                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                  onClick={() => handleOAuthClick("github")}
+               >
                   <Image
                      src={github}
                      alt="github"
                   />
                </div>
-               <div className="bg-white py-3 px-4 md:px-8 cursor-pointer hover:bg-background border border-white rounded-full">
+               <div
+                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                  onClick={() => handleOAuthClick("facebook")}
+               >
                   <Image
                      src={fb}
                      alt="fb"
