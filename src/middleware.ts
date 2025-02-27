@@ -8,7 +8,15 @@ interface CustomJwtPayload {
    role?: string;
 }
 
-const PUBLIC_PATHS = ["/", "/about", "/contact", "/courses"];
+const PUBLIC_PATHS = [
+   "/",
+   "/about",
+   "/contact",
+   "/courses",
+   "/help-center",
+   "/help-center/details",
+   "/help-center/details/:slug",
+];
 const AUTH_PATHS = ["/login", "/register"];
 
 // Define role-based path patterns
@@ -49,12 +57,22 @@ function isValidToken(tokenValue: string) {
    }
 }
 
+// Helper function to check if path matches pattern
+function matchesPath(pathname: string, pattern: string): boolean {
+   // Convert route pattern to regex
+   const regexPattern = pattern
+      .replace(/\/:slug/, "/[^/]+") // Convert :slug to regex
+      .replace(/\*\*/, ".*"); // Convert ** to regex
+   const regex = new RegExp(`^${regexPattern}`);
+   return regex.test(pathname);
+}
+
 export async function middleware(request: NextRequest) {
    const token = request.cookies.get("access_token");
    const { pathname } = request.nextUrl;
 
    // Allow public paths for all users
-   if (PUBLIC_PATHS.includes(pathname)) {
+   if (PUBLIC_PATHS.some((pattern) => matchesPath(pathname, pattern))) {
       return NextResponse.next();
    }
 

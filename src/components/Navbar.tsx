@@ -24,6 +24,8 @@ const Navbar = () => {
                      <Image
                         src={Logo}
                         alt="Logo"
+                        width={30}
+                        height={30}
                      />
                      <p className="font-bold text-main hover:text-main/50 ">
                         Smart Eduhub

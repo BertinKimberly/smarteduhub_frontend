@@ -1,5 +1,4 @@
 "use client";
-import { useAuthStore } from "@/store/useAuthStore";
 import {
    Mail,
    Phone,
@@ -12,9 +11,10 @@ import {
 import ProfileForm from "@/components/profile/ProfileForm";
 import { useState } from "react";
 import DashboardNavbar from "@/components/DashboardNavbar";
+import { useProfile } from "@/hooks/useAuth";
 
 const ProfilePage = () => {
-   const { user } = useAuthStore();
+   const {data:user,isLoading,isError}=useProfile()
    const [isEditing, setIsEditing] = useState(false);
 
    const handleUpdateProfile = (data: Partial<typeof user>) => {
@@ -23,6 +23,7 @@ const ProfilePage = () => {
       setIsEditing(false);
    };
 
+
    const stats = [
       { label: "Courses Enrolled", value: "12" },
       { label: "Completed Courses", value: "8" },
@@ -30,13 +31,17 @@ const ProfilePage = () => {
       { label: "Average Grade", value: "A" },
    ];
 
+   console.log("Uri mwiza uri mwiza",user)
+    if(isLoading){
+        return <div>Loading...</div>
+    }
    return (
       <>
          <div className="w-full space-y-6">
             <DashboardNavbar title="Profile" />
-           
+            <div className="flex justify-between items-center"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                {/* Main Profile Section */}
                <div className="md:col-span-2 space-y-6">
                   <div className="bg-white rounded-lg shadow p-6">

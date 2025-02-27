@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authorizedAPI, unauthorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useAuthStore } from "@/store/useAuthStore";
+import { UserUpdate } from "@/types/user";
+import { Cookies } from "react-cookie";
 
 interface User {
    id: string;
@@ -84,22 +86,21 @@ const handleOAuthCallback = (provider: string, code: string) => {
    );
 };
 
-const updateUserProfile = async (userData: Partial<User>) => {
+const updateUserProfile = async (userData: UserUpdate) => {
+   const userId = useAuthStore.getState().user?.id;
+   if (!userId) throw new Error("User ID not found");
+
    return handleApiRequest(() =>
-      authorizedAPI.put("/users/profile", userData, { withCredentials: true })
+      authorizedAPI.put(`/users/${userId}`, userData, { withCredentials: true })
    );
 };
 
 const fetchUserProfile = async () => {
-   const { user } = useAuthStore.getState();
-   if (!user?.id) {
-      throw new Error("User ID not found");
-   }
-
-   return handleApiRequest(async () => {
-      const response = await authorizedAPI.get(`/users/${user.id}`);
-      return response.data;
-   });
+   return handleApiRequest(() =>
+      authorizedAPI.get("/users/profile", {
+         withCredentials: true,
+      })
+   );
 };
 
 export const useLoginUser = () => {
@@ -109,7 +110,7 @@ export const useLoginUser = () => {
       mutationFn: loginUser,
       onSuccess: (data) => {
          if (data && data.user) {
-            setUser(data.user); // Update Zustand store with user data
+            setUser(data.user);
             setIsAuthenticated(true);
          }
       },
@@ -198,7 +199,7 @@ export const useUpdateProfile = () => {
       onSuccess: (data) => {
          if (data?.user) {
             setUser(data.user);
-            queryClient.invalidateQueries(["profile"]);
+            queryClient.invalidateQueries({ queryKey: ["profile"] });
          }
       },
       onError: (error) => {
@@ -211,6 +212,6 @@ export const useProfile = () => {
    return useQuery({
       queryKey: ["profile"],
       queryFn: fetchUserProfile,
-      staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+      staleTime: 1000 * 60 * 5,
    });
 };

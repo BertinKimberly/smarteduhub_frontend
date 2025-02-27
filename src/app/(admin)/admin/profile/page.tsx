@@ -1,5 +1,4 @@
 "use client";
-import { useAuthStore } from "@/store/useAuthStore";
 import {
    Mail,
    Phone,
@@ -12,9 +11,10 @@ import {
 import ProfileForm from "@/components/profile/ProfileForm";
 import { useState } from "react";
 import DashboardNavbar from "@/components/DashboardNavbar";
+import { useProfile } from "@/hooks/useAuth";
 
 const ProfilePage = () => {
-   const { user } = useAuthStore();
+   const {data:user,isLoading,isError}=useProfile()
    const [isEditing, setIsEditing] = useState(false);
 
    const handleUpdateProfile = (data: Partial<typeof user>) => {
@@ -23,6 +23,7 @@ const ProfilePage = () => {
       setIsEditing(false);
    };
 
+
    const stats = [
       { label: "Courses Enrolled", value: "12" },
       { label: "Completed Courses", value: "8" },
@@ -30,6 +31,10 @@ const ProfilePage = () => {
       { label: "Average Grade", value: "A" },
    ];
 
+   console.log("Uri mwiza uri mwiza",user)
+    if(isLoading){
+        return <div>Loading...</div>
+    }
    return (
       <>
          <div className="w-full space-y-6">

@@ -15,16 +15,22 @@ import DashboardNavbar from "@/components/DashboardNavbar";
 import { useProfile, useUpdateProfile } from "@/hooks/useAuth";
 import { toast } from "react-toastify";
 
-
 const ProfilePage = () => {
    const { user } = useAuthStore();
    const [isEditing, setIsEditing] = useState(false);
-    const { data: profileData, isLoading } = useProfile();
+   const { data: profileData, isLoading } = useProfile();
    const updateProfileMutation = useUpdateProfile();
 
    const handleUpdateProfile = async (data: Partial<typeof user>) => {
       try {
-         await updateProfileMutation.mutateAsync(data);
+         await updateProfileMutation.mutateAsync({
+            ...data,
+            // Ensure null values are sent as empty strings if they're required
+            username: data.username || "",
+            phone: data.phone || "",
+            country: data.country || "",
+            field_of_study: data.field_of_study || "",
+         });
          setIsEditing(false);
          toast.success("Profile updated successfully");
       } catch (error) {
@@ -32,13 +38,15 @@ const ProfilePage = () => {
       }
    };
 
+   const handleCancel = () => {
+      setIsEditing(false);
+   };
+
    const getInitials = (name: string) => {
-      return name
-         .split(" ")
-         .map((word) => word[0])
-         .join("")
-         .toUpperCase()
-         .slice(0, 2);
+      const names = name.split(" ");
+      const firstName = names[0] || "";
+      const lastName = names[names.length - 1] || "";
+      return (firstName[0] + lastName[0]).toUpperCase();
    };
 
    if (isLoading) {
@@ -69,6 +77,7 @@ const ProfilePage = () => {
                         <ProfileForm
                            user={profileData}
                            onUpdate={handleUpdateProfile}
+                           onCancel={handleCancel}
                         />
                      ) : (
                         <div className="space-y-6">
@@ -104,6 +113,15 @@ const ProfilePage = () => {
 
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                               <div className="flex items-center gap-3">
+                                 <User className="text-main" />
+                                 <div>
+                                    <p className="text-sm text-gray-500">
+                                       Username
+                                    </p>
+                                    <p>{profileData?.username || "Not set"}</p>
+                                 </div>
+                              </div>
+                              <div className="flex items-center gap-3">
                                  <Mail className="text-main" />
                                  <div>
                                     <p className="text-sm text-gray-500">
@@ -127,10 +145,22 @@ const ProfilePage = () => {
                                  <MapPin className="text-main" />
                                  <div>
                                     <p className="text-sm text-gray-500">
-                                       Address
+                                       Country
                                     </p>
                                     <p>
-                                       {profileData?.address || "Not provided"}
+                                       {profileData?.country || "Not provided"}
+                                    </p>
+                                 </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                 <Book className="text-main" />
+                                 <div>
+                                    <p className="text-sm text-gray-500">
+                                       Field of Study
+                                    </p>
+                                    <p>
+                                       {profileData?.field_of_study ||
+                                          "Not provided"}
                                     </p>
                                  </div>
                               </div>
@@ -142,7 +172,7 @@ const ProfilePage = () => {
                                     </p>
                                     <p>
                                        {new Date(
-                                          profileData?.joinedDate
+                                          profileData?.created_at
                                        ).toLocaleDateString()}
                                     </p>
                                  </div>
@@ -157,19 +187,20 @@ const ProfilePage = () => {
                      <h3 className="text-lg font-semibold mb-4">
                         Recent Activity
                      </h3>
+
                      <div className="space-y-4">
-                        {profileData?.recentActivity.map((activity, index) => (
+                        {[1, 2, 3].map((i) => (
                            <div
-                              key={index}
+                              key={i}
                               className="flex items-center gap-3 border-b pb-4"
                            >
                               <Activity className="text-main" />
                               <div>
                                  <p className="font-medium">
-                                    {activity.description}
+                                    Completed Chapter {i}
                                  </p>
                                  <p className="text-sm text-gray-500">
-                                    {activity.date}
+                                    2 days ago
                                  </p>
                               </div>
                            </div>
@@ -204,18 +235,18 @@ const ProfilePage = () => {
                         Current Courses
                      </h3>
                      <div className="space-y-3">
-                        {profileData?.currentCourses.map((course, index) => (
+                        {[1, 2, 3].map((i) => (
                            <div
-                              key={index}
+                              key={i}
                               className="flex items-center gap-3"
                            >
                               <Book className="text-main" />
                               <div>
-                                 <p className="font-medium">{course.name}</p>
+                                 <p className="font-medium">Course {i}</p>
                                  <div className="w-full bg-gray-200 rounded-full h-2.5">
                                     <div
                                        className="bg-main h-2.5 rounded-full"
-                                       style={{ width: `${course.progress}%` }}
+                                       style={{ width: `${30 * i}%` }}
                                     ></div>
                                  </div>
                               </div>

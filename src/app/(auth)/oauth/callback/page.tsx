@@ -22,30 +22,43 @@ export default function OAuthCallback() {
 
       if (token) {
          try {
-            // Store the token
+            // Remove any existing token
             cookies.remove("access_token", { path: "/" });
-            cookies.set("access_token", token, { path: "/" });
+
+            // Set the new token with proper options
+            cookies.set("access_token", token, {
+               path: "/",
+               secure: true,
+               sameSite: "lax",
+            });
+
+            // Log token for debugging
+            console.log("Token set:", token);
+            console.log("Cookie value:", cookies.get("access_token"));
 
             // Decode token to get role
             const decoded: any = jwtDecode(token);
+            console.log("Decoded token:", decoded);
 
-            // Redirect based on role
-            switch (decoded.role) {
-               case "admin":
-                  window.location.replace("/admin");
-                  break;
-               case "teacher":
-                  window.location.replace("/teacher");
-                  break;
-               case "parent":
-                  window.location.replace("/parent");
-                  break;
-               case "student":
-                  window.location.replace("/student");
-                  break;
-               default:
-                  window.location.replace("/student");
-            }
+            // Redirect based on role with a slight delay to ensure cookie is set
+            setTimeout(() => {
+               switch (decoded.role) {
+                  case "admin":
+                     window.location.href = "/admin";
+                     break;
+                  case "teacher":
+                     window.location.href = "/teacher";
+                     break;
+                  case "parent":
+                     window.location.href = "/parent";
+                     break;
+                  case "student":
+                     window.location.href = "/student";
+                     break;
+                  default:
+                     window.location.href = "/student";
+               }
+            }, 100);
          } catch (error) {
             console.error("Token processing error:", error);
             toast.error("Authentication failed");

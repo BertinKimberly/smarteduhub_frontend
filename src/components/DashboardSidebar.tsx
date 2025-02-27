@@ -111,6 +111,8 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             <Image
                src={logo}
                alt="smarteduhub"
+               width={30}
+               height={30}
             />
             {!isCollapsed && (
                <span className="text-main font-bold">Smart Eduhub</span>

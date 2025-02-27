@@ -423,8 +423,8 @@ const CalendarYearView = () => {
    return (
       <div className="grid grid-cols-4 gap-10 overflow-auto h-full">
          {months.map((days, i) => (
-            <div key={days[0].toString()}>
-               <span className="text-xl">{i + 1}</span>
+            <div key={days[0].toString()} className="bg-background p-2 rounded-lg">
+               <span className="text-xl">{i+1}</span>
 
                <div className="grid grid-cols-7 gap-2 my-5">
                   {weekDays.map((day) => (

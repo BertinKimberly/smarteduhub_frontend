@@ -195,7 +195,7 @@ const RegisterPage = () => {
                         name="name"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Name *</FormLabel>
+                              <FormLabel>Full Name *</FormLabel>
                               <FormControl>
                                  <Input
                                     className="bg-white p-6 outline-none border border-main "

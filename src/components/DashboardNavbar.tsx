@@ -39,7 +39,7 @@ const DashboardNavbar = ({
    const pathname = usePathname();
 
    const getUserRole = (): "admin" | "student" | "teacher" | "parent" => {
-      const path = pathname.split("/")[1]; // Get the first segment of the path
+      const path = pathname.split("/")[1]; 
       switch (path) {
          case "admin":
             return "admin";
@@ -93,7 +93,7 @@ const DashboardNavbar = ({
                      <Input
                         type="search"
                         placeholder="Search..."
-                        className="w-full pl-10 h-9"
+                        className="w-full pl-10 h-9 bg-white"
                      />
                   </div>
                </div>
@@ -176,13 +176,13 @@ const DashboardNavbar = ({
                <div className="md:hidden py-4 border-t">
                   <div className="space-y-4">
                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
                            <Search className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <Input
                            type="search"
                            placeholder="Search..."
-                           className="w-full pl-10"
+                           className="w-full pl-10 bg-white"
                         />
                      </div>
                      <div className="flex gap-2">
