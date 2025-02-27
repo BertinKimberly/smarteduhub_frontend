@@ -421,10 +421,15 @@ const CalendarYearView = () => {
    if (view !== "year") return null;
 
    return (
-      <div className="grid grid-cols-4 gap-10 overflow-auto h-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  xl:grid-cols-4 gap-10 overflow-auto h-full">
          {months.map((days, i) => (
-            <div key={days[0].toString()} className="bg-background p-2 rounded-lg">
-               <span className="text-xl">{i+1}</span>
+            <div
+               key={days[0].toString()}
+               className="bg-background p-2 rounded-lg"
+            >
+               <span className="text-xl">
+                  {format(setMonth(date, i), "MMM", { locale })}
+               </span>
 
                <div className="grid grid-cols-7 gap-2 my-5">
                   {weekDays.map((day) => (

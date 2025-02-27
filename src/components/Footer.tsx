@@ -72,7 +72,7 @@ const footer = () => {
                            src={Logo}
                            alt="Logo"
                         />
-                        <p className="font-bold ">Smart Eduhub</p>
+                        <p className="font-bold text-main ">Smart Eduhub</p>
                      </Link>
                   </div>
                   <h3 className="text-xs font-medium text-gunmetalgray lh-160 mt-5 mb-4 lg:mb-16">
