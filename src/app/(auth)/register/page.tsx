@@ -30,19 +30,27 @@ import {
 } from "@/components/ui/select";
 import { RoleSelectionModal } from "@/components/RoleSelectionModal";
 import { useInitiateOAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff } from "lucide-react";
 
 // Define the schema for the registration form
 const formSchema = z
    .object({
       email: z.string().email("Invalid email"),
       password: z.string().min(8, "Password must be at least 8 characters"),
-      name: z.string().min(3, "name must be at least 3 characters"),
+      name: z.string().min(3, "Name must be at least 3 characters"),
       confirmPassword: z
          .string()
          .min(8, "Confirm Password must be at least 8 characters"),
       role: z.enum(["teacher", "student", "parent"], {
          message: "Role is required",
       }),
+      username: z
+         .string()
+         .min(3, "Username must be at least 3 characters")
+         .optional(),
+      phone: z.string().optional(),
+      country: z.string().optional(),
+      field_of_study: z.string().optional(),
    })
    .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -57,6 +65,8 @@ const RegisterPage = () => {
    const [isSubmitting, setIsSubmitting] = useState(false);
    const [showRoleModal, setShowRoleModal] = useState(false);
    const [selectedProvider, setSelectedProvider] = useState<string>("");
+   const [showPassword, setShowPassword] = useState(false);
+   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
    const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
@@ -67,6 +77,10 @@ const RegisterPage = () => {
          name: "",
          confirmPassword: "",
          role: "student",
+         username: "",
+         phone: "",
+         country: "",
+         field_of_study: "",
       },
    });
 
@@ -234,17 +248,122 @@ const RegisterPage = () => {
                      />
                      <FormField
                         control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Username</FormLabel>
+                              <FormControl>
+                                 <Input
+                                    className="bg-white p-6 outline-none border border-main"
+                                    placeholder="Username"
+                                    {...field}
+                                 />
+                              </FormControl>
+                           </FormItem>
+                        )}
+                     />
+                     <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Phone</FormLabel>
+                              <FormControl>
+                                 <Input
+                                    className="bg-white p-6 outline-none border border-main"
+                                    placeholder="Phone number"
+                                    {...field}
+                                 />
+                              </FormControl>
+                           </FormItem>
+                        )}
+                     />
+                     <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Country</FormLabel>
+                              <FormControl>
+                                 <Input
+                                    className="bg-white p-6 outline-none border border-main"
+                                    placeholder="Country"
+                                    {...field}
+                                 />
+                              </FormControl>
+                           </FormItem>
+                        )}
+                     />
+                     <FormField
+                        control={form.control}
+                        name="field_of_study"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Field of Study</FormLabel>
+                              <FormControl>
+                                 <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                 >
+                                    <SelectTrigger className="bg-white p-6 outline-none border border-main">
+                                       <SelectValue placeholder="Select field of study" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                       <SelectItem value="computer_science">
+                                          Computer Science
+                                       </SelectItem>
+                                       <SelectItem value="engineering">
+                                          Engineering
+                                       </SelectItem>
+                                       <SelectItem value="mathematics">
+                                          Mathematics
+                                       </SelectItem>
+                                       <SelectItem value="physics">
+                                          Physics
+                                       </SelectItem>
+                                       <SelectItem value="biology">
+                                          Biology
+                                       </SelectItem>
+                                       <SelectItem value="chemistry">
+                                          Chemistry
+                                       </SelectItem>
+                                       <SelectItem value="other">
+                                          Other
+                                       </SelectItem>
+                                    </SelectContent>
+                                 </Select>
+                              </FormControl>
+                           </FormItem>
+                        )}
+                     />
+                     <FormField
+                        control={form.control}
                         name="password"
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>Password *</FormLabel>
                               <FormControl>
-                                 <Input
-                                    className="bg-white p-6 outline-none border border-main "
-                                    placeholder="Password"
-                                    {...field}
-                                    type="password"
-                                 />
+                                 <div className="relative">
+                                    <Input
+                                       className="bg-white p-6 outline-none border border-main pr-10"
+                                       placeholder="Password"
+                                       {...field}
+                                       type={showPassword ? "text" : "password"}
+                                    />
+                                    <button
+                                       type="button"
+                                       className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                                       onClick={() =>
+                                          setShowPassword(!showPassword)
+                                       }
+                                    >
+                                       {showPassword ? (
+                                          <EyeOff className="h-5 w-5" />
+                                       ) : (
+                                          <Eye className="h-5 w-5" />
+                                       )}
+                                    </button>
+                                 </div>
                               </FormControl>
                               {form.formState.errors.password && (
                                  <p className="text-red-500 text-sm">
@@ -261,12 +380,33 @@ const RegisterPage = () => {
                            <FormItem>
                               <FormLabel>Confirm Password *</FormLabel>
                               <FormControl>
-                                 <Input
-                                    className="bg-white p-6 outline-none border border-main "
-                                    placeholder="Confirm Password"
-                                    {...field}
-                                    type="password"
-                                 />
+                                 <div className="relative">
+                                    <Input
+                                       className="bg-white p-6 outline-none border border-main pr-10"
+                                       placeholder="Confirm Password"
+                                       {...field}
+                                       type={
+                                          showConfirmPassword
+                                             ? "text"
+                                             : "password"
+                                       }
+                                    />
+                                    <button
+                                       type="button"
+                                       className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                                       onClick={() =>
+                                          setShowConfirmPassword(
+                                             !showConfirmPassword
+                                          )
+                                       }
+                                    >
+                                       {showConfirmPassword ? (
+                                          <EyeOff className="h-5 w-5" />
+                                       ) : (
+                                          <Eye className="h-5 w-5" />
+                                       )}
+                                    </button>
+                                 </div>
                               </FormControl>
                               {form.formState.errors.confirmPassword && (
                                  <p className="text-red-500 text-sm">
@@ -289,37 +429,38 @@ const RegisterPage = () => {
                   </Button>
                </form>
             </Form>
-
-            <div className="py-8 flex items-center justify-center gap-4 z-30">
-               <div
-                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                  onClick={() => handleOAuthClick("google")}
-               >
-                  <Image
-                     src={google}
-                     alt="google"
-                  />
-               </div>
-               <div
-                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                  onClick={() => handleOAuthClick("github")}
-               >
-                  <Image
-                     src={github}
-                     alt="github"
-                  />
-               </div>
-               <div
-                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                  onClick={() => handleOAuthClick("facebook")}
-               >
-                  <Image
-                     src={fb}
-                     alt="fb"
-                  />
+            <div className="flex flex-col items-center gap-4 py-6">
+               <p className="text-center">Or with</p>
+               <div className="flex items-center justify-center gap-4 z-30">
+                  <div
+                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     onClick={() => handleOAuthClick("google")}
+                  >
+                     <Image
+                        src={google}
+                        alt="google"
+                     />
+                  </div>
+                  <div
+                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     onClick={() => handleOAuthClick("github")}
+                  >
+                     <Image
+                        src={github}
+                        alt="github"
+                     />
+                  </div>
+                  <div
+                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     onClick={() => handleOAuthClick("facebook")}
+                  >
+                     <Image
+                        src={fb}
+                        alt="fb"
+                     />
+                  </div>
                </div>
             </div>
-
             <RoleSelectionModal
                isOpen={showRoleModal}
                onClose={() => setShowRoleModal(false)}

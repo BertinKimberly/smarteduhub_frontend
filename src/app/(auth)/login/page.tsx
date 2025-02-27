@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { Cookies } from "react-cookie";
 import { useSearchParams } from "next/navigation";
 import { useInitiateOAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff } from "lucide-react";
 
 const cookies = new Cookies();
 
@@ -35,6 +36,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const LoginPage = () => {
    const [isSubmitting, setIsSubmitting] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
 
    const searchParams = useSearchParams();
    const redirectUrl = searchParams.get("redirectUrl");
@@ -155,12 +157,27 @@ const LoginPage = () => {
                         <FormItem>
                            <FormLabel>Password *</FormLabel>
                            <FormControl>
-                              <Input
-                                 className="bg-white p-6 outline-none border border-main "
-                                 placeholder="Password"
-                                 {...field}
-                                 type="password"
-                              />
+                              <div className="relative">
+                                 <Input
+                                    className="bg-white p-6 outline-none border border-main pr-10"
+                                    placeholder="Password"
+                                    {...field}
+                                    type={showPassword ? "text" : "password"}
+                                 />
+                                 <button
+                                    type="button"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                                    onClick={() =>
+                                       setShowPassword(!showPassword)
+                                    }
+                                 >
+                                    {showPassword ? (
+                                       <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                       <Eye className="h-5 w-5" />
+                                    )}
+                                 </button>
+                              </div>
                            </FormControl>
                            {form.formState.errors.password && (
                               <p className="text-red-500 text-sm">
@@ -179,33 +196,36 @@ const LoginPage = () => {
                   </Button>
                </form>
             </Form>
-            <div className="py-8 flex items-center justify-center gap-4 z-30">
-               <div
-                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                  onClick={() => handleOAuthClick("google")}
-               >
-                  <Image
-                     src={google}
-                     alt="google"
-                  />
-               </div>
-               <div
-                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                  onClick={() => handleOAuthClick("github")}
-               >
-                  <Image
-                     src={github}
-                     alt="github"
-                  />
-               </div>
-               <div
-                  className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                  onClick={() => handleOAuthClick("facebook")}
-               >
-                  <Image
-                     src={fb}
-                     alt="fb"
-                  />
+            <div className="flex flex-col items-center gap-4 py-6">
+               <p className="text-center">Or with</p>
+               <div className=" flex items-center justify-center gap-4 z-30">
+                  <div
+                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     onClick={() => handleOAuthClick("google")}
+                  >
+                     <Image
+                        src={google}
+                        alt="google"
+                     />
+                  </div>
+                  <div
+                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     onClick={() => handleOAuthClick("github")}
+                  >
+                     <Image
+                        src={github}
+                        alt="github"
+                     />
+                  </div>
+                  <div
+                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     onClick={() => handleOAuthClick("facebook")}
+                  >
+                     <Image
+                        src={fb}
+                        alt="fb"
+                     />
+                  </div>
                </div>
             </div>
             <div className="mt-6">
