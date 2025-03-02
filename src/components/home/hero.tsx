@@ -1,7 +1,8 @@
 "use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import HeroImg from "@/images/hero.svg";
@@ -9,52 +10,101 @@ import { Input } from "../ui/input";
 
 export const HeroSection = () => {
    return (
-      <div className=" w-full bg-main text-white rounded-b-[10%] min-h-[80vh] flex flex-col justify-center items-center">
-         <div className="container py-10 mx-auto w-full flex gap-8 items-center justify-center">
-            <div className="flex flex-col gap-4  items-center md:items-start justify-center md:w-1/2">
-               <h1 className="text-4xl font-bold text-center md:text-start">
-                  Welcome to the future of work
-               </h1>
-               <p className="text-lg text-center md:text-start">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  eget et, sed id. Nunc, sed ut. Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Labore, tempore repellendus
-                  commodi non voluptatem neque dolor. Modi, quas amet porro
-                  aliquid illo veritatis inventore placeat perferendis eligendi
-                  mollitia error totam, quia aut animi, tempora magni incidunt
-                  quaerat natus velit dolorum!
-               </p>
-               <div className="flex w-full gap-6 items-center justify-center md:justify-start">
-                  <Link href="/login">
-                     <Button className="bg-main rounded-full p-4 py-6 px-8 border-white border">
-                        Login
-                     </Button>
-                  </Link>
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-blue-50 py-16 md:py-24">
+         {/* Background elements */}
+         <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-20 right-20 w-64 h-64 bg-blue-400 rounded-full filter blur-3xl opacity-10"></div>
+            <div className="absolute bottom-20 left-20 w-72 h-72 bg-indigo-500 rounded-full filter blur-3xl opacity-10"></div>
+         </div>
 
-                  <Link href="/register">
+         <div className="container mx-auto px-4 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+               <div className="space-y-8">
+                  <Badge
+                     variant="secondary"
+                     className="px-4 py-1 mb-4 text-indigo-600 bg-indigo-100 hover:bg-indigo-200 transition-colors"
+                  >
+                     <Sparkles className="w-4 h-4 mr-2" />
+                     AI-Driven Education
+                  </Badge>
+
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900">
+                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-main to-indigo-600">
+                        Smart EduHub:
+                     </span>{" "}
+                     The Future of Personalized Learning
+                  </h1>
+
+                  <p className="text-lg text-slate-600 max-w-xl">
+                     Revolutionize your learning journey with our AI-powered
+                     platform that adapts to your unique pace and style. Unlock
+                     your full potential with personalized content for students,
+                     parents, teachers, and administrators.
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-4">
                      <Button
-                        className="border border-white text-main rounded-full p-4 py-6 px-8"
-                        variant="outline"
+                        size="lg"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
                      >
-                        Register
+                        Get Started <ArrowRight className="ml-2 h-4 w-4" />
                      </Button>
-                  </Link>
+                     <Button
+                        size="lg"
+                        variant="outline"
+                        className="border-slate-300"
+                     >
+                        Learn More
+                     </Button>
+                  </div>
+
+                  <div className="pt-6">
+                     <div className="p-2 bg-white rounded-xl shadow-lg max-w-md">
+                        <div className="relative flex items-center">
+                           <Search className="absolute left-3 h-5 w-5 text-slate-400" />
+                           <Input
+                              type="text"
+                              placeholder="Search for courses..."
+                              className="pl-10 py-6 border-none focus:ring-2 focus:ring-indigo-500"
+                           />
+                           <Button className="absolute right-1 bg-indigo-600 hover:bg-indigo-700">
+                              Explore
+                           </Button>
+                        </div>
+                     </div>
+                  </div>
                </div>
 
-               {/* search courses */}
-               <div className="mt-10">
-                <h3>Explorer Courses</h3>
+               <div className="hidden lg:flex justify-center relative">
+                  <div className="relative w-full max-w-lg">
+                     <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg blur-lg opacity-75 animate-pulse"></div>
+                     <div className="relative bg-white rounded-lg shadow-xl overflow-hidden p-1">
+                        <Image
+                           src={HeroImg}
+                           alt="Smart EduHub Platform"
+                           className="w-full h-auto"
+                           priority
+                        />
+                     </div>
+
+                     {/* Floating elements */}
+                     <div className="absolute -top-6 -right-6 bg-white p-4 rounded-lg shadow-lg">
+                        <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+                           Students
+                        </Badge>
+                     </div>
+                     <div className="absolute top-1/2 -left-8 bg-white p-4 rounded-lg shadow-lg">
+                        <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                           Teachers
+                        </Badge>
+                     </div>
+                     <div className="absolute -bottom-6 -right-2 bg-white p-4 rounded-lg shadow-lg">
+                        <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+                           Parents
+                        </Badge>
+                     </div>
+                  </div>
                </div>
-               <div className="mt-4 flex w-full">
-                <Input className="p-8 rounded-l-full w-3/4 outline-none bg-white text-black text-lg" placeholder="Search course "/><div className="border border-white flex items-center justify-center rounded-r-full p-4 bg-white text-main cursor-pointer"><Search/></div>
-               </div>
-            </div>
-            <div className="hidden md:block relative w-1/2 h-1/2 ">
-               <Image
-                  src={HeroImg}
-                  objectFit="contain"
-                  alt="Hero Image"
-               />
             </div>
          </div>
       </div>

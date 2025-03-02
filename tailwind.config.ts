@@ -20,6 +20,7 @@ export default {
    			main: '#1782CF',
    			submain: '#D4E8F6',
    			background: '#EFF6FF',
+			sub:"indigo-800",
    			foreground: 'hsl(var(--foreground))',
    			card: {
    				DEFAULT: 'hsl(var(--card))',

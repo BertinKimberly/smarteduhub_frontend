@@ -18,6 +18,7 @@ import {
    User2,
    Users,
    Briefcase,
+   BookOpenCheck,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -64,6 +65,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          { icon: <House />, label: "Home", link: "/student" },
          { icon: <User />, label: "Profile", link: "/student/profile" },
          { icon: <Book />, label: "Courses", link: "/student/courses" },
+         { icon: <BookOpenCheck/>, label: "Enrolled Courses", link: "/student/enrolled-courses" },
          { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
       ],
@@ -94,13 +96,13 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
 
    return (
       <div
-         className={`hidden sticky top-4 rounded-lg p-4 border relative border-main h-[calc(100vh-1rem)] md:flex flex-col gap-6 ${
+         className={`hidden sticky top-4 rounded-lg p-3 border border-main bg-white md:flex flex-col justify-between gap-6 ${
             isCollapsed ? "w-fit" : "w-[240px]"
-         }`}
+         } h-auto min-h-[400px] max-h-[90vh] overflow-y-auto`}
       >
          <button
             onClick={toggleSidebar}
-            className="mb-4 font-bold absolute -right-2 border border-main bg-white w-8 h-8 rounded-full"
+            className="mb-4 font-bold absolute -right-2 border border-main bg-white w-8 h-8 rounded-full z-30"
          >
             {isCollapsed ? ">" : "<"}
          </button>
@@ -118,6 +120,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
                <span className="text-main font-bold">Smart Eduhub</span>
             )}
          </Link>
+
          <div className="flex flex-col gap-4">
             {links[role].map(({ icon, label, link }) => (
                <Link
@@ -132,6 +135,8 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
                </Link>
             ))}
          </div>
+
+         <div>
          <div className="py-4 flex items-center gap-2">
             <div className="border h-8 w-8 rounded-full flex items-center justify-center p-1">
                <User />
@@ -150,6 +155,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             <LogOut />
             {!isCollapsed && <span>Logout</span>}
          </Link>
+         </div>
       </div>
    );
 };

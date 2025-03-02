@@ -3,7 +3,7 @@ import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
 
-const API_URL = "http://127.0.0.1:8000/api/v1";
+export const API_URL = "http://127.0.0.1:8000/api/v1";
 
 const commonHeaders = {
    "Content-Type": "application/json",

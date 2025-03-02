@@ -1,93 +1,98 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
-import { icons } from "lucide-react";
+import { 
+  BrainCircuit, 
+  BarChart3, 
+  Users, 
+  GraduationCap, 
+  MessageCircle, 
+  CalendarClock 
+} from "lucide-react";
+import { ReactNode } from "react";
 
 interface FeaturesProps {
-  icon: string;
+  icon: ReactNode;
   title: string;
   description: string;
 }
 
 const featureList: FeaturesProps[] = [
   {
-    icon: "TabletSmartphone",
-    title: "Mobile Friendly",
+    icon: <BrainCircuit className="h-6 w-6" />,
+    title: "AI-Powered Learning",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam, consectetur.",
+      "Advanced algorithms analyze each student's learning patterns to deliver personalized content that adapts in real-time to their progress and needs.",
   },
   {
-    icon: "BadgeCheck",
-    title: "Social Proof",
+    icon: <BarChart3 className="h-6 w-6" />,
+    title: "Comprehensive Analytics",
     description:
-      "Lorem ipsum dolor sit amet consectetur. Natus consectetur, odio ea accusamus aperiam.",
+      "Detailed dashboards provide actionable insights into performance, highlighting strengths and identifying areas that need additional attention.",
   },
   {
-    icon: "Goal",
-    title: "Targeted Content",
+    icon: <Users className="h-6 w-6" />,
+    title: "Multi-Role Platform",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. odio ea accusamus aperiam.",
+      "Specialized interfaces for students, parents, teachers, and administrators with features designed specifically for each user's needs.",
   },
   {
-    icon: "PictureInPicture",
-    title: "Strong Visuals",
+    icon: <GraduationCap className="h-6 w-6" />,
+    title: "Curriculum Aligned",
     description:
-      "Lorem elit. A odio velit cum aliquam. Natus consectetur dolores, odio ea accusamus aperiam.",
+      "Content mapped to national education standards ensuring students receive comprehensive instruction that prepares them for standardized testing and beyond.",
   },
   {
-    icon: "MousePointerClick",
-    title: "Clear CTA",
+    icon: <MessageCircle className="h-6 w-6" />,
+    title: "Instant Feedback",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing. odio ea accusamus consectetur.",
+      "Real-time assessment and feedback during learning activities help students understand concepts immediately rather than waiting for traditional grading.",
   },
   {
-    icon: "Newspaper",
-    title: "Clear Headline",
+    icon: <CalendarClock className="h-6 w-6" />,
+    title: "Flexible Scheduling",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam. Natus consectetur.",
+      "Learn anytime, anywhere with on-demand access to lessons, allowing students to progress at their own pace while maintaining accountability.",
   },
 ];
 
 export const FeaturesSection = () => {
   return (
-    <section id="features" className="container py-24 sm:py-32">
-      <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-        Features
-      </h2>
+    <section id="features" className="bg-blue-50 py-24 sm:py-32">
+      <div className="container mx-auto px-4">
+        <h2 className="text-lg text-blue-600 text-center mb-2 tracking-wider font-medium">
+          Platform Features
+        </h2>
 
-      <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-        What Makes Us Different
-      </h2>
+        <h2 className="text-3xl md:text-4xl text-center font-bold mb-4 text-gray-900">
+          Technology That Transforms Learning
+        </h2>
 
-      <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
-        fugiat, odit similique quasi sint reiciendis quidem iure veritatis optio
-        facere tenetur.
-      </h3>
+        <h3 className="md:w-3/4 lg:w-2/3 mx-auto text-xl text-center text-gray-600 mb-12">
+          Smart EduHub combines cutting-edge artificial intelligence with proven educational methodologies 
+          to create an adaptive learning environment that meets the unique needs of every student.
+        </h3>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {featureList.map(({ icon, title, description }) => (
-          <div key={title}>
-            <Card className="h-full bg-background border-0 shadow-none">
-              <CardHeader className="flex justify-center items-center">
-                <div className="bg-primary/20 p-2 rounded-full ring-8 ring-primary/10 mb-4">
-                  <Icon
-                    name={icon as keyof typeof icons}
-                    size={24}
-                    color="hsl(var(--primary))"
-                    className="text-primary"
-                  />
-                </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featureList.map(({ icon, title, description }) => (
+            <div key={title}>
+              <Card className="h-full bg-white border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300">
+                <CardHeader className="flex justify-center items-center pb-2">
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 rounded-lg text-white mb-6">
+                    {icon}
+                  </div>
 
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
+                  <CardTitle className="text-xl text-gray-900">{title}</CardTitle>
+                </CardHeader>
 
-              <CardContent className="text-muted-foreground text-center">
-                {description}
-              </CardContent>
-            </Card>
-          </div>
-        ))}
+                <CardContent className="text-gray-600 text-center">
+                  {description}
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 };
+
+export default FeaturesSection;

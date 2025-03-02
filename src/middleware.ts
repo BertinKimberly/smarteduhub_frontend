@@ -15,7 +15,8 @@ const PUBLIC_PATHS = [
    "/courses",
    "/help-center",
    "/help-center/details",
-   "/help-center/details/:slug",
+   "/help-center/details/",
+   "/courses/", // This will match the base courses path
 ];
 const AUTH_PATHS = ["/login", "/register"];
 
@@ -59,6 +60,11 @@ function isValidToken(tokenValue: string) {
 
 // Helper function to check if path matches pattern
 function matchesPath(pathname: string, pattern: string): boolean {
+   // Special handling for course detail pages
+   if (pathname.startsWith("/courses/") && pathname.length > 9) {
+      return true;
+   }
+
    // Convert route pattern to regex
    const regexPattern = pattern
       .replace(/\/:slug/, "/[^/]+") // Convert :slug to regex
@@ -70,6 +76,11 @@ function matchesPath(pathname: string, pattern: string): boolean {
 export async function middleware(request: NextRequest) {
    const token = request.cookies.get("access_token");
    const { pathname } = request.nextUrl;
+
+   // Allow access to course detail pages regardless of auth status
+   if (pathname.startsWith("/courses/") && pathname.length > 9) {
+      return NextResponse.next();
+   }
 
    // Allow public paths for all users
    if (PUBLIC_PATHS.some((pattern) => matchesPath(pathname, pattern))) {

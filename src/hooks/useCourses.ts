@@ -1,7 +1,7 @@
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Course, CourseFormData } from "@/types/course";
+import { Course, CourseFormData, Material } from "@/types/course";
 
 const getAllCourses = (): Promise<Course[]> => {
    return handleApiRequest(() => authorizedAPI.get("/courses"));
@@ -76,6 +76,40 @@ const enrollInCourse = (id: string): Promise<Course> => {
    return handleApiRequest(() => authorizedAPI.post(`/courses/${id}/enroll`));
 };
 
+const uploadMaterial = ({
+   courseId,
+   title,
+   file,
+}: {
+   courseId: string;
+   title: string;
+   file: File;
+}): Promise<Material> => {
+   const formData = new FormData();
+   formData.append("title", title);
+   formData.append("file", file);
+
+   return handleApiRequest(() =>
+      authorizedAPI.post(`/courses/${courseId}/materials`, formData, {
+         headers: {
+            "Content-Type": "multipart/form-data",
+         },
+      })
+   );
+};
+
+const getMaterials = (courseId: string): Promise<Material[]> => {
+   return handleApiRequest(() =>
+      authorizedAPI.get(`/courses/${courseId}/materials`)
+   );
+};
+
+const deleteMaterial = (materialId: string): Promise<void> => {
+   return handleApiRequest(() =>
+      authorizedAPI.delete(`/courses/materials/${materialId}`)
+   );
+};
+
 export const useGetAllCourses = () =>
    useQuery<Course[], Error>({ queryKey: ["courses"], queryFn: getAllCourses });
 
@@ -114,5 +148,29 @@ export const useGetCourseById = (id: string) => {
 export const useEnrollInCourse = () => {
    return useMutation<Course, Error, string>({
       mutationFn: enrollInCourse,
+   });
+};
+
+export const useUploadMaterial = () => {
+   return useMutation<
+      Material,
+      Error,
+      { courseId: string; title: string; file: File }
+   >({
+      mutationFn: uploadMaterial,
+   });
+};
+
+export const useGetMaterials = (courseId: string) => {
+   return useQuery<Material[], Error>({
+      queryKey: ["materials", courseId],
+      queryFn: () => getMaterials(courseId),
+      enabled: !!courseId,
+   });
+};
+
+export const useDeleteMaterial = () => {
+   return useMutation<void, Error, string>({
+      mutationFn: deleteMaterial,
    });
 };

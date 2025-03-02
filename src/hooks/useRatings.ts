@@ -1,54 +1,31 @@
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Rating, RatingCreate } from "@/types/rating";
 
-const getAllRatings = (): Promise<any> => {
-   return handleApiRequest(() => authorizedAPI.get("/ratings"));
+interface CreateRatingData {
+   courseId: string;
+   rating: number;
+   feedback: string;
+}
+
+const createRating = (data: CreateRatingData): Promise<Rating> => {
+   const ratingData: RatingCreate = {
+      course_id: data.courseId,
+      rating: data.rating,
+      feedback: data.feedback || undefined,
+   };
+
+   return handleApiRequest(() => authorizedAPI.post(`/ratings`, ratingData));
 };
-
-const createRating = (formData: any): Promise<any> => {
-   return handleApiRequest(() => authorizedAPI.post("/ratings", formData));
-};
-
-const updateRatings = ({ formData, _id }: any): Promise<any> => {
-   return handleApiRequest(() =>
-      authorizedAPI.put(`/ratings/${_id}`, formData)
-   );
-};
-
-const getRatingsById = ({ queryKey }: any): Promise<any> => {
-   const [_, _id] = queryKey;
-   return handleApiRequest(() => authorizedAPI.get(`/ratings/${_id}`));
-};
-
-const deleteRatingsById = ({ queryKey }: any): Promise<any> => {
-   const [_, _id] = queryKey;
-   return handleApiRequest(() => authorizedAPI.get(`/ratings/${_id}`));
-};
-
-export const useGetAllRatings = () =>
-   useQuery<any, Error>({ queryKey: ["ratings"], queryFn: getAllRatings });
 
 export const useCreateRating = () => {
-   return useMutation<any, Error, any>({
+   const queryClient = useQueryClient();
+
+   return useMutation<Rating, Error, CreateRatingData>({
       mutationFn: createRating,
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["course"] });
+      },
    });
 };
-
-export const useUpdateRatings = () => {
-   return useMutation<any, Error, any>({
-      mutationFn: updateRatings,
-   });
-};
-
-export const deleteRatings = () => {
-   return useMutation<any, Error, any>({
-      mutationFn: deleteRatingsById,
-   });
-};
-
-export const useGetRatingsById = (_id: string) =>
-   useQuery<any, Error, any>({
-      queryKey: ["ratings", _id],
-      queryFn: getRatingsById,
-   });

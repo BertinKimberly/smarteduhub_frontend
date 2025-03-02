@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import { BenefitsSection } from "@/components/home/benefits";
-import CoursesSlide from "@/components/home/CoursesSlide";
+import CoursesSection from "@/components/home/CoursesSlide";
 import { FAQSection } from "@/components/home/faq";
 import { FeaturesSection } from "@/components/home/features";
 import { HeroSection } from "@/components/home/hero";
@@ -12,7 +12,7 @@ const Home = () => {
    return <div>
       <Navbar/>
       <HeroSection/>
-      <CoursesSlide/>
+      <CoursesSection/>
       <BenefitsSection/>
       <FeaturesSection/>
       <TestimonialSection/>

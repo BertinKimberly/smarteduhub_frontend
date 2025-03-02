@@ -111,7 +111,7 @@ const LoginPage = () => {
 
    return (
       <div className="py-8 md:py-10">
-         <div className="bg-background rounded-lg p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20  mx-auto">
+         <div className="bg-background rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20  mx-auto">
             <Link
                className="flex gap-3 items-center justify-start"
                href="/"
