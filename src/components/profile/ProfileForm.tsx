@@ -5,10 +5,16 @@ import { User, UserUpdate } from "@/types/user";
 interface ProfileFormProps {
    user?: User;
    onUpdate: (data: UserUpdate) => void;
-   onCancel?: () => void;
+   onCancel: () => void;
+   isLoading?: boolean;
 }
 
-const ProfileForm = ({ user, onUpdate, onCancel }: ProfileFormProps) => {
+const ProfileForm = ({
+   user,
+   onUpdate,
+   onCancel,
+   isLoading,
+}: ProfileFormProps) => {
    const [formData, setFormData] = useState<UserUpdate>({
       name: user?.name || "",
       email: user?.email || "",
@@ -24,7 +30,7 @@ const ProfileForm = ({ user, onUpdate, onCancel }: ProfileFormProps) => {
       const updatedData = Object.entries(formData).reduce(
          (acc, [key, value]) => {
             if (value !== "") {
-               acc[key] = value;
+               acc[key as keyof UserUpdate] = value;
             }
             return acc;
          },
@@ -37,7 +43,7 @@ const ProfileForm = ({ user, onUpdate, onCancel }: ProfileFormProps) => {
    return (
       <form
          onSubmit={handleSubmit}
-         className="space-y-4"
+         className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4 items-center justify-center"
       >
          {/* Name Field */}
          <div>
@@ -156,14 +162,16 @@ const ProfileForm = ({ user, onUpdate, onCancel }: ProfileFormProps) => {
          <div className="flex gap-2">
             <button
                type="submit"
-               className="bg-main text-white px-4 py-2 rounded-md hover:bg-main/90"
+               disabled={isLoading}
+               className="bg-main text-white px-4 py-2 rounded-md hover:bg-main/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-               Save Changes
+               {isLoading ? "Saving..." : "Save Changes"}
             </button>
             <button
                type="button"
                onClick={onCancel}
-               className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+               disabled={isLoading}
+               className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                Cancel
             </button>

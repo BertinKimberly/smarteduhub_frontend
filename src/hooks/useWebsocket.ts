@@ -68,3 +68,60 @@ export const useWebSocket = (channelId: string | null) => {
 
    return { sendMessage, messages, isConnected };
 };
+
+export const useDMWebSocket = (recipientId: string | null) => {
+   const [messages, setMessages] = useState<ChatMessage[]>([]);
+   const [socket, setSocket] = useState<WebSocket | null>(null);
+   const [isConnected, setIsConnected] = useState(false);
+
+   useEffect(() => {
+      let ws: WebSocket | null = null;
+
+      const connectWebSocket = () => {
+         if (recipientId) {
+            ws = new WebSocket(
+               `ws://127.0.0.1:8000/api/v1/chat/dm/${recipientId}`
+            );
+            setSocket(ws);
+
+            ws.onopen = () => {
+               setIsConnected(true);
+            };
+
+            ws.onmessage = (event) => {
+               try {
+                  const parsedData: ChatMessage = JSON.parse(event.data);
+                  setMessages((prev) => [...prev, parsedData]);
+               } catch (e) {
+                  console.error("Error parsing message:", e);
+               }
+            };
+
+            ws.onerror = () => {
+               setIsConnected(false);
+            };
+
+            ws.onclose = () => {
+               setIsConnected(false);
+               setTimeout(connectWebSocket, 3000);
+            };
+         }
+      };
+
+      connectWebSocket();
+
+      return () => {
+         if (ws) {
+            ws.close();
+         }
+      };
+   }, [recipientId]);
+
+   const sendMessage = (message: string) => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+         socket.send(message);
+      }
+   };
+
+   return { sendMessage, messages, isConnected };
+};

@@ -93,10 +93,12 @@ const RegisterPage = () => {
          const response = await registerMutation.mutateAsync(data);
 
          if (response?.access_token) {
-            // First clear any existing tokens to prevent issues
+            // First clear any existing tokens
             cookies.remove("access_token", { path: "/" });
-            // Then set the new token
-            cookies.set("access_token", response.access_token, { path: "/" });
+            // Set the new token
+            cookies.set("access_token", response.access_token, {
+               path: "/",
+            });
 
             try {
                const payload = JSON.parse(
@@ -123,13 +125,16 @@ const RegisterPage = () => {
             } catch (error) {
                // If token decoding fails, show error and remove the token
                cookies.remove("access_token", { path: "/" });
-               toast.error("Authentication error. Please login again.");
+               toast.error("Authentication error. Please try again.");
             }
          } else {
-            toast.error(response?.error?.msg || "Login failed");
+            toast.error(response?.error?.msg || "Registration failed");
          }
-      } catch (error) {
-         toast.error("Login failed. Please try again.");
+      } catch (error: any) {
+         toast.error(
+            error?.response?.data?.message ||
+               "Registration failed. Please try again."
+         );
       } finally {
          setIsSubmitting(false);
       }
@@ -149,7 +154,7 @@ const RegisterPage = () => {
 
    return (
       <div className="py-8 md:py-10">
-         <div className="bg-background rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20 mx-auto">
+         <div className="bg-gradient-to-b from-background via-secondary to-main rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20 mx-auto">
             <Link
                className="flex gap-3 items-center justify-start"
                href="/"
@@ -472,7 +477,7 @@ const RegisterPage = () => {
                <p>
                   Already have an account?
                   <Link
-                     className="ml-4 text-main"
+                     className="ml-4 text-white"
                      href="/login"
                   >
                      Login

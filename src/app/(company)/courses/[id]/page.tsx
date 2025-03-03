@@ -4,34 +4,22 @@ import { useParams, useRouter } from "next/navigation";
 import {
    CalendarCheck,
    Clock,
-   BarChart3,
    BookOpen,
    GraduationCap,
    Users,
-   CheckCircle,
    Star,
    Award,
-   ChevronDown,
-   ChevronUp,
-   Play,
-   Download,
    MessageCircle,
    Share2,
+   Download,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-   Accordion,
-   AccordionContent,
-   AccordionItem,
-   AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useGetCourseById } from "@/hooks/useCourses";
-import { Course } from "@/types/course";
+import { useGetCourseById, useGetRelatedCourses } from "@/hooks/useCourses";
 import RatingDialog from "@/components/RatingDialog";
 import { useCreateRating } from "@/hooks/useRatings";
 import {
@@ -44,7 +32,6 @@ import {
    AlertDialogFooter,
    AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { Rating } from "@/types/rating";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
 
@@ -57,6 +44,7 @@ const CourseDetail = () => {
       isLoading: loading,
       error,
    } = useGetCourseById(courseId);
+   const { data: relatedCourses } = useGetRelatedCourses(courseId);
    const [progress, setProgress] = useState(8);
    const { user, isAuthenticated } = useAuthStore();
    const [isRatingDialogOpen, setIsRatingDialogOpen] = useState(false);
@@ -170,8 +158,13 @@ const CourseDetail = () => {
       </>
    );
 
+   // Split prerequisites into array if it exists
+   const prerequisitesList = course.prerequisites
+      ? course.prerequisites.split("\n")
+      : [];
+
    return (
-      <div className="bg-gray-50">
+      <>
          {/* Hero Section */}
          <div className="bg-gradient-to-r from-main to-indigo-700">
             <div className="container mx-auto px-4 py-16">
@@ -222,7 +215,7 @@ const CourseDetail = () => {
                         <div className="flex items-center">
                            <Users className="h-5 w-5 mr-2 text-blue-200" />
                            <span className="text-white">
-                              {course.students?.length || 0} students
+                              {course.enrollments?.length || 0} students
                            </span>
                         </div>
 
@@ -237,10 +230,6 @@ const CourseDetail = () => {
 
                      <div className="flex items-center mb-6">
                         <Avatar className="h-12 w-12 border-2 border-white">
-                           <AvatarImage
-                              src={course.teacher?.avatar_url}
-                              alt={course.teacher?.name}
-                           />
                            <AvatarFallback>
                               {course.teacher?.name?.charAt(0)}
                            </AvatarFallback>
@@ -274,16 +263,11 @@ const CourseDetail = () => {
                               <ul className="space-y-2">
                                  <li className="flex items-center text-sm text-gray-600">
                                     <BookOpen className="h-4 w-4 mr-2 text-blue-600" />
-                                    {course.lessons?.length || 0} lessons
+                                    {course.materials?.length || 0} lessons
                                  </li>
                                  <li className="flex items-center text-sm text-gray-600">
                                     <Clock className="h-4 w-4 mr-2 text-blue-600" />
                                     {course.duration} of content
-                                 </li>
-                                 <li className="flex items-center text-sm text-gray-600">
-                                    <Download className="h-4 w-4 mr-2 text-blue-600" />
-                                    {course.resources?.length || 0} downloadable
-                                    resources
                                  </li>
                                  <li className="flex items-center text-sm text-gray-600">
                                     <Award className="h-4 w-4 mr-2 text-blue-600" />
@@ -331,8 +315,8 @@ const CourseDetail = () => {
                   >
                      <TabsList className="mb-6">
                         <TabsTrigger value="overview">Overview</TabsTrigger>
-                        <TabsTrigger value="curriculum">Curriculum</TabsTrigger>
                         <TabsTrigger value="instructor">Instructor</TabsTrigger>
+                        <TabsTrigger value="materials">Materials</TabsTrigger>
                         <TabsTrigger value="reviews">Reviews</TabsTrigger>
                      </TabsList>
 
@@ -345,178 +329,38 @@ const CourseDetail = () => {
                               About This Course
                            </h2>
                            <p className="text-gray-700 leading-relaxed mb-6">
-                              {course.longDescription}
+                              {course.long_description}
                            </p>
                         </div>
 
-                        <div>
-                           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                              What You'll Learn
-                           </h2>
-                           <div className="grid md:grid-cols-2 gap-4">
-                              {course.learningOutcomes?.map(
-                                 (outcome: string, index: number) => (
-                                    <div
-                                       key={index}
-                                       className="flex items-start"
-                                    >
-                                       <CheckCircle className="h-5 w-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                                       <p className="text-gray-700">
-                                          {outcome}
-                                       </p>
-                                    </div>
-                                 )
-                              )}
-                           </div>
-                        </div>
-
+               
                         <div>
                            <h2 className="text-2xl font-bold text-gray-900 mb-4">
                               Prerequisites
                            </h2>
                            <ul className="space-y-2">
-                              {course.prerequisites?.map(
-                                 (prerequisite: string, index: number) => (
-                                    <li
-                                       key={index}
-                                       className="flex items-start"
-                                    >
-                                       <div className="h-5 w-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
-                                          {index + 1}
-                                       </div>
-                                       <p className="text-gray-700">
-                                          {prerequisite}
-                                       </p>
-                                    </li>
-                                 )
-                              )}
+                              {prerequisitesList.map((prerequisite, index) => (
+                                 <li
+                                    key={index}
+                                    className="flex items-start"
+                                 >
+                                    <div className="h-5 w-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
+                                       {index + 1}
+                                    </div>
+                                    <p className="text-gray-700">
+                                       {prerequisite}
+                                    </p>
+                                 </li>
+                              ))}
                            </ul>
                         </div>
-                     </TabsContent>
-
-                     <TabsContent value="curriculum">
-                        <div className="mb-6">
-                           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                              Course Content
-                           </h2>
-                           <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
-                              <p>
-                                 {course.modules?.length || 0} modules •{" "}
-                                 {course.lessons?.length || 0} lessons •{" "}
-                                 {course.duration} total length
-                              </p>
-                              <Button
-                                 variant="ghost"
-                                 size="sm"
-                                 className="text-blue-600 font-medium"
-                              >
-                                 Expand All
-                              </Button>
-                           </div>
-
-                           <div className="mb-6">
-                              <div className="flex justify-between items-center mb-2">
-                                 <span className="text-sm text-gray-600">
-                                    Your progress
-                                 </span>
-                                 <span className="text-sm font-medium text-gray-700">
-                                    {course.completedLessons}/
-                                    {course.lessons?.length || 0} completed
-                                 </span>
-                              </div>
-                              <Progress
-                                 value={progress}
-                                 className="h-2"
-                              />
-                           </div>
-                        </div>
-
-                        <Accordion
-                           type="single"
-                           collapsible
-                           className="space-y-4"
-                        >
-                           {course.modules?.map(
-                              (module: any, index: number) => (
-                                 <AccordionItem
-                                    key={module.id}
-                                    value={module.id}
-                                    className="border border-gray-200 rounded-lg bg-white shadow-sm overflow-hidden"
-                                 >
-                                    <AccordionTrigger className="px-6 py-4 hover:bg-gray-50">
-                                       <div className="flex-1 flex justify-between items-center mr-4">
-                                          <div>
-                                             <h3 className="font-medium text-gray-900 text-left">
-                                                {module.title}
-                                             </h3>
-                                          </div>
-                                       </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-0">
-                                       <div className="divide-y divide-gray-100">
-                                          {module.lessons?.map(
-                                             (
-                                                lesson: any,
-                                                lessonIndex: number
-                                             ) => (
-                                                <div
-                                                   key={lesson.id}
-                                                   className={`p-4 flex items-center hover:bg-gray-50 transition-colors ${
-                                                      lesson.isCompleted
-                                                         ? "bg-green-50"
-                                                         : ""
-                                                   }`}
-                                                >
-                                                   <div className="mr-4 flex-shrink-0">
-                                                      {lesson.isCompleted ? (
-                                                         <CheckCircle className="h-5 w-5 text-green-600" />
-                                                      ) : (
-                                                         <Play className="h-5 w-5 text-blue-600" />
-                                                      )}
-                                                   </div>
-                                                   <div className="flex-1">
-                                                      <h4
-                                                         className={`font-medium ${
-                                                            lesson.isCompleted
-                                                               ? "text-green-700"
-                                                               : "text-gray-900"
-                                                         }`}
-                                                      >
-                                                         {index + 1}.
-                                                         {lessonIndex + 1}{" "}
-                                                         {lesson.title}
-                                                      </h4>
-                                                   </div>
-                                                   <div className="text-sm text-gray-500 mr-4">
-                                                      {lesson.duration}
-                                                   </div>
-                                                   <Button
-                                                      size="sm"
-                                                      variant="ghost"
-                                                      className="text-blue-600"
-                                                   >
-                                                      Preview
-                                                   </Button>
-                                                </div>
-                                             )
-                                          )}
-                                       </div>
-                                    </AccordionContent>
-                                 </AccordionItem>
-                              )
-                           )}
-                        </Accordion>
                      </TabsContent>
 
                      <TabsContent value="instructor">
                         <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-8">
                            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                               <Avatar className="h-24 w-24 border-2 border-blue-100">
-                                 <AvatarImage
-                                    src={course.teacher?.avatar_url}
-                                    alt={course.teacher?.name}
-                                 />
-                                 <AvatarFallback className="text-2xl">
+                                 <AvatarFallback className="text-2xl uppercase">
                                     {course.teacher?.name?.charAt(0)}
                                  </AvatarFallback>
                               </Avatar>
@@ -544,11 +388,43 @@ const CourseDetail = () => {
                                     </div>
                                  </div>
 
-                                 <p className="text-gray-700 leading-relaxed">
-                                    {course.teacher?.bio}
-                                 </p>
                               </div>
                            </div>
+                        </div>
+                     </TabsContent>
+
+                     <TabsContent value="materials">
+                        <div className="space-y-4">
+                           {course.materials?.map((material) => (
+                              <div
+                                 key={material.id}
+                                 className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200"
+                              >
+                                 <div className="flex items-center">
+                                    <div className="h-10 w-10 bg-blue-100 text-blue-700 rounded flex items-center justify-center mr-4">
+                                       <Download className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                       <h4 className="font-medium text-gray-900">
+                                          {material.title}
+                                       </h4>
+                                       <p className="text-sm text-gray-500">
+                                          Added on{" "}
+                                          {new Date(
+                                             material.created_at
+                                          ).toLocaleDateString()}
+                                       </p>
+                                    </div>
+                                 </div>
+                                 <Button
+                                    variant="outline"
+                                    size="sm"
+                                 >
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Download
+                                 </Button>
+                              </div>
+                           ))}
                         </div>
                      </TabsContent>
 
@@ -605,7 +481,7 @@ const CourseDetail = () => {
                                                 <span className="text-sm text-gray-600 mr-2">
                                                    {rating}
                                                 </span>
-                                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
                                              </div>
                                              <div className="w-full max-w-md">
                                                 <Progress
@@ -682,66 +558,41 @@ const CourseDetail = () => {
 
                <div className="md:col-span-1">
                   <div className="sticky top-24">
-                     <Card className="shadow-sm mb-6">
-                        <CardContent className="p-6">
-                           <h3 className="font-bold text-gray-900 mb-4">
-                              Resources
-                           </h3>
-                           <div className="space-y-3">
-                              {course.resources?.map((resource: any) => (
-                                 <div
-                                    key={resource.id}
-                                    className="flex items-center justify-between"
-                                 >
-                                    <div className="flex items-center">
-                                       <div className="h-8 w-8 bg-blue-100 text-blue-700 rounded flex items-center justify-center mr-3">
-                                          <Download className="h-4 w-4" />
-                                       </div>
-                                       <div>
-                                          <p className="text-sm font-medium text-gray-900">
-                                             {resource.title}
-                                          </p>
-                                          <p className="text-xs text-gray-500">
-                                             {resource.type} • {resource.size}
-                                          </p>
-                                       </div>
-                                    </div>
-                                    <Button
-                                       variant="ghost"
-                                       size="sm"
-                                       className="text-blue-600"
-                                    >
-                                       <Download className="h-4 w-4" />
-                                    </Button>
-                                 </div>
-                              ))}
-                           </div>
-                        </CardContent>
-                     </Card>
-
                      <Card className="shadow-sm">
                         <CardContent className="p-6">
                            <h3 className="font-bold text-gray-900 mb-4">
                               Related Courses
                            </h3>
-                           {/* Mock related courses - replace with actual data */}
                            <div className="space-y-4">
-                              {[1, 2, 3].map((item) => (
+                              {relatedCourses?.map((relatedCourse) => (
                                  <div
-                                    key={item}
+                                    key={relatedCourse.id}
                                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                    onClick={() =>
+                                       router.push(
+                                          `/courses/${relatedCourse.id}`
+                                       )
+                                    }
                                  >
-                                    <div className="w-20 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded"></div>
+                                    <div className="w-20 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded flex items-center justify-center">
+                                       <BookOpen className="w-6 h-6 text-white" />
+                                    </div>
                                     <div>
                                        <h4 className="font-medium text-gray-900 text-sm">
-                                          Introduction to Neural Networks
+                                          {relatedCourse.title}
                                        </h4>
                                        <p className="text-xs text-gray-500">
-                                          45 lessons • 6h 30m
+                                          {relatedCourse.category} •{" "}
+                                          {relatedCourse.level}
                                        </p>
                                     </div>
                                  </div>
                               ))}
+                              {!relatedCourses?.length && (
+                                 <p className="text-sm text-gray-500 text-center py-4">
+                                    No related courses found
+                                 </p>
+                              )}
                            </div>
                         </CardContent>
                      </Card>
@@ -749,7 +600,7 @@ const CourseDetail = () => {
                </div>
             </div>
          </div>
-      </div>
+      </>
    );
 };
 

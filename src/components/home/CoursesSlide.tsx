@@ -142,65 +142,9 @@ const CoursesSection = () => {
       Autoplay({ delay: 4000, stopOnInteraction: true })
    );
 
-   // Generate sample course data if not provided
-   const sampleCourses: CourseData[] = [
-      {
-         id: "1",
-         title: "Advanced Mathematics: Calculus & Linear Algebra",
-         description:
-            "Master the fundamentals of calculus and linear algebra with our comprehensive course designed for high school students.",
-         category: "Mathematics",
-         level: "Advanced",
-         teacher: { id: "t1", name: "Dr. Sarah Johnson" },
-      },
-      {
-         id: "2",
-         title: "Introduction to Computer Science",
-         description:
-            "Learn programming fundamentals, algorithms, and problem-solving techniques in this beginner-friendly course.",
-         category: "Programming",
-         level: "Beginner",
-         teacher: { id: "t2", name: "Prof. Michael Chen" },
-      },
-      {
-         id: "3",
-         title: "World History: Ancient Civilizations",
-         description:
-            "Explore the rise and fall of ancient civilizations and their lasting impact on our modern world.",
-         category: "History",
-         level: "Intermediate",
-         teacher: { id: "t3", name: "Dr. Emily Rodriguez" },
-      },
-      {
-         id: "4",
-         title: "Biology: Human Anatomy & Physiology",
-         description:
-            "Discover the fascinating systems of the human body through interactive lessons and virtual labs.",
-         category: "Science",
-         level: "Intermediate",
-         teacher: { id: "t4", name: "Dr. James Wilson" },
-      },
-      {
-         id: "5",
-         title: "Spanish for Beginners",
-         description:
-            "Start your journey to Spanish fluency with this interactive language course featuring AI-powered pronunciation feedback.",
-         category: "Language",
-         level: "Beginner",
-         teacher: { id: "t5", name: "Prof. Maria Garcia" },
-      },
-      {
-         id: "6",
-         title: "Physics: Mechanics & Thermodynamics",
-         description:
-            "Master the fundamental principles of physics through engaging simulations and problem-solving exercises.",
-         category: "Science",
-         level: "Advanced",
-         teacher: { id: "t6", name: "Dr. Robert Thompson" },
-      },
-   ];
+ 
 
-   const displayCourses = courses?.length ? courses : sampleCourses;
+   const displayCourses = courses?.length ? courses : [];
 
    return (
       <section

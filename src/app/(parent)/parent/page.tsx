@@ -216,7 +216,7 @@ const ParentHome = () => {
          {/* Child's Courses */}
          <section className="my-6">
             <div className="flex items-center justify-between w-full my-4">
-               <h3 className="font-medium">Child's Courses</h3>
+               <h3 className="font-medium">Child&apos;s Courses</h3>
                <Button
                   className="text-blue-600"
                   variant="outline"

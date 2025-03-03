@@ -29,6 +29,10 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useFetchUsers } from "@/hooks/useUsers";
+import { useDMWebSocket } from "@/hooks/useWebsocket";
+import { useGetDMHistory, useSendDirectMessage, useMarkMessagesAsRead } from "@/hooks/useDirectMessages";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ChatArea = () => {
   const { user } = useAuthStore();
@@ -45,6 +49,24 @@ const ChatArea = () => {
     messages: realTimeMessages,
     isConnected,
   } = useWebSocket(selectedChannel);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isDMMode, setIsDMMode] = useState(false);
+  const { data: users } = useFetchUsers();
+  const { data: dmHistory } = useGetDMHistory(
+    user?.id || "",
+    selectedUser?.id || ""
+  );
+  const { mutate: sendDM } = useSendDirectMessage();
+  const { mutate: markAsRead } = useMarkMessagesAsRead();
+  
+  const {
+    sendMessage: sendDMWebSocket,
+    messages: realtimeDMs,
+    isConnected: isDMConnected,
+  } = useDMWebSocket(selectedUser?.id || null);
+
+  // Combine DM history with realtime messages
+  const allDirectMessages = [...(dmHistory || []), ...realtimeDMs];
 
   const handleCreateChannel = () => {
     const channelName = prompt("Enter channel name:");
@@ -54,21 +76,39 @@ const ChatArea = () => {
   };
 
   const handleSendMessage = async () => {
-    if (message.trim() && selectedChannel && user) {
+    if (!message.trim()) return;
+
+    if (isDMMode && selectedUser) {
       const messageData = {
-        channel_id: selectedChannel,
+        sender_id: user?.id,
+        recipient_id: selectedUser.id,
         message: message,
-        user_id: user.id,
-        timestamp: new Date().toISOString(),
       };
 
       try {
-        await sendMessage(messageData);
-        sendWebSocketMessage(JSON.stringify(messageData));
+        await sendDM(messageData);
+        sendDMWebSocket(JSON.stringify(messageData));
         setMessage("");
-        refetchMessages();
       } catch (error) {
-        console.error("Error sending message:", error);
+        console.error("Error sending DM:", error);
+      }
+    } else {
+      if (message.trim() && selectedChannel && user) {
+        const messageData = {
+          channel_id: selectedChannel,
+          message: message,
+          user_id: user.id,
+          timestamp: new Date().toISOString(),
+        };
+  
+        try {
+          await sendMessage(messageData);
+          sendWebSocketMessage(JSON.stringify(messageData));
+          setMessage("");
+          refetchMessages();
+        } catch (error) {
+          console.error("Error sending message:", error);
+        }
       }
     }
   };
@@ -100,86 +140,96 @@ const ChatArea = () => {
             </div>
           </div>
 
-          {/* Sidebar Content */}
+          {/* Toggle between Channels and DMs */}
+          <div className="flex border-b border-submain">
+            <button
+              onClick={() => setIsDMMode(false)}
+              className={`flex-1 p-2 text-sm font-medium ${
+                !isDMMode ? "bg-main text-white" : "hover:bg-background"
+              }`}
+            >
+              Channels
+            </button>
+            <button
+              onClick={() => setIsDMMode(true)}
+              className={`flex-1 p-2 text-sm font-medium ${
+                isDMMode ? "bg-main text-white" : "hover:bg-background"
+              }`}
+            >
+              Direct Messages
+            </button>
+          </div>
+
+          {/* Content Area */}
           <ScrollArea className="flex-1 p-4">
-            {/* Unread Section */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                <span className="text-sm font-medium">Unread</span>
-                <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">
-                  8
-                </span>
-              </div>
-              <Button 
-                size="sm" 
-                className="gap-2 bg-main text-white hover:bg-main/90"
-              >
-                <PenBox className="h-4 w-4" />
-                <span className="hidden md:inline">New Message</span>
-              </Button>
-            </div>
-
-            {/* Channels Section */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Hash className="h-4 w-4" />
-                  <span className="text-sm font-medium">Channels</span>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleCreateChannel}
-                  className="text-main hover:text-main/80 hover:bg-background"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-1">
-                {channels?.map((channel: any) => (
+            {isDMMode ? (
+              // Users List for DM
+              <div className="space-y-2">
+                {users?.map((u: any) => (
                   <button
-                    key={channel.id}
-                    onClick={() => setSelectedChannel(channel.id)}
-                    className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors
-                      ${
-                        selectedChannel === channel.id
-                          ? "bg-background text-main"
-                          : "hover:bg-background hover:text-main"
-                      }`}
+                    key={u.id}
+                    onClick={() => setSelectedUser(u)}
+                    className={`w-full flex items-center gap-3 rounded-lg p-2 transition-colors ${
+                      selectedUser?.id === u.id
+                        ? "bg-background text-main"
+                        : "hover:bg-background"
+                    }`}
                   >
-                    <Hash className="h-4 w-4" />
-                    <span>{channel.name}</span>
-                    {channel.unreadCount > 0 && (
-                      <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-main text-xs text-white">
-                        {channel.unreadCount}
-                      </span>
-                    )}
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={u.avatar} />
+                      <AvatarFallback>{u.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="text-left">
+                      <div className="text-sm font-medium">{u.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {u.email}
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Direct Messages Section */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span className="text-sm font-medium">Direct Messages</span>
+            ) : (
+              // Channels List
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Hash className="h-4 w-4" />
+                    <span className="text-sm font-medium">Channels</span>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleCreateChannel}
+                    className="text-main hover:text-main/80 hover:bg-background"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className="text-red-500 hover:text-red-600 hover:bg-background"
-                >
-                  Clear
-                </Button>
+  
+                <div className="space-y-1">
+                  {channels?.map((channel: any) => (
+                    <button
+                      key={channel.id}
+                      onClick={() => setSelectedChannel(channel.id)}
+                      className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors
+                        ${
+                          selectedChannel === channel.id
+                            ? "bg-background text-main"
+                            : "hover:bg-background hover:text-main"
+                        }`}
+                    >
+                      <Hash className="h-4 w-4" />
+                      <span>{channel.name}</span>
+                      {channel.unreadCount > 0 && (
+                        <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-main text-xs text-white">
+                          {channel.unreadCount}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground py-2 px-3">
-                No direct messages yet
-              </div>
-            </div>
+            )}
           </ScrollArea>
         </div>
       </ResizablePanel>
@@ -191,43 +241,87 @@ const ChatArea = () => {
           {/* Chat Header */}
           <div className="border-b border-submain p-4 bg-background">
             <div className="flex items-center gap-2">
-              <Hash className="h-5 w-5" />
-              <span className="font-medium">
-                {channels?.find((c: any) => c.id === selectedChannel)?.name || "general"}
-              </span>
+              {isDMMode ? (
+                selectedUser && (
+                  <>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={selectedUser.avatar} />
+                      <AvatarFallback>{selectedUser.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="font-medium">{selectedUser.name}</span>
+                  </>
+                )
+              ) : (
+                <>
+                  <Hash className="h-5 w-5" />
+                  <span className="font-medium">
+                    {channels?.find((c: any) => c.id === selectedChannel)?.name ||
+                      "general"}
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
           {/* Messages Area */}
           <ScrollArea className="flex-1 p-4">
             <div className="space-y-4">
-              {allMessages?.map((msg: any, index: number) => (
-                <div
-                  key={msg.id || `rt-${index}`}
-                  className={`flex ${
-                    msg.user_id === user?.id ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`relative rounded-lg px-4 py-2 max-w-[70%] shadow-sm
-                      ${
-                        msg.user_id === user?.id
-                          ? "bg-main text-white"
-                          : "bg-background"
+              {isDMMode
+                ? allDirectMessages?.map((msg: any, index: number) => (
+                    // Direct Message UI
+                    <div
+                      key={msg.id || `rt-${index}`}
+                      className={`flex ${
+                        msg.sender_id === user?.id
+                          ? "justify-end"
+                          : "justify-start"
                       }`}
+                    >
+                      <div
+                        className={`relative rounded-lg px-4 py-2 max-w-[70%] shadow-sm ${
+                          msg.sender_id === user?.id
+                            ? "bg-main text-white"
+                            : "bg-background"
+                        }`}
+                      >
+                        <p className="break-words">{msg.message}</p>
+                        <span className="block mt-1 text-xs opacity-70">
+                          {new Date(msg.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                : allMessages?.map((msg: any, index: number) => (
+                  <div
+                    key={msg.id || `rt-${index}`}
+                    className={`flex ${
+                      msg.user_id === user?.id ? "justify-end" : "justify-start"
+                    }`}
                   >
-                    <p className="break-words">{msg.message}</p>
-                    <span className="block mt-1 text-xs opacity-70">
-                      {msg.timestamp
-                        ? new Date(msg.timestamp).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })
-                        : ""}
-                    </span>
+                    <div
+                      className={`relative rounded-lg px-4 py-2 max-w-[70%] shadow-sm
+                        ${
+                          msg.user_id === user?.id
+                            ? "bg-main text-white"
+                            : "bg-background"
+                        }`}
+                    >
+                      <p className="break-words">{msg.message}</p>
+                      <span className="block mt-1 text-xs opacity-70">
+                        {msg.timestamp
+                          ? new Date(msg.timestamp).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                          : ""}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              }
             </div>
           </ScrollArea>
 

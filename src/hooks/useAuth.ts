@@ -7,8 +7,17 @@ import { Cookies } from "react-cookie";
 
 interface User {
    id: string;
+   username?: string;
    name: string;
    email: string;
+   phone?: string;
+   country?: string;
+   field_of_study?: string;
+   role: string;
+   is_active: boolean;
+   is_superuser: boolean;
+   created_at: string;
+   oauth_provider?: string;
 }
 
 interface UpdateUserData {
@@ -25,6 +34,12 @@ interface SignupData {
    name: string;
    email: string;
    password: string;
+   confirmPassword: string;
+   role: string;
+   username?: string;
+   phone?: string;
+   country?: string;
+   field_of_study?: string;
 }
 
 // Add these interfaces

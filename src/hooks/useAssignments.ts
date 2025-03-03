@@ -21,9 +21,8 @@ const getAssignmentById = ({ queryKey }: any): Promise<any> => {
    return handleApiRequest(() => authorizedAPI.get(`/assignments/${_id}`));
 };
 
-const deleteAssignmentById = ({ queryKey }: any): Promise<any> => {
-   const [_, _id] = queryKey;
-   return handleApiRequest(() => authorizedAPI.get(`/assignments/${_id}`));
+const deleteAssignmentById = (_id: string): Promise<any> => {
+   return handleApiRequest(() => authorizedAPI.delete(`/assignments/${_id}`));
 };
 
 export const useGetAllAssignments = () =>
@@ -44,8 +43,8 @@ export const useUpdateAssignment = () => {
    });
 };
 
-export const deleteUpdateAssignment = () => {
-   return useMutation<any, Error, any>({
+export const useDeleteAssignment = () => {
+   return useMutation<any, Error, string>({
       mutationFn: deleteAssignmentById,
    });
 };

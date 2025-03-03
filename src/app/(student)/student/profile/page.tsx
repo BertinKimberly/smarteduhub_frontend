@@ -11,18 +11,39 @@ import {
 import ProfileForm from "@/components/profile/ProfileForm";
 import { useState } from "react";
 import DashboardNavbar from "@/components/DashboardNavbar";
-import { useProfile } from "@/hooks/useAuth";
+import { useProfile, useUpdateProfile } from "@/hooks/useAuth";
+import { toast } from "react-toastify";
+import { UserUpdate } from "@/types/user";
 
 const ProfilePage = () => {
-   const {data:user,isLoading,isError}=useProfile()
+   const { data: user, isLoading, isError, refetch } = useProfile();
+   const updateProfile = useUpdateProfile();
    const [isEditing, setIsEditing] = useState(false);
 
-   const handleUpdateProfile = (data: Partial<typeof user>) => {
-      // TODO: Implement profile update logic
-      console.log("Updating profile:", data);
-      setIsEditing(false);
+   const handleUpdateProfile = async (data: UserUpdate) => {
+      try {
+         await updateProfile.mutateAsync(data);
+         await refetch(); // Refetch user data after successful update
+         toast.success("Profile updated successfully", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+         });
+         setIsEditing(false);
+      } catch (error) {
+         toast.error("Failed to update profile", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+         });
+      }
    };
-
 
    const stats = [
       { label: "Courses Enrolled", value: "12" },
@@ -31,10 +52,14 @@ const ProfilePage = () => {
       { label: "Average Grade", value: "A" },
    ];
 
-   console.log("Uri mwiza uri mwiza",user)
-    if(isLoading){
-        return <div>Loading...</div>
-    }
+   if (isLoading) {
+      return <div>Loading...</div>;
+   }
+
+   if (isError) {
+      return <div>Error loading profile</div>;
+   }
+
    return (
       <>
          <div className="w-full space-y-6">
@@ -49,6 +74,8 @@ const ProfilePage = () => {
                         <ProfileForm
                            user={user}
                            onUpdate={handleUpdateProfile}
+                           onCancel={() => setIsEditing(false)}
+                           isLoading={updateProfile.isPending}
                         />
                      ) : (
                         <div className="space-y-6">
@@ -101,9 +128,9 @@ const ProfilePage = () => {
                                  <MapPin className="text-main" />
                                  <div>
                                     <p className="text-sm text-gray-500">
-                                       Address
+                                       Country
                                     </p>
-                                    <p>{user?.address || "Not provided"}</p>
+                                    <p>{user?.country || "Not provided"}</p>
                                  </div>
                               </div>
                               <div className="flex items-center gap-3">

@@ -110,6 +110,52 @@ const deleteMaterial = (materialId: string): Promise<void> => {
    );
 };
 
+const getRelatedCourses = async (course: Course): Promise<Course[]> => {
+   // Get all courses
+   const allCourses = await handleApiRequest(() =>
+      authorizedAPI.get("/courses")
+   );
+
+   // Filter out the current course and sort by relevance
+   return allCourses
+      .filter((c: Course) => c.id !== course.id) // Remove current course
+      .map((c: Course) => ({
+         ...c,
+         relevanceScore: calculateRelevanceScore(course, c),
+      }))
+      .sort((a: any, b: any) => b.relevanceScore - a.relevanceScore)
+      .slice(0, 3); // Get top 3 most relevant courses
+};
+
+const calculateRelevanceScore = (
+   sourceCourse: Course,
+   targetCourse: Course
+): number => {
+   let score = 0;
+
+   // Same category (highest weight)
+   if (sourceCourse.category === targetCourse.category) {
+      score += 5;
+   }
+
+   // Same level
+   if (sourceCourse.level === targetCourse.level) {
+      score += 3;
+   }
+
+   // Similar description (basic text matching)
+   if (sourceCourse.description && targetCourse.description) {
+      const sourceWords = sourceCourse.description.toLowerCase().split(" ");
+      const targetWords = targetCourse.description.toLowerCase().split(" ");
+      const commonWords = sourceWords.filter(
+         (word) => word.length > 3 && targetWords.includes(word)
+      );
+      score += commonWords.length * 0.1;
+   }
+
+   return score;
+};
+
 export const useGetAllCourses = () =>
    useQuery<Course[], Error>({ queryKey: ["courses"], queryFn: getAllCourses });
 
@@ -172,5 +218,15 @@ export const useGetMaterials = (courseId: string) => {
 export const useDeleteMaterial = () => {
    return useMutation<void, Error, string>({
       mutationFn: deleteMaterial,
+   });
+};
+
+export const useGetRelatedCourses = (courseId: string) => {
+   const { data: currentCourse } = useGetCourseById(courseId);
+
+   return useQuery<Course[], Error>({
+      queryKey: ["relatedCourses", courseId],
+      queryFn: () => getRelatedCourses(currentCourse as Course),
+      enabled: !!currentCourse, // Only run when we have the current course data
    });
 };
