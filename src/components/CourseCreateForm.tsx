@@ -342,7 +342,7 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
                       id="materialFile"
                       type="file"
                       onChange={handleFileChange}
-                      accept=".pdf,.doc,.docx,.ppt,.pptx"
+                      accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.png,.jpeg"
                       className="h-12 opacity-0 absolute inset-0 cursor-pointer"
                     />
                     <div className="h-12 px-4 border rounded-md flex items-center justify-between text-gray-500 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors">

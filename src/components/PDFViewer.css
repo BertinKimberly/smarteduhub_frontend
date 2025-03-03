@@ -1,0 +1,10 @@
+.webviewer-container {
+   width: 100%;
+   height: 100%;
+   background: #e0e0e0;
+}
+
+.webviewer {
+   height: 100%;
+   width: 100%;
+}

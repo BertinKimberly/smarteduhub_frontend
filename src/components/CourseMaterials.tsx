@@ -16,8 +16,6 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "./ui/dialog";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
-import "@react-pdf-viewer/core/lib/styles/index.css";
 
 interface CourseMaterialsProps {
    courseId: string;
@@ -30,9 +28,7 @@ const CourseMaterials: FC<CourseMaterialsProps> = ({
 }) => {
    const [title, setTitle] = useState("");
    const [file, setFile] = useState<File | null>(null);
-   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
-      null
-   );
+   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
 
    const { data: materials, isLoading, refetch } = useGetMaterials(courseId);
    const uploadMutation = useUploadMaterial();
@@ -84,21 +80,13 @@ const CourseMaterials: FC<CourseMaterialsProps> = ({
       const fileUrl = getFileUrl(material.file_path);
       const fileExtension = material.file_path.split(".").pop()?.toLowerCase();
 
-      console.log("Preview URL:", fileUrl); // Debug log
-
       if (fileExtension === "pdf") {
          return (
-            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-               <div style={{ height: "500px" }}>
-                  <Viewer
-                     fileUrl={fileUrl}
-                     onError={(error) => {
-                        console.error("PDF viewer error:", error);
-                        console.log("Attempted URL:", fileUrl);
-                     }}
-                  />
-               </div>
-            </Worker>
+            <iframe
+               src={`${fileUrl}#view=fitH`}
+               title={material.title}
+               className="w-full h-full min-h-[500px] border-0"
+            />
          );
       }
 
@@ -127,24 +115,25 @@ const CourseMaterials: FC<CourseMaterialsProps> = ({
          <h3 className="text-lg font-semibold">Course Materials</h3>
 
          {isTeacher && (
-            <div className="flex gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
                <Input
                   placeholder="Material title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  className="flex-1"
                />
                <Input
                   type="file"
                   onChange={handleFileChange}
                   accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png"
+                  className="flex-1"
                />
                <Button
                   onClick={handleUpload}
                   disabled={!file || !title || uploadMutation.isPending}
+                  className="whitespace-nowrap"
                >
-                  {uploadMutation.isPending
-                     ? "Uploading..."
-                     : "Upload Material"}
+                  {uploadMutation.isPending ? "Uploading..." : "Upload Material"}
                </Button>
             </div>
          )}
@@ -153,20 +142,21 @@ const CourseMaterials: FC<CourseMaterialsProps> = ({
             {materials && materials.length > 0 ? (
                materials.map((material) => (
                   <Card key={material.id}>
-                     <CardContent className="flex items-center justify-between p-4">
+                     <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 gap-3">
                         <div className="flex items-center gap-3">
                            <FileIcon className="h-5 w-5 text-blue-500" />
-                           <span>{material.title}</span>
+                           <span className="font-medium">{material.title}</span>
                            <span className="text-sm text-gray-500">
                               ({material.file_path.split("/").pop()})
                            </span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2 ml-auto">
                            <Dialog>
                               <DialogTrigger asChild>
                                  <Button
                                     variant="outline"
                                     size="sm"
+                                    onClick={() => setSelectedMaterial(material)}
                                  >
                                     <Eye className="h-4 w-4 mr-2" />
                                     Preview
@@ -177,12 +167,11 @@ const CourseMaterials: FC<CourseMaterialsProps> = ({
                                     <DialogTitle>
                                        {material.title}
                                        <span className="text-sm text-gray-500 ml-2">
-                                          ({material.file_path.split("/").pop()}
-                                          )
+                                          ({material.file_path.split("/").pop()})
                                        </span>
                                     </DialogTitle>
                                  </DialogHeader>
-                                 <div className="flex-1 overflow-auto">
+                                 <div className="flex-1 overflow-auto h-full">
                                     {renderMaterialPreview(material)}
                                  </div>
                               </DialogContent>
@@ -190,9 +179,9 @@ const CourseMaterials: FC<CourseMaterialsProps> = ({
 
                            <Button
                               variant="outline"
+                              size="sm"
                               onClick={() => {
                                  const url = getFileUrl(material.file_path);
-                                 console.log("Download URL:", url); // Debug log
                                  window.open(url, "_blank");
                               }}
                            >
