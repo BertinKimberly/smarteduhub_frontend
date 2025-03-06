@@ -184,166 +184,169 @@ const CoursesPage = () => {
    return (
       <div className="min-h-screen bg-[#F8F9FE] pb-4">
          {/* Hero Section */}
-<div className="relative overflow-hidden bg-gradient-to-r from-main  to-indigo-700">
-  {/* Background decoration elements */}
-  <div className="absolute inset-0">
-    <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-    <div className="absolute left-1/3 top-2/3 h-40 w-40 rounded-full bg-pink-500/10 blur-3xl"></div>
-    <div className="absolute -left-20 top-20 h-72 w-72 rounded-full bg-indigo-400/10 blur-3xl"></div>
-  </div>
-  
-  <div className="container relative mx-auto px-4 py-20">
-    <div className="mb-12 text-center">
-      <h1 className="mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-5xl font-extrabold leading-tight text-transparent md:text-6xl">
-        Discover Your Learning Path
-      </h1>
-      <p className="mx-auto max-w-2xl text-lg font-medium text-blue-100">
-        Unlock your potential with premium courses taught by industry experts
-      </p>
-    </div>
+         <div className="relative overflow-hidden bg-gradient-to-r from-main  to-indigo-700">
+            {/* Background decoration elements */}
+            <div className="absolute inset-0">
+               <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+               <div className="absolute left-1/3 top-2/3 h-40 w-40 rounded-full bg-pink-500/10 blur-3xl"></div>
+               <div className="absolute -left-20 top-20 h-72 w-72 rounded-full bg-indigo-400/10 blur-3xl"></div>
+            </div>
 
-    {/* Enhanced Search Experience */}
-    <div className="mx-auto max-w-3xl">
-      <div className="relative flex items-center rounded-2xl bg-white/10 p-2 backdrop-blur-lg">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-blue-200" />
-          <Input
-            placeholder="What do you want to learn today?"
-            className="w-full border-0 bg-transparent py-4 pl-12 pr-4 text-white placeholder-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+            <div className="container relative mx-auto px-4 py-20">
+               <div className="mb-12 text-center">
+                  <h1 className="mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-5xl font-extrabold leading-tight text-transparent md:text-6xl">
+                     Discover Your Learning Path
+                  </h1>
+                  <p className="mx-auto max-w-2xl text-lg font-medium text-blue-100">
+                     Unlock your potential with premium courses taught by
+                     industry experts
+                  </p>
+               </div>
 
-        {/* Quick Category Filters */}
-        <div className="hidden md:flex">
-          {['Development', 'Design', 'Business'].map((cat) => (
-            <Button
-              key={cat}
-              variant="ghost"
-              className="text-sm text-white hover:bg-white/20"
-              onClick={() => {
-                setSelectedCategory(cat);
-                setShowFilters(true);
-              }}
-            >
-              {cat}
-            </Button>
-          ))}
-        </div>
+               {/* Enhanced Search Experience */}
+               <div className="mx-auto max-w-3xl">
+                  <div className="relative flex items-center rounded-2xl bg-white/10 p-2 backdrop-blur-lg">
+                     {/* Search Input */}
+                     <div className="relative flex-1">
+                        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-blue-200" />
+                        <Input
+                           placeholder="What do you want to learn today?"
+                           className="w-full border-0 bg-transparent py-4 pl-12 pr-4 text-white placeholder-white placeholder:text-white/70 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                           value={searchTerm}
+                           onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                     </div>
 
-        {/* Filter Toggle Button */}
-        <Button
-          className="ml-2 rounded-xl bg-white px-4 text-indigo-700 hover:bg-blue-50"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {showFilters ? (
-            <X className="mr-2 h-4 w-4" />
-          ) : (
-            <Filter className="mr-2 h-4 w-4" />
-          )}
-          {showFilters ? "Hide Filters" : "Filters"}
-        </Button>
-      </div>
+                     {/* Quick Category Filters */}
+                     <div className="hidden md:flex">
+                        {["Development", "Design", "Business"].map((cat) => (
+                           <Button
+                              key={cat}
+                              variant="ghost"
+                              className="text-sm text-white hover:bg-white/20"
+                              onClick={() => {
+                                 setSelectedCategory(cat);
+                                 setShowFilters(true);
+                              }}
+                           >
+                              {cat}
+                           </Button>
+                        ))}
+                     </div>
 
-      {/* Stats bar */}
-      <div className="mt-6 flex justify-center space-x-12 text-center text-sm text-white/80">
-        <div>
-          <span className="font-bold text-white">100+</span> Courses
-        </div>
-        <div>
-          <span className="font-bold text-white">50+</span> Instructors
-        </div>
-        <div>
-          <span className="font-bold text-white">10k+</span> Students
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                     {/* Filter Toggle Button */}
+                     <Button
+                        className="ml-2 rounded-xl bg-white px-4 text-indigo-700 hover:bg-blue-50"
+                        onClick={() => setShowFilters(!showFilters)}
+                     >
+                        {showFilters ? (
+                           <X className="mr-2 h-4 w-4" />
+                        ) : (
+                           <Filter className="mr-2 h-4 w-4" />
+                        )}
+                        {showFilters ? "Hide Filters" : "Filters"}
+                     </Button>
+                  </div>
 
-{/* Expanded Filters Panel (slides down when filters are toggled) */}
-{showFilters && (
-  <div className="bg-white py-2 shadow-lg transform transition-all duration-300">
-    <div className="container mx-auto px-4">
-      <div className="flex flex-wrap gap-6 py-4">
-        <div className="flex-1 min-w-[180px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Category
-          </label>
-          <Select
-            onValueChange={setSelectedCategory}
-            defaultValue={selectedCategory}
-          >
-            <SelectTrigger className="w-full border-indigo-100 focus:ring-indigo-500">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem
-                  key={category}
-                  value={category}
-                >
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+                  {/* Stats bar */}
+                  <div className="mt-6 flex justify-center space-x-12 text-center text-sm text-white/80">
+                     <div>
+                        <span className="font-bold text-white">100+</span>{" "}
+                        Courses
+                     </div>
+                     <div>
+                        <span className="font-bold text-white">50+</span>{" "}
+                        Instructors
+                     </div>
+                     <div>
+                        <span className="font-bold text-white">10k+</span>{" "}
+                        Students
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
 
-        <div className="flex-1 min-w-[180px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Level
-          </label>
-          <Select
-            onValueChange={setSelectedLevel}
-            defaultValue={selectedLevel}
-          >
-            <SelectTrigger className="w-full border-indigo-100 focus:ring-indigo-500">
-              <SelectValue placeholder="Select level" />
-            </SelectTrigger>
-            <SelectContent>
-              {levels.map((level) => (
-                <SelectItem
-                  key={level}
-                  value={level}
-                >
-                  {level}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+         {/* Expanded Filters Panel (slides down when filters are toggled) */}
+         {showFilters && (
+            <div className="bg-white py-2 shadow-lg transform transition-all duration-300">
+               <div className="container mx-auto px-4">
+                  <div className="flex flex-wrap gap-6 py-4">
+                     <div className="flex-1 min-w-[180px]">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                           Category
+                        </label>
+                        <Select
+                           onValueChange={setSelectedCategory}
+                           defaultValue={selectedCategory}
+                        >
+                           <SelectTrigger className="w-full border-indigo-100 focus:ring-indigo-500">
+                              <SelectValue placeholder="Select category" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {categories.map((category) => (
+                                 <SelectItem
+                                    key={category}
+                                    value={category}
+                                 >
+                                    {category}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
 
-        <div className="flex-1 min-w-[180px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Duration
-          </label>
-          <Select defaultValue="any">
-            <SelectTrigger className="w-full border-indigo-100 focus:ring-indigo-500">
-              <SelectValue placeholder="Course length" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any Duration</SelectItem>
-              <SelectItem value="short">0-3 Hours</SelectItem>
-              <SelectItem value="medium">3-10 Hours</SelectItem>
-              <SelectItem value="long">10+ Hours</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+                     <div className="flex-1 min-w-[180px]">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                           Level
+                        </label>
+                        <Select
+                           onValueChange={setSelectedLevel}
+                           defaultValue={selectedLevel}
+                        >
+                           <SelectTrigger className="w-full border-indigo-100 focus:ring-indigo-500">
+                              <SelectValue placeholder="Select level" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {levels.map((level) => (
+                                 <SelectItem
+                                    key={level}
+                                    value={level}
+                                 >
+                                    {level}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
 
-        <div className="flex items-end w-full sm:w-auto">
-          <Button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700">
-            Apply Filters
-          </Button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                     <div className="flex-1 min-w-[180px]">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                           Duration
+                        </label>
+                        <Select defaultValue="any">
+                           <SelectTrigger className="w-full border-indigo-100 focus:ring-indigo-500">
+                              <SelectValue placeholder="Course length" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              <SelectItem value="any">Any Duration</SelectItem>
+                              <SelectItem value="short">0-3 Hours</SelectItem>
+                              <SelectItem value="medium">3-10 Hours</SelectItem>
+                              <SelectItem value="long">10+ Hours</SelectItem>
+                           </SelectContent>
+                        </Select>
+                     </div>
 
-     
+                     <div className="flex items-end w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700">
+                           Apply Filters
+                        </Button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         )}
+
          {/* Courses Grid */}
          <div className="container mx-auto px-4 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

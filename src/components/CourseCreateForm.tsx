@@ -26,6 +26,20 @@ import {
 import { Card } from "./ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { Progress } from "./ui/progress";
+import { Badge } from "./ui/badge";
+
+const CATEGORY_OPTIONS = [
+   { value: "programming", label: "Programming & Development" },
+   { value: "business", label: "Business & Entrepreneurship" },
+   { value: "design", label: "Design & Creative Arts" },
+   { value: "marketing", label: "Marketing & Communication" },
+   { value: "science", label: "Science & Engineering" },
+   { value: "languages", label: "Languages & Linguistics" },
+   { value: "mathematics", label: "Mathematics & Statistics" },
+   { value: "health", label: "Health & Wellness" },
+   { value: "music", label: "Music & Audio" },
+   { value: "technology", label: "Technology & IT" },
+] as const;
 
 interface CourseCreateFormProps {
    onSuccess: () => void;
@@ -36,10 +50,12 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
       title: "",
       description: "",
       long_description: "",
-      prerequisites: "",
+      prerequisites: [],
       category: "",
       level: "Beginner",
    });
+
+   const [prerequisiteInput, setPrerequisiteInput] = useState("");
 
    const [courseId, setCourseId] = useState<string>("");
 
@@ -145,6 +161,26 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
       const sizeInKB = file.size / 1024;
       if (sizeInKB < 1024) return `${Math.round(sizeInKB)} KB`;
       return `${(sizeInKB / 1024).toFixed(1)} MB`;
+   };
+
+   const handleAddPrerequisite = () => {
+      if (prerequisiteInput.trim()) {
+         setFormData((prev) => ({
+            ...prev,
+            prerequisites: [
+               ...(prev.prerequisites || []),
+               prerequisiteInput.trim(),
+            ],
+         }));
+         setPrerequisiteInput("");
+      }
+   };
+
+   const handleRemovePrerequisite = (index: number) => {
+      setFormData((prev) => ({
+         ...prev,
+         prerequisites: prev.prerequisites?.filter((_, i) => i !== index) || [],
+      }));
    };
 
    return (
@@ -272,18 +308,58 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
                      >
                         Prerequisites
                      </Label>
-                     <Textarea
-                        id="prerequisites"
-                        value={formData.prerequisites}
-                        onChange={(e) =>
-                           setFormData({
-                              ...formData,
-                              prerequisites: e.target.value,
-                           })
-                        }
-                        placeholder="List any prerequisites for this course"
-                        className="min-h-20"
-                     />
+                     <div className="flex gap-2">
+                        <Input
+                           id="prerequisites"
+                           value={prerequisiteInput}
+                           onChange={(e) =>
+                              setPrerequisiteInput(e.target.value)
+                           }
+                           placeholder="Add a prerequisite"
+                           className="h-12"
+                           onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                 e.preventDefault();
+                                 handleAddPrerequisite();
+                              }
+                           }}
+                        />
+                        <Button
+                           type="button"
+                           onClick={handleAddPrerequisite}
+                           variant="outline"
+                           className="h-12"
+                        >
+                           Add
+                        </Button>
+                     </div>
+                     {formData.prerequisites &&
+                        formData.prerequisites.length > 0 && (
+                           <div className="flex flex-wrap gap-2 mt-2">
+                              {formData.prerequisites.map(
+                                 (prerequisite, index) => (
+                                    <Badge
+                                       key={index}
+                                       variant="secondary"
+                                       className="px-3 py-1"
+                                    >
+                                       {prerequisite}
+                                       <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-4 w-4 p-0 ml-2 hover:bg-transparent"
+                                          onClick={() =>
+                                             handleRemovePrerequisite(index)
+                                          }
+                                       >
+                                          ×
+                                       </Button>
+                                    </Badge>
+                                 )
+                              )}
+                           </div>
+                        )}
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
@@ -294,28 +370,38 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
                         >
                            Category<span className="text-red-500">*</span>
                         </Label>
-                        <Input
-                           id="category"
+                        <Select
                            value={formData.category}
-                           onChange={(e) => {
+                           onValueChange={(value) => {
                               setFormData({
                                  ...formData,
-                                 category: e.target.value,
+                                 category: value,
                               });
-                              if (e.target.value.trim()) {
+                              if (value) {
                                  setValidationErrors({
                                     ...validationErrors,
                                     category: false,
                                  });
                               }
                            }}
-                           placeholder="e.g., Science, Programming, Art"
-                           className={`h-12 ${
-                              validationErrors.category
-                                 ? "border-red-500 focus-visible:ring-red-500"
-                                 : ""
-                           }`}
-                        />
+                        >
+                           <SelectTrigger
+                              id="category"
+                              className="h-12"
+                           >
+                              <SelectValue placeholder="Select a category" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {CATEGORY_OPTIONS.map(({ value, label }) => (
+                                 <SelectItem
+                                    key={value}
+                                    value={value}
+                                 >
+                                    {label}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
                         {validationErrors.category && (
                            <span className="text-sm text-red-500">
                               Category is required

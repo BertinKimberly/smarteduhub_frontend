@@ -69,8 +69,8 @@ export const useWebSocket = (channelId: string | null) => {
    return { sendMessage, messages, isConnected };
 };
 
-export const useDMWebSocket = (recipientId: string | null) => {
-   const [messages, setMessages] = useState<ChatMessage[]>([]);
+export const useDMWebSocket = (userId: string | null) => {
+   const [messages, setMessages] = useState<any[]>([]);
    const [socket, setSocket] = useState<WebSocket | null>(null);
    const [isConnected, setIsConnected] = useState(false);
 
@@ -78,30 +78,43 @@ export const useDMWebSocket = (recipientId: string | null) => {
       let ws: WebSocket | null = null;
 
       const connectWebSocket = () => {
-         if (recipientId) {
+         if (userId) {
             ws = new WebSocket(
-               `ws://127.0.0.1:8000/api/v1/chat/dm/${recipientId}`
+               `ws://127.0.0.1:8000/api/v1/chat/ws/dm/${userId}`
             );
             setSocket(ws);
 
             ws.onopen = () => {
                setIsConnected(true);
+               console.log("DM WebSocket Connected");
             };
 
             ws.onmessage = (event) => {
                try {
-                  const parsedData: ChatMessage = JSON.parse(event.data);
-                  setMessages((prev) => [...prev, parsedData]);
+                  const parsedData = JSON.parse(event.data);
+                  setMessages((prev) => {
+                     // Avoid duplicate messages
+                     const isDuplicate = prev.some(
+                        (msg) =>
+                           msg.id === parsedData.id ||
+                           (msg.message === parsedData.message &&
+                              msg.timestamp === parsedData.timestamp)
+                     );
+                     if (isDuplicate) return prev;
+                     return [...prev, parsedData];
+                  });
                } catch (e) {
-                  console.error("Error parsing message:", e);
+                  console.error("Error parsing DM:", e);
                }
             };
 
-            ws.onerror = () => {
+            ws.onerror = (error) => {
+               console.error("DM WebSocket error:", error);
                setIsConnected(false);
             };
 
             ws.onclose = () => {
+               console.log("DM WebSocket closed");
                setIsConnected(false);
                setTimeout(connectWebSocket, 3000);
             };
@@ -115,11 +128,21 @@ export const useDMWebSocket = (recipientId: string | null) => {
             ws.close();
          }
       };
-   }, [recipientId]);
+   }, [userId]);
 
-   const sendMessage = (message: string) => {
-      if (socket && socket.readyState === WebSocket.OPEN) {
-         socket.send(message);
+   const sendMessage = (messageData: {
+      sender_id: string;
+      recipient_id: string;
+      message: string;
+   }) => {
+      if (socket?.readyState === WebSocket.OPEN) {
+         const messageWithTimestamp = {
+            ...messageData,
+            timestamp: new Date().toISOString(),
+         };
+         socket.send(JSON.stringify(messageWithTimestamp));
+      } else {
+         console.error("DM WebSocket is not connected");
       }
    };
 

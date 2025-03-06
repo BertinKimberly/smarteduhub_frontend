@@ -3,7 +3,8 @@
 import { Icon } from "@/components/ui/icon";
 import { Marquee } from "@devnomic/marquee";
 import "@devnomic/marquee/dist/index.css";
-import { icons } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 interface sponsorsProps {
   icon: string;
   name: string;
@@ -34,20 +35,23 @@ const sponsors: sponsorsProps[] = [
     icon: "Cookie",
     name: "Accmee",
   },
-  {
-    icon: "Drama",
-    name: "Acmetech",
-  },
+
 ];
 
 export const SponsorsSection = () => {
   return (
-    <section id="sponsors" className="max-w-[75%] mx-auto pb-24 sm:pb-32">
-      <h2 className="text-lg md:text-xl text-center mb-6">
-        Our Platinum Sponsors
-      </h2>
+    <section className="py-12 bg-gray-50 ">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-main dark:text-white">
+            Our Platinum Sponsors
+          </h2>
+          <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+            We are grateful for the support of our sponsors.
+          </p>
+        </div>
 
-      <div className="mx-auto">
+        <div>
         <Marquee
           className="gap-[3rem]"
           fade
@@ -55,20 +59,23 @@ export const SponsorsSection = () => {
           pauseOnHover
         >
           {sponsors.map(({ icon, name }) => (
-            <div
-              key={name}
-              className="flex items-center text-xl md:text-2xl font-medium"
-            >
-              <Icon
-                name={icon as keyof typeof icons}
-                size={32}
-                color="white"
-                className="mr-2"
-              />
-              {name}
-            </div>
+            <Card key={name} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center space-x-4">
+                {/* @ts-ignore */}
+                <Icon name={icon} className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Thank you for your support!
+                </p>
+              </CardContent>
+            </Card>
           ))}
-        </Marquee>
+          </Marquee>
+        </div>
       </div>
     </section>
   );

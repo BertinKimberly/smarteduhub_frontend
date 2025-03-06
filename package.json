@@ -10,6 +10,8 @@
     "postinstall": "node tools/copy-webviewer-files.js"
   },
   "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.17.0",
+    "@devnomic/marquee": "^1.0.3",
     "@hookform/resolvers": "^3.10.0",
     "@pdftron/webviewer": "^8.7.4",
     "@radix-ui/react-accordion": "^1.2.2",

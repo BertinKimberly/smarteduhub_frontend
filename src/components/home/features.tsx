@@ -58,7 +58,7 @@ export const FeaturesSection = () => {
   return (
     <section id="features" className="bg-blue-50 py-24 sm:py-32">
       <div className="container mx-auto px-4">
-        <h2 className="text-lg text-blue-600 text-center mb-2 tracking-wider font-medium">
+        <h2 className="text-lg text-main text-center mb-2 tracking-wider font-medium">
           Platform Features
         </h2>
 
@@ -76,7 +76,7 @@ export const FeaturesSection = () => {
             <div key={title}>
               <Card className="h-full bg-white border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300">
                 <CardHeader className="flex justify-center items-center pb-2">
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 rounded-lg text-white mb-6">
+                  <div className="bg-gradient-to-r from-main to-indigo-600 p-4 rounded-lg text-white mb-6">
                     {icon}
                   </div>
 

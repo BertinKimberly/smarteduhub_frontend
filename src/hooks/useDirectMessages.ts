@@ -23,7 +23,13 @@ const sendDirectMessage = (data: {
    recipient_id: string;
    message: string;
 }): Promise<DirectMessage> => {
-   return handleApiRequest(() => authorizedAPI.post("/chat/dm/", data));
+   return handleApiRequest(() =>
+      authorizedAPI.post("/chat/dm/", data, {
+         headers: {
+            "Content-Type": "application/json",
+         },
+      })
+   );
 };
 
 const markMessagesAsRead = (
@@ -32,6 +38,16 @@ const markMessagesAsRead = (
 ): Promise<void> => {
    return handleApiRequest(() =>
       authorizedAPI.post(`/chat/dm/read/${recipientId}/${senderId}`)
+   );
+};
+
+const getActiveConversations = (userId: string): Promise<any> => {
+   return handleApiRequest(() =>
+      authorizedAPI.get(`/chat/dm/conversations/user/${userId}`, {
+         headers: {
+            Accept: "application/json",
+         },
+      })
    );
 };
 
@@ -53,5 +69,36 @@ export const useMarkMessagesAsRead = () => {
    return useMutation<void, Error, { recipientId: string; senderId: string }>({
       mutationFn: ({ recipientId, senderId }) =>
          markMessagesAsRead(recipientId, senderId),
+   });
+};
+
+export const useActiveConversations = (userId: string) => {
+   return useQuery({
+      queryKey: ["active-conversations", userId],
+      queryFn: () => getActiveConversations(userId),
+      enabled: !!userId && userId.length > 10, // Only enable if we have a valid-looking UUID
+      refetchOnWindowFocus: true, // Add this to keep conversations up to date
+      staleTime: 1000 * 60, // Consider data stale after 1 minute
+      onError: (error: any) => {
+         console.error(
+            "Error fetching conversations:",
+            error?.response?.data || error
+         );
+      },
+   });
+};
+
+export const useGetMessagesByChannel = (channelId: string) => {
+   return useQuery({
+      queryKey: ["messages", channelId],
+      queryFn: () => getMessagesByChannel(channelId),
+      enabled: !!channelId,
+      retry: false,
+      onError: (error: any) => {
+         console.error(
+            "Error fetching messages:",
+            error?.response?.data || error
+         );
+      },
    });
 };

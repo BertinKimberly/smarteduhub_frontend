@@ -16,7 +16,7 @@ const PUBLIC_PATHS = [
    "/help-center",
    "/help-center/details",
    "/help-center/details/",
-   "/courses/", // This will match the base courses path
+   "/courses/", 
 ];
 const AUTH_PATHS = ["/login", "/register"];
 
@@ -35,6 +35,7 @@ const ROLE_HOME_PAGES = {
    student: "/student",
    parent: "/parent",
 };
+
 // Helper function to validate token
 function isValidToken(tokenValue: string) {
    try {
@@ -65,6 +66,11 @@ function matchesPath(pathname: string, pattern: string): boolean {
       return true;
    }
 
+   // Special handling for help-center detail pages
+   if (pathname.startsWith("/help-center/details/") && pathname.length > 21) {
+      return true;
+   }
+
    // Convert route pattern to regex
    const regexPattern = pattern
       .replace(/\/:slug/, "/[^/]+") // Convert :slug to regex
@@ -79,6 +85,11 @@ export async function middleware(request: NextRequest) {
 
    // Allow access to course detail pages regardless of auth status
    if (pathname.startsWith("/courses/") && pathname.length > 9) {
+      return NextResponse.next();
+   }
+
+   // Allow access to help-center detail pages regardless of auth status
+   if (pathname.startsWith("/help-center/details/") && pathname.length > 21) {
       return NextResponse.next();
    }
 

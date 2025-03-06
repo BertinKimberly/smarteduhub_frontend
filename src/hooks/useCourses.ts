@@ -2,6 +2,7 @@ import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Course, CourseFormData, Material } from "@/types/course";
+import React from "react";
 
 const getAllCourses = (): Promise<Course[]> => {
    return handleApiRequest(() => authorizedAPI.get("/courses"));
@@ -229,4 +230,27 @@ export const useGetRelatedCourses = (courseId: string) => {
       queryFn: () => getRelatedCourses(currentCourse as Course),
       enabled: !!currentCourse, // Only run when we have the current course data
    });
+};
+
+export const useGetAllCoursesWithEnrollment = () => {
+   const { data: allCourses, isLoading: isLoadingAll } = useGetAllCourses();
+   const { data: enrolledCourses, isLoading: isLoadingEnrolled } =
+      useGetEnrolledCourses();
+
+   const mergedCourses = React.useMemo(() => {
+      if (!allCourses) return [];
+
+      return allCourses.map((course) => ({
+         ...course,
+         isEnrolled:
+            enrolledCourses?.some((enrolled) => enrolled.id === course.id) ??
+            false,
+         materials: course.materials || [], // Ensure materials is always an array
+      }));
+   }, [allCourses, enrolledCourses]);
+
+   return {
+      data: mergedCourses,
+      isLoading: isLoadingAll || isLoadingEnrolled,
+   };
 };

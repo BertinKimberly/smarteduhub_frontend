@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import logo from "@/images/logo.svg";
@@ -11,7 +11,6 @@ import {
    ChartArea,
    House,
    LogOut,
-   Menu,
    MessageCircleCode,
    Settings,
    User,
@@ -29,17 +28,7 @@ interface SidebarProps {
 const DashboardSidebar = ({ role }: SidebarProps) => {
    const { user } = useAuthStore();
    const [isCollapsed, setIsCollapsed] = useState(false);
-   const [isMobile, setIsMobile] = useState(false);
    const pathname = usePathname();
-
-   useEffect(() => {
-      const handleResize = () => {
-         setIsMobile(window.innerWidth < 768);
-      };
-      window.addEventListener("resize", handleResize);
-      handleResize();
-      return () => window.removeEventListener("resize", handleResize);
-   }, []);
 
    const toggleSidebar = () => {
       setIsCollapsed(!isCollapsed);
@@ -65,7 +54,11 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          { icon: <House />, label: "Home", link: "/student" },
          { icon: <User />, label: "Profile", link: "/student/profile" },
          { icon: <Book />, label: "Courses", link: "/student/courses" },
-         { icon: <BookOpenCheck/>, label: "Enrolled Courses", link: "/student/enrolled-courses" },
+         {
+            icon: <BookOpenCheck />,
+            label: "Enrolled Courses",
+            link: "/student/enrolled-courses",
+         },
          { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
       ],
@@ -96,16 +89,18 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
 
    return (
       <div
-         className={`hidden sticky top-4 rounded-lg p-3 border border-main bg-white md:flex flex-col justify-between gap-6 ${
+         className={`hidden sticky top-0 rounded-lg p-3 border border-main bg-white md:flex flex-col justify-between gap-6 ${
             isCollapsed ? "w-fit" : "w-[240px]"
          } h-auto min-h-[400px] max-h-[90vh] overflow-y-auto`}
       >
+         {/* Toggle Button */}
          <button
             onClick={toggleSidebar}
-            className="mb-4 font-bold absolute -right-2 border border-main bg-white w-8 h-8 rounded-full z-30"
+            className="absolute -right-2 top-3 font-bold bg-white w-8 h-8 rounded-full border border-main hover:bg-background shadow-sm"
          >
             {isCollapsed ? ">" : "<"}
          </button>
+
          <Link
             className="flex gap-3 items-center justify-start"
             href="/"
@@ -137,24 +132,24 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          </div>
 
          <div>
-         <div className="py-4 flex items-center gap-2">
-            <div className="border h-8 w-8 rounded-full flex items-center justify-center p-1">
-               <User />
-            </div>
-            {!isCollapsed && (
-               <div className="flex flex-col">
-                  <small>{user?.name}</small>
-                  <small>{user?.email}</small>
+            <div className="py-4 flex items-center gap-2">
+               <div className="border h-8 w-8 rounded-full flex items-center justify-center p-1">
+                  <User />
                </div>
-            )}
-         </div>
-         <Link
-            className="flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-main hover:text-white"
-            href="/login"
-         >
-            <LogOut />
-            {!isCollapsed && <span>Logout</span>}
-         </Link>
+               {!isCollapsed && (
+                  <div className="flex flex-col">
+                     <small>{user?.name}</small>
+                     <small>{user?.email}</small>
+                  </div>
+               )}
+            </div>
+            <Link
+               className="flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-main hover:text-white"
+               href="/login"
+            >
+               <LogOut />
+               {!isCollapsed && <span>Logout</span>}
+            </Link>
          </div>
       </div>
    );

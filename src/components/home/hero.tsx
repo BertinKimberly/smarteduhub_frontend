@@ -42,21 +42,24 @@ export const HeroSection = () => {
                      parents, teachers, and administrators.
                   </p>
 
-                  <div className="flex flex-col sm:flex-row gap-4">
-                     <Button
-                        size="lg"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                     >
-                        Get Started <ArrowRight className="ml-2 h-4 w-4" />
-                     </Button>
-                     <Button
-                        size="lg"
-                        variant="outline"
-                        className="border-slate-300"
-                     >
-                        Learn More
-                     </Button>
-                  </div>
+                  <div className="flex gap-4 xl:gap-6">
+                 
+                    
+                        <Link href="/login">
+                           <Button className="bg-main rounded-full p-4 py-6 xl:px-16 px-8">
+                              Login
+                           </Button>
+                        </Link>
+                        <Link href="/register">
+                           <Button
+                              className="border border-main rounded-full p-4 py-6 xl:px-16 px-8"
+                              variant="outline"
+                           >
+                              Register
+                           </Button>
+                        </Link>
+                  
+               </div>
 
                   <div className="pt-6">
                      <div className="p-2 bg-white rounded-xl shadow-lg max-w-md">

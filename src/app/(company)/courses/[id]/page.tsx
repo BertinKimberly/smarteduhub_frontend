@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use client";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -505,7 +506,7 @@ const CourseDetail = () => {
                                     key={review.id}
                                     className="bg-white border border-gray-200 rounded-lg p-6"
                                  >
-                                    <div className="flex justify-between items-start mb-4">
+                                    <div className="flex justify-between items-start mb-4 ">
                                        <div className="flex items-center">
                                           <Avatar className="h-10 w-10 mr-4">
                                              <AvatarFallback>

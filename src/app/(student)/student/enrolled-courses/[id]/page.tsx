@@ -9,7 +9,9 @@ import {
    ChevronLeft,
    Download,
    Eye,
-   FileIcon
+   FileIcon,
+   Maximize2,
+   Minimize2,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,9 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import { useGetCourseById, useGetMaterials } from "@/hooks/useCourses";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import mammoth from "mammoth";
+import DocumentViewer from "@/components/DocumentViewer";
+import { CourseRatings } from "@/components/CourseRatings";
 
 const levelColorMap: Record<string, string> = {
    beginner: "bg-green-100 text-green-700 border-green-200",
@@ -33,30 +34,24 @@ const CourseDetailPage = () => {
    const router = useRouter();
    const courseId = params.id as string;
    const [activeTab, setActiveTab] = useState("overview");
-   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
-   const [docxContent, setDocxContent] = useState<string>("");
+   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(
+      null
+   );
+   const [isFullscreen, setIsFullscreen] = useState(false);
 
    const { data: course, isLoading, error } = useGetCourseById(courseId);
-   const { data: materials, isLoading: materialsLoading } = useGetMaterials(courseId);
+   const { data: materials, isLoading: materialsLoading } =
+      useGetMaterials(courseId);
 
    // Function to get file URL
    const getFileUrl = (filePath: string) => {
-      const cleanPath = filePath.replace(/^(uploads\/)?/, "");
+      // Remove any leading 'uploads/' since the API endpoint already includes it
+      const cleanPath = filePath.replace(/^uploads\//, "");
       return `${process.env.NEXT_PUBLIC_API_URL}/uploads/${cleanPath}`;
    };
 
-   // Add this new function to handle DOCX conversion
-   const handleDocxConversion = async (fileUrl: string) => {
-      try {
-         const response = await fetch(fileUrl);
-         const arrayBuffer = await response.arrayBuffer();
-         const result = await mammoth.convertToHtml({ arrayBuffer });
-         setDocxContent(result.value);
-      } catch (error) {
-         console.error("Error converting DOCX:", error);
-         setDocxContent("<p>Error loading document content</p>");
-      }
-   };
+   console.log("Course:", course);
+   console.log("Materials:", materials);
 
    // Render loading state
    if (isLoading) {
@@ -109,25 +104,19 @@ const CourseDetailPage = () => {
 
    // If a material is selected for viewing, show the PDF viewer
    if (selectedMaterialId && materials) {
-      const selectedMaterial = materials.find(m => m.id === selectedMaterialId);
+      const selectedMaterial = materials.find(
+         (m) => m.id === selectedMaterialId
+      );
       if (!selectedMaterial) return null;
-      
-      const fileUrl = getFileUrl(selectedMaterial.file_path);
-      const fileExtension = selectedMaterial.file_path.split(".").pop()?.toLowerCase();
-      
-      console.log("File URL:", getFileUrl(selectedMaterial.file_path));
 
-      // Use useEffect to handle DOCX conversion
-      React.useEffect(() => {
-         if (fileExtension === "docx") {
-            handleDocxConversion(fileUrl);
-         }
-      }, [selectedMaterialId]);
+      const fileUrl = getFileUrl(selectedMaterial.file_path);
 
       return (
          <div className="min-h-screen bg-gray-50 flex flex-col">
-            <DashboardNavbar title={selectedMaterial?.title || "View Material"} />
-            
+            <DashboardNavbar
+               title={selectedMaterial?.title || "View Material"}
+            />
+
             <div className="bg-white border-b">
                <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                   <Button
@@ -138,65 +127,38 @@ const CourseDetailPage = () => {
                      <ChevronLeft className="mr-2 h-4 w-4" />
                      Back to Course
                   </Button>
-                  
-                  {selectedMaterial && (
-                     <Button
-                        variant="outline"
-                        onClick={() => {
-                           window.open(fileUrl, "_blank");
-                        }}
-                     >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                     </Button>
-                  )}
-               </div>
-            </div>
-            
-            <div className="flex-1 flex items-center justify-center bg-gray-100">
-               <div className="w-full h-full max-w-6xl mx-auto p-6">
-                  {fileExtension === "pdf" ? (
-                     <div className="w-full h-[calc(100vh-180px)] bg-white rounded-lg shadow-sm overflow-hidden">
-                        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                           <Viewer
-                              fileUrl={fileUrl}
-                              defaultScale={1.2}
-                              requestHeaders={{
-                                 "Access-Control-Allow-Origin": "*"
-                              }}
-                              withCredentials={false}
-                           />
-                        </Worker>
-                     </div>
-                  ) : ["jpg", "jpeg", "png", "gif"].includes(fileExtension || "") ? (
-                     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm">
-                        <img 
-                           src={fileUrl} 
-                           alt={selectedMaterial.title} 
-                           className="max-w-full h-auto"
-                        />
-                     </div>
-                  ) : fileExtension === "docx" ? (
-                     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm">
-                        <div 
-                           className="prose max-w-full" 
-                           dangerouslySetInnerHTML={{ __html: docxContent }}
-                        />
-                     </div>
-                  ) : (
-                     <div className="p-8 text-center bg-white rounded-lg shadow-sm">
-                        <FileIcon className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                        <h3 className="text-xl font-medium mb-2">Cannot Preview This File Type</h3>
-                        <p className="text-gray-500 mb-6">This file type cannot be previewed in the browser.</p>
-                        <Button 
-                           onClick={() => window.open(fileUrl, "_blank")} 
-                           size="lg"
+
+                  {!isFullscreen && (
+                     <div className="flex items-center gap-2">
+                        <Button
+                           variant="outline"
+                           size="icon"
+                           onClick={() => setIsFullscreen(true)}
+                           className="bg-white shadow-sm hover:bg-gray-100"
+                        >
+                           <Maximize2 className="h-4 w-4 text-gray-700" />
+                        </Button>
+                        <Button
+                           variant="outline"
+                           onClick={() => window.open(fileUrl, "_blank")}
                         >
                            <Download className="h-4 w-4 mr-2" />
-                           Download to View
+                           Download
                         </Button>
                      </div>
                   )}
+               </div>
+            </div>
+
+            <div className="flex-1 flex items-stretch justify-center bg-gray-100">
+               <div className="w-full max-w-6xl mx-auto p-6">
+                  <div className="w-full h-[calc(100vh-180px)] bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+                     <DocumentViewer
+                        fileUrl={fileUrl}
+                        isFullscreen={isFullscreen}
+                        onToggleFullscreen={() => setIsFullscreen(false)}
+                     />
+                  </div>
                </div>
             </div>
          </div>
@@ -232,9 +194,6 @@ const CourseDetailPage = () => {
                         <Badge
                            variant="outline"
                            className={`font-medium ${levelClass} border-opacity-50`}
-                        <Badge
-                           variant="outline"
-                           className="bg-white/10 text-white border-white/20"
                         >
                            {course.category}
                         </Badge>
@@ -270,6 +229,7 @@ const CourseDetailPage = () => {
                <TabsList className="mb-6 bg-white">
                   <TabsTrigger value="overview">Course Overview</TabsTrigger>
                   <TabsTrigger value="materials">Course Materials</TabsTrigger>
+                  <TabsTrigger value="ratings">Ratings & Reviews</TabsTrigger>
                </TabsList>
 
                <TabsContent
@@ -308,7 +268,7 @@ const CourseDetailPage = () => {
                   {/* Custom Material Cards with Simple Viewer Integration */}
                   <div className="space-y-4">
                      <h3 className="text-lg font-semibold">Course Materials</h3>
-                     
+
                      {materialsLoading ? (
                         <div className="text-center py-8">
                            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
@@ -317,22 +277,31 @@ const CourseDetailPage = () => {
                      ) : materials && materials.length > 0 ? (
                         <div className="grid gap-4">
                            {materials.map((material) => (
-                              <Card key={material.id} className="hover:shadow-md transition-shadow">
+                              <Card
+                                 key={material.id}
+                                 className="hover:shadow-md transition-shadow"
+                              >
                                  <CardContent className="flex items-center justify-between p-4">
                                     <div className="flex items-center gap-3">
                                        <div className="bg-blue-100 p-2 rounded">
                                           <FileIcon className="h-5 w-5 text-blue-600" />
                                        </div>
                                        <div>
-                                          <h4 className="font-medium">{material.title}</h4>
+                                          <h4 className="font-medium">
+                                             {material.title}
+                                          </h4>
                                           <p className="text-sm text-gray-500">
-                                             {material.file_path.split("/").pop()}
+                                             {material.file_path
+                                                .split("/")
+                                                .pop()}
                                           </p>
                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                       <Button 
-                                          onClick={() => setSelectedMaterialId(material.id)}
+                                       <Button
+                                          onClick={() =>
+                                             setSelectedMaterialId(material.id)
+                                          }
                                           variant="default"
                                        >
                                           <Eye className="h-4 w-4 mr-2" />
@@ -341,7 +310,9 @@ const CourseDetailPage = () => {
                                        <Button
                                           variant="outline"
                                           onClick={() => {
-                                             const url = getFileUrl(material.file_path);
+                                             const url = getFileUrl(
+                                                material.file_path
+                                             );
                                              window.open(url, "_blank");
                                           }}
                                        >
@@ -359,6 +330,13 @@ const CourseDetailPage = () => {
                         </p>
                      )}
                   </div>
+               </TabsContent>
+
+               <TabsContent
+                  value="ratings"
+                  className="bg-white rounded-lg shadow-sm p-6"
+               >
+                  <CourseRatings courseId={courseId} />
                </TabsContent>
             </Tabs>
          </div>

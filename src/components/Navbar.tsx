@@ -122,7 +122,7 @@ const Navbar = () => {
                {/* Desktop Call-to-Action Buttons */}
                <div className="hidden md:flex gap-4 xl:gap-6">
                   {isAuthenticated ? (
-                     <Link href="/dashboard">
+                     <Link href="/student">
                         <Button className="bg-main rounded-full p-4 py-6 px-8">
                            Dashboard
                         </Button>

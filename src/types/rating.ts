@@ -17,3 +17,19 @@ export interface RatingCreate {
    rating: number;
    feedback?: string;
 }
+
+export interface RatingStats {
+   averageRating: number;
+   totalRatings: number;
+   ratingDistribution: {
+      [key: number]: number; // key is 1-5, value is count
+   };
+}
+
+export interface RatingWithFeedback extends Rating {
+   student: {
+      name: string;
+      avatar?: string;
+   };
+   created_at: string;
+}

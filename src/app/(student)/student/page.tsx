@@ -36,7 +36,7 @@ const cardData = [
 ];
 const StudentHome = () => {
    return (
-      <div className="p-3">
+      <div>
          <DashboardNavbar title="Dashboard" />
          <div className="flex flex-col gap-2 w-[40%] my-6">
             <h4>Curriculum Progress</h4>

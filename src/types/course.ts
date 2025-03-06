@@ -14,20 +14,21 @@ export interface Course {
    title: string;
    description: string | null;
    long_description: string | null;
-   prerequisites: string | null;
+   prerequisites: string[] | null;
    category: string;
    level: string;
    created_at: string;
    teacher: User;
    materials: Material[];
    ratings: Rating[];
+   isEnrolled?: boolean;
 }
 
 export interface CourseFormData {
    title: string;
    description?: string;
    long_description?: string;
-   prerequisites?: string;
+   prerequisites?: string[];
    category: string;
    level: string;
 }
