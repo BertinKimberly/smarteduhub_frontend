@@ -1,4 +1,3 @@
-//@ts-nocheck
 "use client";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -35,6 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-toastify";
+import { formatDistanceToNow } from "date-fns";
 
 const CourseDetail = () => {
    const params = useParams();
@@ -160,9 +160,7 @@ const CourseDetail = () => {
    );
 
    // Split prerequisites into array if it exists
-   const prerequisitesList = course.prerequisites
-      ? course.prerequisites.split("\n")
-      : [];
+   const prerequisitesList = course.prerequisites ? course.prerequisites : [];
 
    return (
       <>
@@ -334,7 +332,6 @@ const CourseDetail = () => {
                            </p>
                         </div>
 
-               
                         <div>
                            <h2 className="text-2xl font-bold text-gray-900 mb-4">
                               Prerequisites
@@ -388,7 +385,6 @@ const CourseDetail = () => {
                                        <span>18,430 Students</span>
                                     </div>
                                  </div>
-
                               </div>
                            </div>
                         </div>
@@ -501,26 +497,32 @@ const CourseDetail = () => {
                            </div>
 
                            <div className="space-y-6">
-                              {course.ratings?.map((review: any) => (
+                              {course.ratings?.map((review) => (
                                  <div
                                     key={review.id}
                                     className="bg-white border border-gray-200 rounded-lg p-6"
                                  >
-                                    <div className="flex justify-between items-start mb-4 ">
+                                    <div className="flex justify-between items-start mb-4">
                                        <div className="flex items-center">
                                           <Avatar className="h-10 w-10 mr-4">
                                              <AvatarFallback>
-                                                {review.user.charAt(0)}
+                                                {review.student?.name?.charAt(
+                                                   0
+                                                ) || "U"}
                                              </AvatarFallback>
                                           </Avatar>
                                           <div>
                                              <h4 className="font-medium text-gray-900">
-                                                {review.user}
+                                                {review.student?.name ||
+                                                   "Anonymous User"}
                                              </h4>
                                              <p className="text-sm text-gray-500">
-                                                {new Date(
-                                                   review.date
-                                                ).toLocaleDateString()}
+                                                {formatDistanceToNow(
+                                                   new Date(review.created_at),
+                                                   {
+                                                      addSuffix: true,
+                                                   }
+                                                )}
                                              </p>
                                           </div>
                                        </div>
@@ -537,12 +539,27 @@ const CourseDetail = () => {
                                           ))}
                                        </div>
                                     </div>
-                                    <p className="text-gray-700">
-                                       {review.comment}
-                                    </p>
+                                    {review.feedback && (
+                                       <p className="text-gray-700">
+                                          {review.feedback}
+                                       </p>
+                                    )}
                                  </div>
                               ))}
                            </div>
+
+                           {(!course.ratings ||
+                              course.ratings.length === 0) && (
+                              <div className="text-center py-8 bg-gray-50 rounded-lg">
+                                 <Star className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    No reviews yet
+                                 </h3>
+                                 <p className="text-gray-500">
+                                    Be the first to review this course!
+                                 </p>
+                              </div>
+                           )}
 
                            <div className="flex justify-center mt-8">
                               <Button

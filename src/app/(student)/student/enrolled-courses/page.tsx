@@ -51,7 +51,9 @@ const categoryIconMap: Record<string, React.ReactNode> = {
    history: <Clock className="h-4 w-4" />,
 };
 
-const EnrolledCourseCard: React.FC<{ course: CourseData }> = ({ course }) => {
+export const EnrolledCourseCard: React.FC<{ course: CourseData }> = ({
+   course,
+}) => {
    const link = `/student/enrolled-courses/${course.id}`;
 
    // Default category if not found

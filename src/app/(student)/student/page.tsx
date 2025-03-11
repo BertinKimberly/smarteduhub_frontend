@@ -1,12 +1,15 @@
+"use client";
 import { AssignmentChart } from "@/components/AssignmentChart";
 import CustomCard from "@/components/CustomCard";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import { StudentBarChart } from "@/components/StudentBarChart";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Book, Pen, Star, Users } from "lucide-react";
+import { Book, Pen, Star, Users, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { EnrolledCourseCard } from "@/app/(student)/student/enrolled-courses/page";
+import { useGetEnrolledCourses } from "@/hooks/useCourses";
 
 const cardData = [
    {
@@ -34,7 +37,13 @@ const cardData = [
       color: "#311D4A",
    },
 ];
+
 const StudentHome = () => {
+   const { data: courses, isLoading, error } = useGetEnrolledCourses();
+
+   // Take only first 3 courses for preview
+   const previewCourses = courses?.slice(0, 3) || [];
+
    return (
       <div>
          <DashboardNavbar title="Dashboard" />
@@ -77,9 +86,50 @@ const StudentHome = () => {
 
          {/* enrolled courses  */}
          <section className="my-6">
-          <div className="flex items-center justify-between w-full my-4"><h3>Enrolled Courses</h3> <Button className="text-main" variant="outline">View All</Button></div>
-            
+            <div className="flex items-center justify-between w-full my-4">
+               <h3>Enrolled Courses</h3>
+               <Link href="/student/enrolled-courses">
+                  <Button
+                     className="text-main"
+                     variant="outline"
+                  >
+                     View All
+                  </Button>
+               </Link>
+            </div>
+
             {/* courses  */}
+            <div className="flex flex-wrap -mx-4">
+               {isLoading ? (
+                  <div className="w-full flex items-center justify-center py-12">
+                     <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                     <span className="ml-3 text-gray-600">
+                        Loading courses...
+                     </span>
+                  </div>
+               ) : error ? (
+                  <div className="w-full text-center py-12 text-gray-500">
+                     Failed to load courses. Please try again later.
+                  </div>
+               ) : previewCourses.length === 0 ? (
+                  <div className="w-full text-center py-12 text-gray-500">
+                     No courses enrolled yet.
+                     <Link
+                        href="/courses"
+                        className="block mt-2 text-main hover:underline"
+                     >
+                        Browse Available Courses
+                     </Link>
+                  </div>
+               ) : (
+                  previewCourses.map((course) => (
+                     <EnrolledCourseCard
+                        key={course.id}
+                        course={course}
+                     />
+                  ))
+               )}
+            </div>
          </section>
       </div>
    );

@@ -34,6 +34,7 @@ import {
    useContext,
    useMemo,
    useState,
+   useEffect,
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -581,10 +582,20 @@ CalendarTodayTrigger.displayName = "CalendarTodayTrigger";
 
 const CalendarCurrentDate = () => {
    const { date, view } = useCalendar();
+   const [mounted, setMounted] = useState(false);
+
+   useEffect(() => {
+      setMounted(true);
+   }, []);
+
+   if (!mounted) {
+      return null; // Return null on server-side
+   }
 
    return (
       <time
          dateTime={date.toISOString()}
+         suppressHydrationWarning
          className="tabular-nums"
       >
          {format(date, view === "day" ? "dd MMMM yyyy" : "MMMM yyyy")}

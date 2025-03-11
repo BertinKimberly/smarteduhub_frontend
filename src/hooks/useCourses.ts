@@ -12,6 +12,13 @@ const createCourse = (data: CourseFormData): Promise<Course> => {
    const formData = new FormData();
    formData.append("title", data.title);
    formData.append("description", data.description || "");
+   formData.append("long_description", data.long_description || "");
+
+   // Handle prerequisites as JSON string if present
+   if (data.prerequisites && data.prerequisites.length > 0) {
+      formData.append("prerequisites", JSON.stringify(data.prerequisites));
+   }
+
    formData.append("category", data.category);
    formData.append("level", data.level);
    if (data.file) {
@@ -34,7 +41,15 @@ const updateCourse = ({
    data: CourseFormData;
    id: string;
 }): Promise<Course> => {
-   return handleApiRequest(() => authorizedAPI.put(`/courses/${id}`, data));
+   // Make sure prerequisites is properly formatted
+   const courseData = {
+      ...data,
+      prerequisites: data.prerequisites || null,
+   };
+
+   return handleApiRequest(() =>
+      authorizedAPI.put(`/courses/${id}`, courseData)
+   );
 };
 
 const getCourseById = ({

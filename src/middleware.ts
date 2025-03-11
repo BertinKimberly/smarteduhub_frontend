@@ -8,24 +8,23 @@ interface CustomJwtPayload {
    role?: string;
 }
 
+// Define public paths that should be accessible without authentication
 const PUBLIC_PATHS = [
    "/",
    "/about",
    "/contact",
    "/courses",
    "/help-center",
-   "/help-center/details",
-   "/help-center/details/",
-   "/courses/", 
+   "/login",
+   "/register",
 ];
-const AUTH_PATHS = ["/login", "/register"];
 
 // Define role-based path patterns
 const ROLE_PATHS = {
-   admin: ["/admin", "/admin"],
-   teacher: ["/teacher", "/teacher"],
-   student: ["/student", "/student"],
-   parent: ["/parent", "/parent"],
+   admin: ["/admin"],
+   teacher: ["/teacher"],
+   student: ["/student"],
+   parent: ["/parent"],
 };
 
 // Define role-specific home pages
@@ -36,119 +35,61 @@ const ROLE_HOME_PAGES = {
    parent: "/parent",
 };
 
-// Helper function to validate token
-function isValidToken(tokenValue: string) {
-   try {
-      // Attempt to decode the token to validate it
-      const decoded = jwtDecode<CustomJwtPayload>(tokenValue);
+// Simple function to check if a path should be publicly accessible
+function isPublicPath(pathname: string): boolean {
+   // Check exact matches first
+   if (PUBLIC_PATHS.includes(pathname)) return true;
 
-      // Check if token has expired
-      const currentTime = Date.now() / 1000;
-      if (decoded.exp && decoded.exp < currentTime) {
-         return false;
-      }
+   // Check for dynamic routes
+   if (pathname.startsWith("/courses/")) return true;
+   if (pathname.startsWith("/help-center/details/")) return true;
 
-      // Check if it has required fields
-      if (!decoded.role) {
-         return false;
-      }
-
-      return true;
-   } catch (error) {
-      return false;
-   }
-}
-
-// Helper function to check if path matches pattern
-function matchesPath(pathname: string, pattern: string): boolean {
-   // Special handling for course detail pages
-   if (pathname.startsWith("/courses/") && pathname.length > 9) {
-      return true;
-   }
-
-   // Special handling for help-center detail pages
-   if (pathname.startsWith("/help-center/details/") && pathname.length > 21) {
-      return true;
-   }
-
-   // Convert route pattern to regex
-   const regexPattern = pattern
-      .replace(/\/:slug/, "/[^/]+") // Convert :slug to regex
-      .replace(/\*\*/, ".*"); // Convert ** to regex
-   const regex = new RegExp(`^${regexPattern}`);
-   return regex.test(pathname);
+   return false;
 }
 
 export async function middleware(request: NextRequest) {
-   const token = request.cookies.get("access_token");
    const { pathname } = request.nextUrl;
 
-   // Allow access to course detail pages regardless of auth status
-   if (pathname.startsWith("/courses/") && pathname.length > 9) {
+   // 1. Always allow public paths without any other checks
+   if (isPublicPath(pathname)) {
       return NextResponse.next();
    }
 
-   // Allow access to help-center detail pages regardless of auth status
-   if (pathname.startsWith("/help-center/details/") && pathname.length > 21) {
-      return NextResponse.next();
-   }
+   // 2. Get the token
+   const token = request.cookies.get("access_token");
 
-   // Allow public paths for all users
-   if (PUBLIC_PATHS.some((pattern) => matchesPath(pathname, pattern))) {
-      return NextResponse.next();
-   }
-
-   // Allow access to auth paths without token validation
-   if (AUTH_PATHS.includes(pathname)) {
-      // Only redirect if token is valid
-      if (token && isValidToken(token.value)) {
-         try {
-            const decodedToken: any = jwtDecode(token.value);
-            const homePage =
-               ROLE_HOME_PAGES[
-                  decodedToken.role as keyof typeof ROLE_HOME_PAGES
-               ];
-            return NextResponse.redirect(new URL(homePage, request.url));
-         } catch (error) {
-            // If there's an error decoding, allow access to login/register
-            return NextResponse.next();
-         }
-      }
-      // If no token or invalid token, allow access to auth pages
-      return NextResponse.next();
-   }
-
-   // For protected routes, check if token exists and is valid
-   if (!token || !isValidToken(token.value)) {
+   // 3. If no token, redirect to login for non-public paths
+   if (!token) {
       const redirectUrl = new URL("/login", request.url);
       redirectUrl.searchParams.set("redirectUrl", pathname);
       return NextResponse.redirect(redirectUrl);
    }
 
+   // 4. Validate token and handle role-based access
    try {
-      const decodedToken: any = jwtDecode(token.value);
-      const userRole = decodedToken.role;
+      const decoded = jwtDecode<CustomJwtPayload>(token.value);
 
-      // Check if user is accessing their allowed paths
-      const isAccessingOwnRole = ROLE_PATHS[
-         userRole as keyof typeof ROLE_PATHS
-      ].some((path) => pathname.startsWith(path));
-
-      // Check if user is accessing other role paths
-      const isAccessingOtherRoles = Object.entries(ROLE_PATHS)
-         .filter(([role]) => role !== userRole)
-         .some(([_, paths]) => paths.some((path) => pathname.startsWith(path)));
-
-      // If trying to access other role paths, redirect to their own dashboard
-      if (isAccessingOtherRoles || !isAccessingOwnRole) {
-         const homePage =
-            ROLE_HOME_PAGES[userRole as keyof typeof ROLE_HOME_PAGES];
-         return NextResponse.redirect(new URL(homePage, request.url));
+      if (!decoded.role || !decoded.exp || decoded.exp < Date.now() / 1000) {
+         throw new Error("Invalid token");
       }
 
-      return NextResponse.next();
+      const userRole = decoded.role;
+      const userRolePaths =
+         ROLE_PATHS[userRole as keyof typeof ROLE_PATHS] || [];
+
+      // Check if user is accessing their role-specific paths
+      if (userRolePaths.some((path) => pathname.startsWith(path))) {
+         return NextResponse.next();
+      }
+
+      // Redirect to role-specific homepage if accessing unauthorized paths
+      return NextResponse.redirect(
+         new URL(
+            ROLE_HOME_PAGES[userRole as keyof typeof ROLE_HOME_PAGES],
+            request.url
+         )
+      );
    } catch (error) {
-      // Clear the invalid token cookie
       const response = NextResponse.redirect(new URL("/login", request.url));
       response.cookies.delete("access_token");
       return response;

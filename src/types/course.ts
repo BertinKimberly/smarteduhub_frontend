@@ -9,6 +9,13 @@ export interface Material {
    created_at: string;
 }
 
+export interface Enrollment {
+   id: string;
+   student_id: string;
+   course_id: string;
+   created_at: string;
+}
+
 export interface Course {
    id: string;
    title: string;
@@ -22,6 +29,8 @@ export interface Course {
    materials: Material[];
    ratings: Rating[];
    isEnrolled?: boolean;
+   enrollments: Enrollment[];
+   duration?: string;
 }
 
 export interface CourseFormData {
