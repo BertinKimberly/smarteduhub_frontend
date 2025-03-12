@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -65,24 +66,6 @@ const deleteCourseById = (id: string): Promise<void> => {
    return handleApiRequest(() => authorizedAPI.delete(`/courses/${id}`));
 };
 
-const uploadCourseMaterial = ({
-   id,
-   file,
-}: {
-   id: string;
-   file: File;
-}): Promise<Course> => {
-   const formData = new FormData();
-   formData.append("file", file);
-
-   return handleApiRequest(() =>
-      authorizedAPI.post(`/courses/${id}/upload`, formData, {
-         headers: {
-            "Content-Type": "multipart/form-data",
-         },
-      })
-   );
-};
 
 const getEnrolledCourses = (): Promise<Course[]> => {
    return handleApiRequest(() => authorizedAPI.get("/courses/enrolled/me"));

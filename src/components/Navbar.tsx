@@ -9,7 +9,12 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 const Navbar = () => {
    const [isMenuOpen, setIsMenuOpen] = useState(false);
-   const { isAuthenticated } = useAuthStore();
+   const { isAuthenticated, user } = useAuthStore();
+
+   const getDashboardLink = () => {
+      if (!user?.role) return "/";
+      return `/${user.role.toLowerCase()}`;
+   };
 
    return (
       <>
@@ -92,7 +97,7 @@ const Navbar = () => {
                         </Link>
                         <div className="flex w-full gap-2 items-center justify-center">
                            {isAuthenticated ? (
-                              <Link href="/dashboard">
+                              <Link href={getDashboardLink()}>
                                  <Button className="bg-main rounded-full p-4 py-6 px-8">
                                     Dashboard
                                  </Button>
@@ -122,7 +127,7 @@ const Navbar = () => {
                {/* Desktop Call-to-Action Buttons */}
                <div className="hidden md:flex gap-4 xl:gap-6">
                   {isAuthenticated ? (
-                     <Link href="/student">
+                     <Link href={getDashboardLink()}>
                         <Button className="bg-main rounded-full p-4 py-6 px-8">
                            Dashboard
                         </Button>

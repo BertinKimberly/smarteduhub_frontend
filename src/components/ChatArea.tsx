@@ -109,7 +109,7 @@ const DateSeparator = ({ date }) => {
 };
 
 // Helper function to get day suffix (st, nd, rd, th)
-const getDaySuffix = (day) => {
+const getDaySuffix = (day: number): string => {
    if (day > 3 && day < 21) return "th";
    switch (day % 10) {
       case 1:
@@ -123,7 +123,15 @@ const getDaySuffix = (day) => {
    }
 };
 
-const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
+const MessageBubble = ({
+   message,
+   isOwnMessage,
+   showName = true,
+}: {
+   message: Message;
+   isOwnMessage: boolean;
+   showName?: boolean;
+}) => {
    const [isEditing, setIsEditing] = useState(false);
    const [editedMessage, setEditedMessage] = useState(message.message);
    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -135,13 +143,50 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
    const { mutate: addReaction } = useAddReaction();
    const { mutate: addDMReaction } = useAddDMReaction();
 
+   const formatFileSize = (bytes: number) => {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      else if (bytes < 1024 * 1024 * 1024)
+         return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+      else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + " GB";
+   };
+
+   const truncateFilename = (filename: string, maxLength: number = 20) => {
+      if (filename.length <= maxLength) return filename;
+
+      const extension =
+         filename.lastIndexOf(".") > 0
+            ? filename.slice(filename.lastIndexOf("."))
+            : "";
+      const nameWithoutExt = filename.slice(
+         0,
+         filename.lastIndexOf(".") > 0
+            ? filename.lastIndexOf(".")
+            : filename.length
+      );
+
+      if (nameWithoutExt.length <= maxLength - 3 - extension.length)
+         return filename;
+
+      return (
+         nameWithoutExt.slice(0, maxLength - 3 - extension.length) +
+         "..." +
+         extension
+      );
+   };
+
    const handleEdit = () => {
+      if (!user?.id) {
+         toast.error("You must be logged in to edit messages");
+         return;
+      }
+
       const editFn = message.channel_id ? editMessage : editDM;
       editFn(
          {
             messageId: message.id,
             message: editedMessage,
-            userId: user?.id,
+            userId: user.id,
          },
          {
             onSuccess: () => {
@@ -156,11 +201,16 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
    };
 
    const handleDelete = () => {
+      if (!user?.id) {
+         toast.error("You must be logged in to delete messages");
+         return;
+      }
+
       const deleteFn = message.channel_id ? deleteMessage : deleteDM;
       deleteFn(
          {
             messageId: message.id,
-            userId: user?.id,
+            userId: user.id,
          },
          {
             onSuccess: () => {
@@ -174,12 +224,17 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
    };
 
    const handleReaction = (emoji: string) => {
+      if (!user?.id) {
+         toast.error("You must be logged in to add reactions");
+         return;
+      }
+
       const reactionFn = message.channel_id ? addReaction : addDMReaction;
       reactionFn(
          {
             messageId: message.id,
             emoji,
-            userId: user?.id,
+            userId: user.id,
          },
          {
             onSuccess: () => {
@@ -196,16 +251,20 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
       <div
          className={`flex flex-col ${
             isOwnMessage ? "items-end" : "items-start"
-         }`}
+         } w-full`}
       >
          {showName && !isOwnMessage && (
             <span className="text-xs text-muted-foreground ml-2 mb-1">
                {message.user?.name || "Unknown User"}
             </span>
          )}
-         <div className="flex items-start gap-2">
+         <div
+            className={`flex items-start gap-2 max-w-full ${
+               isOwnMessage ? "justify-end" : "justify-start"
+            }`}
+         >
             <div
-               className={`relative rounded-lg px-4 py-2 max-w-[70%] shadow-sm ${
+               className={`relative rounded-lg px-4 py-2 max-w-[85%] shadow-sm ${
                   isOwnMessage ? "bg-main text-white" : "bg-background"
                }`}
             >
@@ -234,23 +293,64 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
                   </div>
                ) : (
                   <>
-                     <p className="break-words">{message.message}</p>
-                     {message.file_attachments?.map((file, index) => (
-                        <div
-                           key={index}
-                           className="mt-2"
-                        >
-                           <a
-                              href={file.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-500 hover:underline flex items-center gap-2"
+                     {message.message && (
+                        <p className="break-words">{message.message}</p>
+                     )}
+                     {message.file_attachments &&
+                        message.file_attachments.length > 0 && (
+                           <div
+                              className={`${
+                                 message.message ? "mt-2" : ""
+                              } space-y-2`}
                            >
-                              <File className="h-4 w-4" />
-                              {file.filename}
-                           </a>
-                        </div>
-                     ))}
+                              {message.file_attachments.map((file, index) => (
+                                 <div
+                                    key={index}
+                                    className="w-full"
+                                 >
+                                    {file.is_image ? (
+                                       <div className="relative">
+                                          <img
+                                             src={`http://127.0.0.1:8000${file.url}`}
+                                             alt={file.filename}
+                                             className="max-w-full rounded-lg max-h-[300px] object-contain"
+                                          />
+                                          <a
+                                             href={`http://127.0.0.1:8000${file.url}`}
+                                             download={file.filename}
+                                             className="absolute bottom-2 right-2 bg-black/50 text-white rounded-lg px-2 py-1 text-xs hover:bg-black/70 transition-colors"
+                                             title={file.filename}
+                                          >
+                                             Download
+                                          </a>
+                                       </div>
+                                    ) : (
+                                       <a
+                                          href={`http://127.0.0.1:8000${file.url}`}
+                                          download={file.filename}
+                                          className="text-sm hover:underline flex items-center gap-2 bg-black/10 rounded-lg px-3 py-2 w-full"
+                                          title={file.filename}
+                                       >
+                                          <File className="h-4 w-4 flex-shrink-0" />
+                                          <div className="flex flex-col overflow-hidden">
+                                             <span
+                                                className="font-medium truncate"
+                                                title={file.filename}
+                                             >
+                                                {truncateFilename(
+                                                   file.filename
+                                                )}
+                                             </span>
+                                             <span className="text-xs opacity-70">
+                                                {formatFileSize(file.file_size)}
+                                             </span>
+                                          </div>
+                                       </a>
+                                    )}
+                                 </div>
+                              ))}
+                           </div>
+                        )}
                      <span className="block mt-1 text-xs opacity-70">
                         {new Date(message.timestamp).toLocaleTimeString([], {
                            hour: "2-digit",
@@ -270,7 +370,7 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
                   <Button
                      variant="ghost"
                      size="icon"
-                     className="h-8 w-8"
+                     className="h-8 w-8 flex-shrink-0"
                   >
                      <MoreVertical className="h-4 w-4" />
                   </Button>
@@ -302,8 +402,12 @@ const MessageBubble = ({ message, isOwnMessage, showName = true }) => {
                </DropdownMenuContent>
             </DropdownMenu>
          </div>
-         {message.reactions?.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1 ml-2">
+         {message.reactions && message.reactions.length > 0 && (
+            <div
+               className={`flex flex-wrap gap-1 mt-1 ${
+                  isOwnMessage ? "mr-2" : "ml-2"
+               }`}
+            >
                {message.reactions.map((reaction, index) => (
                   <div
                      key={index}
@@ -863,7 +967,10 @@ const ChatArea = () => {
                </div>
             </div>
          </ResizablePanel>
-         <Dialog open={isCreateChannelOpen} onOpenChange={setIsCreateChannelOpen}>
+         <Dialog
+            open={isCreateChannelOpen}
+            onOpenChange={setIsCreateChannelOpen}
+         >
             <DialogContent>
                <DialogHeader>
                   <DialogTitle>Create New Channel</DialogTitle>
@@ -880,7 +987,10 @@ const ChatArea = () => {
                   </div>
                </div>
                <DialogFooter>
-                  <Button onClick={() => setIsCreateChannelOpen(false)} variant="outline">
+                  <Button
+                     onClick={() => setIsCreateChannelOpen(false)}
+                     variant="outline"
+                  >
                      Cancel
                   </Button>
                   <Button onClick={handleCreateChannel}>Create Channel</Button>
