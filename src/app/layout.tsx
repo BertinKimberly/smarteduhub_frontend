@@ -43,7 +43,7 @@ export default function RootLayout({
                </ReactQueryProvider>
             </AuthProvider>
             <ToastContainer
-               progressStyle={{ background: "#001544" }}
+               progressClassName="bg-darkBlue"
                icon={false}
                hideProgressBar={true}
                autoClose={3000}

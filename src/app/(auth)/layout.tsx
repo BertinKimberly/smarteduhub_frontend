@@ -7,7 +7,7 @@ import dot from "../../../public/images/dot.png";
 const AuthLayout = ({ children }: { children: ReactNode }) => {
    return (
       <div className="w-full min-h-screen flex items-center justify-center">
-         <div className="px-2 w-[98%] sm:container mx-auto relative z-10">{children}</div>
+         <div className="px-2 w-[98%] sm:container mx-auto relative z-10 flex items-center justify-center">{children}</div>
          <div className="fixed bottom-0 right-0 z-10 pointer-events-none">
             <div className="relative hidden md:block">
                <Image

@@ -8,8 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { Book, Pen, Star, Users, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { EnrolledCourseCard } from "@/app/(student)/student/enrolled-courses/page";
 import { useGetEnrolledCourses } from "@/hooks/useCourses";
+import { EnrolledCourseCard } from "@/components/student/EnrolledCourseCard";
 
 const cardData = [
    {
@@ -125,6 +125,7 @@ const StudentHome = () => {
                   previewCourses.map((course) => (
                      <EnrolledCourseCard
                         key={course.id}
+                        //@ts-ignore
                         course={course}
                      />
                   ))

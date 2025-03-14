@@ -5,7 +5,7 @@ import {
    Phone,
    MapPin,
    Calendar,
-   User,
+   UserCircle,
    Book,
    Activity,
 } from "lucide-react";
@@ -14,6 +14,7 @@ import { useState } from "react";
 import DashboardNavbar from "@/components/DashboardNavbar";
 import { useProfile, useUpdateProfile } from "@/hooks/useAuth";
 import { toast } from "react-toastify";
+import { User } from "@/types/user";
 
 const ProfilePage = () => {
    const { user } = useAuthStore();
@@ -21,15 +22,15 @@ const ProfilePage = () => {
    const { data: profileData, isLoading } = useProfile();
    const updateProfileMutation = useUpdateProfile();
 
-   const handleUpdateProfile = async (data: Partial<typeof user>) => {
+   const handleUpdateProfile = async (data: Partial<User>) => {
       try {
          await updateProfileMutation.mutateAsync({
             ...data,
             // Ensure null values are sent as empty strings if they're required
-            username: data.username || "",
-            phone: data.phone || "",
-            country: data.country || "",
-            field_of_study: data.field_of_study || "",
+            username: data?.username ?? "",
+            phone: data?.phone ?? "",
+            country: data?.country ?? "",
+            field_of_study: data?.field_of_study ?? "",
          });
          setIsEditing(false);
          toast.success("Profile updated successfully");
@@ -87,7 +88,7 @@ const ProfilePage = () => {
                                     {profileData?.name ? (
                                        getInitials(profileData.name)
                                     ) : (
-                                       <User
+                                       <UserCircle
                                           size={40}
                                           className="text-main"
                                        />
@@ -104,7 +105,7 @@ const ProfilePage = () => {
                                        onClick={() => setIsEditing(!isEditing)}
                                        className="mt-2 bg-main hover:bg-main/90 transition-colors text-white px-4 py-1.5 rounded-full text-sm flex items-center gap-2"
                                     >
-                                       <User size={14} />
+                                       <UserCircle size={14} />
                                        {isEditing ? "Cancel" : "Edit Profile"}
                                     </button>
                                  </div>
@@ -113,7 +114,7 @@ const ProfilePage = () => {
 
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                               <div className="flex items-center gap-3">
-                                 <User className="text-main" />
+                                 <UserCircle className="text-main" />
                                  <div>
                                     <p className="text-sm text-gray-500">
                                        Username

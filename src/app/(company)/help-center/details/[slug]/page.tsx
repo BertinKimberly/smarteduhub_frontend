@@ -196,7 +196,7 @@ const HelpCenterDetail = () => {
 
                               {section.type === "steps" && (
                                  <ol className="list-decimal pl-6 space-y-2">
-                                    {section.items.map((item, i) => (
+                                    {section.items?.map((item, i) => (
                                        <li
                                           key={i}
                                           className="text-gray-700 pl-2"
@@ -209,7 +209,7 @@ const HelpCenterDetail = () => {
 
                               {section.type === "list" && (
                                  <ul className="list-disc pl-6 space-y-2">
-                                    {section.items.map((item, i) => (
+                                    {section.items?.map((item, i) => (
                                        <li
                                           key={i}
                                           className="text-gray-700 pl-2"

@@ -42,14 +42,10 @@ const editMessage = (data: {
    userId: string;
 }): Promise<any> => {
    return handleApiRequest(() =>
-      authorizedAPI.put(
-         `/chat/message/${data.messageId}`,
-         { message: data.message },
-         {
-            headers: { "Content-Type": "application/json" },
-            data: { user_id: data.userId },
-         }
-      )
+      authorizedAPI.put(`/chat/message/${data.messageId}`, {
+         edit_data: { message: data.message },
+         user_id: data.userId,
+      })
    );
 };
 
@@ -60,14 +56,10 @@ const editDirectMessage = (data: {
    userId: string;
 }): Promise<any> => {
    return handleApiRequest(() =>
-      authorizedAPI.put(
-         `/chat/dm/${data.messageId}`,
-         { message: data.message },
-         {
-            headers: { "Content-Type": "application/json" },
-            data: { user_id: data.userId },
-         }
-      )
+      authorizedAPI.put(`/chat/dm/${data.messageId}`, {
+         edit_data: { message: data.message },
+         user_id: data.userId,
+      })
    );
 };
 
@@ -78,7 +70,6 @@ const deleteMessage = (data: {
 }): Promise<any> => {
    return handleApiRequest(() =>
       authorizedAPI.delete(`/chat/message/${data.messageId}`, {
-         headers: { "Content-Type": "application/json" },
          data: { user_id: data.userId },
       })
    );
@@ -91,7 +82,6 @@ const deleteDirectMessage = (data: {
 }): Promise<any> => {
    return handleApiRequest(() =>
       authorizedAPI.delete(`/chat/dm/${data.messageId}`, {
-         headers: { "Content-Type": "application/json" },
          data: { user_id: data.userId },
       })
    );

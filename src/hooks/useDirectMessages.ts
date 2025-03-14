@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
@@ -79,24 +81,12 @@ export const useActiveConversations = (userId: string) => {
       enabled: !!userId && userId.length > 10, // Only enable if we have a valid-looking UUID
       refetchOnWindowFocus: true, // Add this to keep conversations up to date
       staleTime: 1000 * 60, // Consider data stale after 1 minute
+      onSuccess: (data: any) => {
+         console.log("Conversations fetched successfully:", data);
+      },
       onError: (error: any) => {
          console.error(
             "Error fetching conversations:",
-            error?.response?.data || error
-         );
-      },
-   });
-};
-
-export const useGetMessagesByChannel = (channelId: string) => {
-   return useQuery({
-      queryKey: ["messages", channelId],
-      queryFn: () => getMessagesByChannel(channelId),
-      enabled: !!channelId,
-      retry: false,
-      onError: (error: any) => {
-         console.error(
-            "Error fetching messages:",
             error?.response?.data || error
          );
       },

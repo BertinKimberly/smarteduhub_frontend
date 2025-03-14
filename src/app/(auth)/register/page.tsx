@@ -16,8 +16,6 @@ import logo from "@/images/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import google from "@/images/google.png";
-import github from "@/images/github.png";
-import fb from "@/images/fb.png";
 import { toast } from "react-toastify";
 import { Cookies } from "react-cookie";
 import { useRegisterUser } from "@/hooks/useAuth";
@@ -30,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { RoleSelectionModal } from "@/components/RoleSelectionModal";
 import { useInitiateOAuth } from "@/hooks/useAuth";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Plus, Minus } from "lucide-react";
 
 // Define the schema for the registration form
 const formSchema = z
@@ -51,6 +49,16 @@ const formSchema = z
       phone: z.string().optional(),
       country: z.string().optional(),
       field_of_study: z.string().optional(),
+      children: z
+         .array(
+            z.object({
+               name: z.string().min(3, "Name must be at least 3 characters"),
+               grade: z.string().min(1, "Grade is required"),
+               email: z.string().email("Invalid email"), 
+               age: z.number().min(1, "Age is required").max(18, "Invalid age"),
+            })
+         )
+         .optional(),
    })
    .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -67,6 +75,7 @@ const RegisterPage = () => {
    const [selectedProvider, setSelectedProvider] = useState<string>("");
    const [showPassword, setShowPassword] = useState(false);
    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+   const [showChildFields, setShowChildFields] = useState(false);
 
    const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
@@ -81,6 +90,7 @@ const RegisterPage = () => {
          phone: "",
          country: "",
          field_of_study: "",
+         children: [],
       },
    });
 
@@ -152,9 +162,26 @@ const RegisterPage = () => {
       });
    };
 
+   const addChild = () => {
+      const children = form.getValues("children") || [];
+      form.setValue("children", [
+         ...children,
+         { name: "", grade: "", email: "", age: 0 },
+      ]);
+   };
+
+   const removeChild = (index: number) => {
+      const children = form.getValues("children") || [];
+      form.setValue(
+         "children",
+         children.filter((_, i) => i !== index)
+      );
+   };
+
    return (
-      <div className="py-8 md:py-10">
-         <div className="bg-gradient-to-b from-background via-white to-main rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20 mx-auto">
+      <div className="py-8 md:py-10 w-full  flex items-center justify-center">
+      <div className="bg-gradient-to-b from-background via-white to-main rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex  items-center justify-center">
+      <div className="flex flex-col gap-6 w-[95%] ">
             <Link
                className="flex gap-3 items-center justify-start"
                href="/"
@@ -170,7 +197,7 @@ const RegisterPage = () => {
             <Form {...form}>
                <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-full md:w-5/6 z-30"
+                  className="w-full  z-30"
                >
                   {/* Role Selection Field */}
                   <FormField
@@ -425,6 +452,123 @@ const RegisterPage = () => {
                         )}
                      />
                   </div>
+
+                  {/* Show child fields only if role is parent */}
+                  {form.watch("role") === "parent" && (
+                     <div className="mt-6">
+                        <div className="flex justify-between items-center mb-4">
+                           <h3 className="text-lg font-medium">
+                              Child Information
+                           </h3>
+                           <Button
+                              type="button"
+                              onClick={addChild}
+                              className="bg-main"
+                           >
+                              <Plus className="h-4 w-4 mr-2" /> Add Child
+                           </Button>
+                        </div>
+
+                        {form.watch("children")?.map((_, index) => (
+                           <div
+                              key={index}
+                              className="border rounded-lg p-4 mb-4"
+                           >
+                              <div className="flex justify-between items-center mb-4">
+                                 <h4 className="font-medium">
+                                    Child {index + 1}
+                                 </h4>
+                                 <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() => removeChild(index)}
+                                 >
+                                    <Minus className="h-4 w-4" />
+                                 </Button>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                 <FormField
+                                    control={form.control}
+                                    name={`children.${index}.name`}
+                                    render={({ field }) => (
+                                       <FormItem>
+                                          <FormLabel>
+                                             Child&apos;s Name *
+                                          </FormLabel>
+                                          <FormControl>
+                                             <Input
+                                                className="bg-white p-6"
+                                                placeholder="Child's name"
+                                                {...field}
+                                             />
+                                          </FormControl>
+                                       </FormItem>
+                                    )}
+                                 />
+                                 <FormField
+                                    control={form.control}
+                                    name={`children.${index}.grade`}
+                                    render={({ field }) => (
+                                       <FormItem>
+                                          <FormLabel>Grade *</FormLabel>
+                                          <FormControl>
+                                             <Input
+                                                className="bg-white p-6"
+                                                placeholder="Grade"
+                                                {...field}
+                                             />
+                                          </FormControl>
+                                       </FormItem>
+                                    )}
+                                 />
+                                 <FormField
+                                    control={form.control}
+                                    name={`children.${index}.email`} // Changed from school to email
+                                    render={({ field }) => (
+                                       <FormItem>
+                                          <FormLabel>
+                                             Child&apos;s Email *
+                                          </FormLabel>
+                                          <FormControl>
+                                             <Input
+                                                className="bg-white p-6"
+                                                placeholder="Child's email address"
+                                                type="email"
+                                                {...field}
+                                             />
+                                          </FormControl>
+                                       </FormItem>
+                                    )}
+                                 />
+                                 <FormField
+                                    control={form.control}
+                                    name={`children.${index}.age`}
+                                    render={({ field }) => (
+                                       <FormItem>
+                                          <FormLabel>Age *</FormLabel>
+                                          <FormControl>
+                                             <Input
+                                                className="bg-white p-6"
+                                                type="number"
+                                                placeholder="Age"
+                                                {...field}
+                                                onChange={(e) =>
+                                                   field.onChange(
+                                                      parseInt(e.target.value)
+                                                   )
+                                                }
+                                             />
+                                          </FormControl>
+                                       </FormItem>
+                                    )}
+                                 />
+                              </div>
+                           </div>
+                        ))}
+                     </div>
+                  )}
+
                   <Button
                      type="submit"
                      className="w-full bg-main py-6 mt-10"
@@ -435,34 +579,18 @@ const RegisterPage = () => {
                </form>
             </Form>
             <div className="flex flex-col items-center gap-4 py-6">
-               <p className="text-center">Or with</p>
-               <div className="flex items-center justify-center gap-4 z-30">
+               <p className="text-center">Or</p>
+               <div className="w-full flex items-center justify-center">
                   <div
-                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     className="w-full md:w-1/2 bg-white py-4 px-8 cursor-pointer hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors duration-200 flex items-center justify-center gap-3 shadow-sm"
                      onClick={() => handleOAuthClick("google")}
                   >
                      <Image
                         src={google}
                         alt="google"
+                        className="w-6 h-6"
                      />
-                  </div>
-                  <div
-                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                     onClick={() => handleOAuthClick("github")}
-                  >
-                     <Image
-                        src={github}
-                        alt="github"
-                     />
-                  </div>
-                  <div
-                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                     onClick={() => handleOAuthClick("facebook")}
-                  >
-                     <Image
-                        src={fb}
-                        alt="fb"
-                     />
+                     <span className="text-gray-600">Continue with Google</span>
                   </div>
                </div>
             </div>
@@ -485,6 +613,7 @@ const RegisterPage = () => {
                </p>
             </div>
          </div>
+      </div>
       </div>
    );
 };

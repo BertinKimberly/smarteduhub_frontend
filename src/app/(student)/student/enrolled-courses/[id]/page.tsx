@@ -12,6 +12,7 @@ import {
    FileIcon,
    Maximize2,
    Minimize2,
+   Brain,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,21 @@ import DashboardNavbar from "@/components/DashboardNavbar";
 import { useGetCourseById, useGetMaterials } from "@/hooks/useCourses";
 import DocumentViewer from "@/components/DocumentViewer";
 import { CourseRatings } from "@/components/CourseRatings";
+import AIAnalysisPanel from "@/components/AIAnalysisPanel";
+import { useExtractDocumentText } from "@/hooks/useAI";
+
+interface Material {
+   id: string;
+   title: string;
+   file_path: string;
+}
+
+interface DocumentAnalysisResponse {
+   material_id: string;
+   title: string;
+   course_id: string;
+   content: string;
+}
 
 const levelColorMap: Record<string, string> = {
    beginner: "bg-green-100 text-green-700 border-green-200",
@@ -38,6 +54,10 @@ const CourseDetailPage = () => {
       null
    );
    const [isFullscreen, setIsFullscreen] = useState(false);
+   const [showAIPanel, setShowAIPanel] = useState(false);
+   const [selectedMaterialForAI, setSelectedMaterialForAI] =
+      useState<DocumentAnalysisResponse | null>(null);
+   const extractDocumentText = useExtractDocumentText();
 
    const { data: course, isLoading, error } = useGetCourseById(courseId);
    const { data: materials, isLoading: materialsLoading } =
@@ -52,6 +72,17 @@ const CourseDetailPage = () => {
 
    console.log("Course:", course);
    console.log("Materials:", materials);
+
+   // Function to handle AI analysis
+   const handleAIAnalysis = async (material: Material) => {
+      try {
+         const response = await extractDocumentText.mutateAsync(material.id);
+         setSelectedMaterialForAI(response);
+         setShowAIPanel(true);
+      } catch (error) {
+         console.error("Error extracting document text:", error);
+      }
+   };
 
    // Render loading state
    if (isLoading) {
@@ -151,14 +182,25 @@ const CourseDetailPage = () => {
             </div>
 
             <div className="flex-1 flex items-stretch justify-center bg-gray-100">
-               <div className="w-full max-w-6xl mx-auto p-6">
-                  <div className="w-full h-[calc(100vh-180px)] bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+               <div className="w-full max-w-6xl mx-auto p-6 flex gap-6">
+                  <div className="w-2/3 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
                      <DocumentViewer
                         fileUrl={fileUrl}
                         isFullscreen={isFullscreen}
                         onToggleFullscreen={() => setIsFullscreen(false)}
                      />
                   </div>
+                  {showAIPanel && selectedMaterialForAI && (
+                     <div className="w-1/3">
+                        <AIAnalysisPanel
+                           materialId={selectedMaterialForAI.material_id}
+                           materialTitle={selectedMaterialForAI.title}
+                           courseId={selectedMaterialForAI.course_id}
+                           content={selectedMaterialForAI.content}
+                           onClose={() => setShowAIPanel(false)}
+                        />
+                     </div>
+                  )}
                </div>
             </div>
          </div>
@@ -169,6 +211,7 @@ const CourseDetailPage = () => {
       levelColorMap[course.level.toLowerCase()] ||
       "bg-blue-100 text-blue-700 border-blue-200";
 
+   const prerequisites = course.prerequisites ? course.prerequisites : [];
    return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
          <DashboardNavbar title={course.title} />
@@ -234,30 +277,34 @@ const CourseDetailPage = () => {
 
                <TabsContent
                   value="overview"
-                  className="bg-white rounded-lg shadow-sm p-6"
+                  className="space-y-8"
                >
-                  <div className="space-y-8">
-                     {course.long_description && (
-                        <div className="space-y-4">
-                           <h3 className="text-lg font-semibold text-gray-700">
-                              Course Description
-                           </h3>
-                           <p className="text-gray-600 whitespace-pre-line">
-                              {course.long_description}
-                           </p>
-                        </div>
-                     )}
+                  <div>
+                     <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        About This Course
+                     </h2>
+                     <p className="text-gray-700 leading-relaxed mb-6">
+                        {course.long_description}
+                     </p>
+                  </div>
 
-                     {course.prerequisites && (
-                        <div className="space-y-4">
-                           <h3 className="text-lg font-semibold text-gray-700">
-                              Prerequisites
-                           </h3>
-                           <p className="text-gray-600 whitespace-pre-line">
-                              {course.prerequisites}
-                           </p>
-                        </div>
-                     )}
+                  <div>
+                     <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        Prerequisites
+                     </h2>
+                     <ul className="space-y-2">
+                        {prerequisites.map((prerequisite, index) => (
+                           <li
+                              key={index}
+                              className="flex items-start"
+                           >
+                              <div className="h-5 w-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">
+                                 {index + 1}
+                              </div>
+                              <p className="text-gray-700">{prerequisite}</p>
+                           </li>
+                        ))}
+                     </ul>
                   </div>
                </TabsContent>
 
@@ -318,6 +365,15 @@ const CourseDetailPage = () => {
                                        >
                                           <Download className="h-4 w-4 mr-2" />
                                           Download
+                                       </Button>
+                                       <Button
+                                          onClick={() =>
+                                             handleAIAnalysis(material)
+                                          }
+                                          variant="secondary"
+                                       >
+                                          <Brain className="h-4 w-4 mr-2" />
+                                          AI Analysis
                                        </Button>
                                     </div>
                                  </CardContent>

@@ -1,12 +1,13 @@
 export interface User {
-   id: string;
-   name: string;
+   id?: string;
+   name?: string;
    email: string;
-   role: string;
    username?: string;
    phone?: string;
    country?: string;
    field_of_study?: string;
+   role?: string;
+   created_at?: string;
 }
 
 export interface UserUpdate {

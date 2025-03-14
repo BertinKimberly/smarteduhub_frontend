@@ -18,6 +18,8 @@ import {
    Users,
    Briefcase,
    BookOpenCheck,
+   MessageSquare,
+   Brain,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -61,6 +63,11 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          },
          { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
+         {
+            icon: <Brain />,
+            label: "AI Chat",
+            link: "/student/ai-chat",
+         },
       ],
       parent: [
          { icon: <House />, label: "Dashboard", link: "/parent" },
@@ -84,6 +91,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          { icon: <Briefcase />, label: "Courses", link: "/teacher/courses" },
          { icon: <Users />, label: "Students", link: "/teacher/students" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/teacher/chat" },
+         { icon: <Calendar />, label: "Schedule", link: "/teacher/schedule" },
       ],
    };
 

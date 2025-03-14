@@ -189,7 +189,7 @@ const CourseCard: React.FC<{
 };
 
 const AllCoursesPage = () => {
-   const { data: courses, isLoading, error } = useGetAllCoursesWithEnrollment();
+   const { data: courses, isLoading } = useGetAllCoursesWithEnrollment();
    const enrollMutation = useEnrollInCourse();
 
    const [filteredCourses, setFilteredCourses] = useState<CourseData[]>([]);
@@ -197,6 +197,7 @@ const AllCoursesPage = () => {
    const [categoryFilter, setCategoryFilter] = useState("all");
    const [levelFilter, setLevelFilter] = useState("all");
    const [enrollingId, setEnrollingId] = useState<string | null>(null);
+   const [error, setError] = useState<Error | null>(null);
 
    const categories = [
       "Mathematics",
@@ -208,8 +209,21 @@ const AllCoursesPage = () => {
    const levels = ["Beginner", "Intermediate", "Advanced", "All-Levels"];
 
    useEffect(() => {
+      if (!courses && !isLoading) {
+         setError(new Error("Failed to load courses"));
+      }
+   }, [courses, isLoading]);
+
+   useEffect(() => {
       if (courses) {
-         let result = [...courses];
+         let result = courses.map((course) => ({
+            ...course,
+            teacher: {
+               ...course.teacher,
+               id: course.teacher?.id || "",
+               name: course.teacher?.name || "",
+            },
+         }));
 
          // Apply search filter
          if (searchTerm) {
@@ -400,6 +414,7 @@ const AllCoursesPage = () => {
                   {displayCourses.map((course) => (
                      <CourseCard
                         key={course.id}
+                        // @ts-ignore
                         course={course}
                         onEnroll={handleEnroll}
                         isEnrolling={enrollMutation.isPending}

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Cookies } from "react-cookie";
 import { toast } from "react-toastify";
@@ -7,7 +7,8 @@ import { jwtDecode } from "jwt-decode";
 
 const cookies = new Cookies();
 
-export default function OAuthCallback() {
+// Create a client component that uses the search params
+function CallbackHandler() {
    const [isProcessing, setIsProcessing] = useState(true);
    const searchParams = useSearchParams();
    const token = searchParams.get("token");
@@ -74,5 +75,26 @@ export default function OAuthCallback() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-main mx-auto"></div>
          </div>
       </div>
+   );
+}
+
+// Create a loading component
+function Loading() {
+   return (
+      <div className="flex items-center justify-center min-h-screen">
+         <div className="text-center">
+            <h2 className="text-xl mb-4">Loading...</h2>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-main mx-auto"></div>
+         </div>
+      </div>
+   );
+}
+
+// Main component with Suspense boundary
+export default function OAuthCallback() {
+   return (
+      <Suspense fallback={<Loading />}>
+         <CallbackHandler />
+      </Suspense>
    );
 }

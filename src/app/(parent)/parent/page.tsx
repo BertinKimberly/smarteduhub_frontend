@@ -11,6 +11,7 @@ import {
    Bell,
    BarChart3,
    PieChart,
+   Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -32,6 +33,8 @@ import DashboardNavbar from "@/components/DashboardNavbar";
 import CustomCard from "@/components/CustomCard";
 import ParentLineChart from "@/components/parent/ParentLineChart";
 import ParentBarChart from "@/components/parent/ParentBarChart";
+import { useChildren, useChildDetails } from "@/hooks/useParent";
+import { EnrolledCourseCard } from "@/components/student/EnrolledCourseCard";
 
 const activityData = [
    { name: "Completed", value: 68, color: "#979205" },
@@ -87,6 +90,11 @@ const ParentHome = () => {
       { message: "Term project guidelines updated", time: "2 days ago" },
    ];
 
+   const { data: children } = useChildren();
+   const { data: childDetails, isLoading } = useChildDetails(
+      children?.[0]?.id || ""
+   );
+
    return (
       <div className="p-3">
          {/* Dashboard Header */}
@@ -109,10 +117,10 @@ const ParentHome = () => {
             {cardData.map((d, i) => (
                <CustomCard
                   key={i}
+                  color={d.color}
                   icon={d.icon}
                   desc={d.desc}
                   title={d.title}
-                  color={d.color}
                />
             ))}
          </section>
@@ -217,40 +225,40 @@ const ParentHome = () => {
          <section className="my-6">
             <div className="flex items-center justify-between w-full my-4">
                <h3 className="font-medium">Child&apos;s Courses</h3>
-               <Button
-                  className="text-blue-600"
-                  variant="outline"
-               >
-                  View All
-               </Button>
-            </div>
-            {/* Placeholder for courses - would need to implement similar to the student dashboard */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-               {[1, 2, 3].map((course) => (
-                  <Card
-                     key={course}
-                     className="hover:shadow-md transition-shadow"
+               <Link href="/parent/enrolled-courses">
+                  <Button
+                     className="text-blue-600"
+                     variant="outline"
                   >
-                     <CardContent className="p-4">
-                        <div className="h-32 bg-gray-100 rounded-md mb-3 flex items-center justify-center">
-                           <Book className="h-12 w-12 text-gray-400" />
-                        </div>
-                        <h4 className="font-medium">Course Title {course}</h4>
-                        <p className="text-sm text-gray-500 mt-1">
-                           Teacher: Mr. Smith
-                        </p>
-                        <div className="mt-3 flex justify-between items-center">
-                           <Progress
-                              value={[75, 60, 45][course - 1]}
-                              className="w-2/3 h-2"
-                           />
-                           <span className="text-sm font-medium">
-                              {[75, 60, 45][course - 1]}%
-                           </span>
-                        </div>
-                     </CardContent>
-                  </Card>
-               ))}
+                     View All
+                  </Button>
+               </Link>
+            </div>
+            <div className="flex flex-wrap -mx-4">
+               {isLoading ? (
+                  <div className="w-full flex items-center justify-center py-12">
+                     <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                     <span className="ml-3 text-gray-600">
+                        Loading courses...
+                     </span>
+                  </div>
+               ) : !childDetails?.enrolledCourses?.length ? (
+                  <div className="w-full text-center py-12 text-gray-500">
+                     No courses enrolled yet.
+                  </div>
+               ) : (
+                  childDetails.enrolledCourses.slice(0, 3).map((course) => (
+                     <EnrolledCourseCard
+                        key={course.id}
+                        course={{
+                           ...course,
+                           level: course.grade || "Not Set",
+                           progress: course.progress || 0,
+                           category: "other", // Add a default category
+                        }}
+                     />
+                  ))
+               )}
             </div>
          </section>
       </div>

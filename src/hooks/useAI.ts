@@ -27,6 +27,13 @@ interface QuizAttempt {
    answers: Array<{ question_id: string; answer: string }>;
 }
 
+interface DocumentAnalysisResponse {
+   material_id: string;
+   title: string;
+   content: string;
+   course_id: string;
+}
+
 // API call functions
 const chatWithAI = (request: ChatRequest): Promise<any> => {
    return handleApiRequest(() => authorizedAPI.post("/ai/chat", request));
@@ -67,6 +74,14 @@ const studyChat = (request: StudyRequest): Promise<any> => {
 const aiLearning = (request: LearningRequest): Promise<any> => {
    return handleApiRequest(() =>
       authorizedAPI.post("/ai/ai-learning", request)
+   );
+};
+
+const extractDocumentText = (
+   materialId: string
+): Promise<DocumentAnalysisResponse> => {
+   return handleApiRequest(() =>
+      authorizedAPI.post(`/ai/extract-document-text/${materialId}`)
    );
 };
 
@@ -116,5 +131,11 @@ export const useStudyChat = () => {
 export const useAILearning = () => {
    return useMutation<any, Error, LearningRequest>({
       mutationFn: aiLearning,
+   });
+};
+
+export const useExtractDocumentText = () => {
+   return useMutation<DocumentAnalysisResponse, Error, string>({
+      mutationFn: extractDocumentText,
    });
 };

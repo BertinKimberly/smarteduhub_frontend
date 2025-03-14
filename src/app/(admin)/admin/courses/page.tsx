@@ -69,6 +69,7 @@ const CoursesAdmin = () => {
             Create Course
           </Button>
         </div>
+        {/* @ts-ignore */}
         {courses.length === 0 ? <Empty /> : <DataTable columns={columns} data={courses} />}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>

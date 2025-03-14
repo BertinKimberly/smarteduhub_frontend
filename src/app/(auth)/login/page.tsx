@@ -11,13 +11,11 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import logo from "@/images/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import google from "@/images/google.png";
-import github from "@/images/github.png";
-import fb from "@/images/fb.png";
 import { useLoginUser } from "@/hooks/useAuth";
 import { toast } from "react-toastify";
 import { Cookies } from "react-cookie";
@@ -34,7 +32,19 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const LoginPage = () => {
+// Loading component
+function Loading() {
+   return (
+      <div className="flex items-center justify-center min-h-screen">
+         <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-main mx-auto"></div>
+         </div>
+      </div>
+   );
+}
+
+// Main login form component that uses useSearchParams
+function LoginForm() {
    const [isSubmitting, setIsSubmitting] = useState(false);
    const [showPassword, setShowPassword] = useState(false);
 
@@ -110,8 +120,9 @@ const LoginPage = () => {
    };
 
    return (
-      <div className="py-8 md:py-10">
-         <div className="bg-gradient-to-b from-background via-white to-main rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex flex-col gap-6 xl:pl-20  mx-auto">
+      <div className="py-8 md:py-10 w-full  flex items-center justify-center">
+         <div className="bg-gradient-to-b from-background via-white to-main rounded-lg p-4 md:p-10 shadow-lg w-full md:w-5/6 xl:w-[70%] flex  items-center justify-center">
+         <div className="flex flex-col gap-6 w-[95%] ">
             <Link
                className="flex gap-3 items-center justify-start"
                href="/"
@@ -127,7 +138,7 @@ const LoginPage = () => {
             <Form {...form}>
                <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8 w-full md:w-5/6 z-30"
+                  className="space-y-8 w-full  z-30"
                >
                   <FormField
                      control={form.control}
@@ -197,34 +208,18 @@ const LoginPage = () => {
                </form>
             </Form>
             <div className="flex flex-col items-center gap-4 py-6">
-               <p className="text-center">Or with</p>
-               <div className=" flex items-center justify-center gap-4 z-30">
+               <p className="text-center">Or</p>
+               <div className="w-full flex items-center justify-center">
                   <div
-                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
+                     className="w-full md:w-1/2 bg-white py-4 px-8 cursor-pointer hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors duration-200 flex items-center justify-center gap-3 shadow-sm"
                      onClick={() => handleOAuthClick("google")}
                   >
                      <Image
                         src={google}
                         alt="google"
+                        className="w-6 h-6"
                      />
-                  </div>
-                  <div
-                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                     onClick={() => handleOAuthClick("github")}
-                  >
-                     <Image
-                        src={github}
-                        alt="github"
-                     />
-                  </div>
-                  <div
-                     className="bg-white py-3 px-8 cursor-pointer hover:bg-background border border-white rounded-full"
-                     onClick={() => handleOAuthClick("facebook")}
-                  >
-                     <Image
-                        src={fb}
-                        alt="fb"
-                     />
+                     <span className="text-gray-600">Continue with Google</span>
                   </div>
                </div>
             </div>
@@ -241,6 +236,16 @@ const LoginPage = () => {
             </div>
          </div>
       </div>
+      </div>
+   );
+}
+
+// Main wrapper component with Suspense boundary
+const LoginPage = () => {
+   return (
+      <Suspense fallback={<Loading />}>
+         <LoginForm />
+      </Suspense>
    );
 };
 
