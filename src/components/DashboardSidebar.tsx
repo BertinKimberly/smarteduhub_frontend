@@ -22,6 +22,7 @@ import {
    Brain,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useLogoutUser } from "@/hooks/useAuth";
 
 interface SidebarProps {
    role: "admin" | "student" | "parent" | "teacher";
@@ -31,9 +32,18 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
    const { user } = useAuthStore();
    const [isCollapsed, setIsCollapsed] = useState(false);
    const pathname = usePathname();
+   const logout = useLogoutUser();
 
    const toggleSidebar = () => {
       setIsCollapsed(!isCollapsed);
+   };
+
+   const handleLogout = async () => {
+      try {
+         await logout.mutateAsync();
+      } catch (error) {
+         console.error("Logout failed:", error);
+      }
    };
 
    // Define navigation links based on the role
@@ -151,13 +161,13 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
                   </div>
                )}
             </div>
-            <Link
-               className="flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-main hover:text-white"
-               href="/login"
+            <button
+               className="flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-main hover:text-white w-full"
+               onClick={handleLogout}
             >
                <LogOut />
                {!isCollapsed && <span>Logout</span>}
-            </Link>
+            </button>
          </div>
       </div>
    );

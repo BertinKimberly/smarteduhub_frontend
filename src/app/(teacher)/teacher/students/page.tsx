@@ -1,4 +1,5 @@
-// @ts-nocheck
+// app/students/page.tsx
+//@ts-nocheck
 "use client";
 
 import React, { useState, useEffect } from "react";

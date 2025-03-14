@@ -21,6 +21,14 @@ const columns: ColumnDef<User>[] = [
       header: "Email",
    },
    {
+      accessorKey: "phone",
+      header: "Phone",
+   },
+   {
+      accessorKey: "username",
+      header: "Username",
+   },
+   {
       accessorKey: "role",
       header: "Role",
    },

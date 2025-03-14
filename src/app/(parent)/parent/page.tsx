@@ -225,7 +225,7 @@ const ParentHome = () => {
          <section className="my-6">
             <div className="flex items-center justify-between w-full my-4">
                <h3 className="font-medium">Child&apos;s Courses</h3>
-               <Link href="/parent/enrolled-courses">
+               <Link href="/parent/child">
                   <Button
                      className="text-blue-600"
                      variant="outline"

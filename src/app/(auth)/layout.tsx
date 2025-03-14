@@ -15,7 +15,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
                   alt="login"
                   className="w-[300px] xl:w-[400px] 2xl:w-[500px] relative z-20"
                />
-               <div className="absolute top-1/2 left-24 transform z-30">
+               <div className="absolute top-1/2 left-32 transform z-30">
                   <Image
                      src={assisted}
                      alt="assisted"

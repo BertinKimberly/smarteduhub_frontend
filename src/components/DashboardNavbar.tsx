@@ -31,6 +31,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import NotificationsDrawer, { Notification } from "./NotificationsDrawer";
 import NotificationBell from "./NotificationBell";
+import { useLogoutUser } from "@/hooks/useAuth";
 
 interface DashboardNavbarProps {
    title: string;
@@ -46,6 +47,7 @@ const DashboardNavbar = ({
    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
    const router = useRouter();
    const pathname = usePathname();
+   const logout = useLogoutUser();
 
    // Sample notifications data
    const [notifications, setNotifications] = useState<Notification[]>([
@@ -203,6 +205,14 @@ const DashboardNavbar = ({
       );
    };
 
+   const handleLogout = async () => {
+      try {
+         await logout.mutateAsync();
+      } catch (error) {
+         console.error("Logout failed:", error);
+      }
+   };
+
    return (
       <nav
          className={`w-full sticky top-0 z-50 transition-all duration-300 ${
@@ -278,10 +288,7 @@ const DashboardNavbar = ({
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                            className="cursor-pointer text-red-600 focus:text-red-600"
-                           onClick={() => {
-                              // Add your logout logic here
-                              router.push("/login");
-                           }}
+                           onClick={handleLogout}
                         >
                            <LogOut className="mr-2 h-4 w-4" />
                            <span>Log out</span>

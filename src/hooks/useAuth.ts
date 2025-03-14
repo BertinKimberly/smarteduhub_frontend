@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { authorizedAPI, unauthorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -67,10 +68,19 @@ const registerUser = (userData: SignupData) => {
    );
 };
 
-const logoutUser = () => {
-   return handleApiRequest(() =>
-      authorizedAPI.post("/auth/logout", {}, { withCredentials: true })
-   );
+const logoutUser = async () => {
+   try {
+      await authorizedAPI.post("/auth/logout", {}, { withCredentials: true });
+      // Clear cookies manually as fallback
+      document.cookie =
+         "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      // Clear local storage
+      localStorage.removeItem("auth-storage");
+      return true;
+   } catch (error) {
+      console.error("Logout error:", error);
+      throw error;
+   }
 };
 
 const initiateOAuth = (provider: string, role?: string) => {
@@ -154,14 +164,24 @@ export const useRegisterUser = () => {
 
 export const useLogoutUser = () => {
    const { clearUser } = useAuthStore();
+   const router = useRouter();
+   const queryClient = useQueryClient();
 
    return useMutation({
       mutationFn: logoutUser,
       onSuccess: () => {
          clearUser(); // Clear user data from Zustand store
+         // Clear React Query cache
+         queryClient.clear();
+         // Redirect to login
+         router.push("/login");
       },
       onError: (error) => {
          console.error("Logout error:", error);
+         // Even if the API call fails, clear local data
+         clearUser();
+         localStorage.removeItem("auth-storage");
+         router.push("/login");
       },
    });
 };
@@ -184,6 +204,7 @@ export const useInitiateOAuth = () => {
 export const useOAuthCallback = () => {
    const { setUser, setIsAuthenticated } = useAuthStore();
    const queryClient = useQueryClient();
+   const router = useRouter();
 
    return useMutation({
       mutationFn: async ({
@@ -195,12 +216,39 @@ export const useOAuthCallback = () => {
          code: string;
          state: string;
       }) => {
-         const response = await handleOAuthCallback(provider, code);
-         if (response?.user) {
-            setUser(response.user);
-            setIsAuthenticated(true);
+         try {
+            const response = await handleOAuthCallback(provider, code);
+            if (response?.user) {
+               setUser(response.user);
+               setIsAuthenticated(true);
+
+               // Get role from user data
+               const role = response.user.role;
+
+               // Redirect based on role
+               switch (role) {
+                  case "admin":
+                     router.push("/admin");
+                     break;
+                  case "teacher":
+                     router.push("/teacher");
+                     break;
+                  case "parent":
+                     router.push("/parent");
+                     break;
+                  case "student":
+                     router.push("/student");
+                     break;
+                  default:
+                     router.push("/student");
+               }
+            }
+            return response;
+         } catch (error) {
+            console.error("OAuth callback error:", error);
+            router.push("/login");
+            throw error;
          }
-         return response;
       },
    });
 };

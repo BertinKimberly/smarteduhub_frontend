@@ -17,6 +17,8 @@ const PUBLIC_PATHS = [
    "/help-center",
    "/login",
    "/register",
+   "/auth/callback",
+
 ];
 
 // Define role-based path patterns

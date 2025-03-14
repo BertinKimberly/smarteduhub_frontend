@@ -20,7 +20,7 @@ const AdminPage = () => {
    const { user } = useAuthStore();
 
    return (
-      <div className="p-2 sm:p-4 lg:p-6 flex flex-col gap-4 sm:gap-6">
+      <div className="p-2  flex flex-col gap-4 sm:gap-6">
          <DashboardNavbar title="Admin Dashboard" />
          <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
             <div>
