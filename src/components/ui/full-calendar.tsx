@@ -46,6 +46,8 @@ const monthEventVariants = cva("size-2 rounded-full", {
          green: "bg-green-500",
          pink: "bg-pink-500",
          purple: "bg-purple-500",
+         red: "bg-red-500", // added red
+         yellow: "bg-yellow-500", // added yellow
       },
    },
    defaultVariants: {
@@ -61,6 +63,8 @@ const dayEventVariants = cva("font-bold border-l-4 rounded p-2 text-xs", {
          green: "bg-green-500/30 text-green-600 border-green-500",
          pink: "bg-pink-500/30 text-pink-600 border-pink-500",
          purple: "bg-purple-500/30 text-purple-600 border-purple-500",
+         red: "bg-red-500/30 text-red-600 border-red-500", // added red
+         yellow: "bg-yellow-500/30 text-yellow-600 border-yellow-500", // added yellow
       },
    },
    defaultVariants: {
@@ -119,6 +123,10 @@ const Calendar = ({
    const [date, setDate] = useState(defaultDate);
    const [events, setEvents] = useState<CalendarEvent[]>(defaultEvents);
 
+   useEffect(() => {
+      setEvents(defaultEvents);
+   }, [defaultEvents]);
+
    const changeView = (view: View) => {
       setView(view);
       onChangeView?.(view);
@@ -168,11 +176,12 @@ const CalendarViewTrigger = forwardRef<
    React.HTMLAttributes<HTMLButtonElement> & {
       view: View;
    }
->(({ children, view, ...props }) => {
+>(({ children, view, ...props }, ref) => {
    const { view: currentView, setView, onChangeView } = useCalendar();
 
    return (
       <Button
+         ref={ref}
          aria-current={currentView === view}
          size="sm"
          variant="ghost"

@@ -109,6 +109,9 @@ const EventForm = ({
       });
    };
 
+ 
+   
+
    return (
       <form
          onSubmit={handleSubmit}
@@ -377,6 +380,8 @@ export default function CalendarPage() {
       setIsDialogOpen(false);
    };
 
+
+   console.log("Data nuyumunsi aracyakora",apiEvents);
    return (
       <>
          <div className="flex justify-between items-center mb-4 px-6 pt-6">

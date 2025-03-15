@@ -65,20 +65,21 @@ const fetchEventById = async (eventId: string): Promise<Event> => {
 
 const createEvent = async (eventData: EventCreateData): Promise<Event> => {
    try {
-      // Convert frontend dates to ISO string format for backend
+      // Format the data according to the backend schema
       const data = {
-         title: eventData.title,
+         title: eventData.title.trim(),
          start_time: new Date(eventData.start_time).toISOString(),
          end_time: new Date(eventData.end_time).toISOString(),
-         color: eventData.color || undefined, // Only send if not null/undefined
-         description: eventData.description || undefined, // Only send if not null/undefined
+         color: eventData.color || undefined,
+         description: eventData.description?.trim() || undefined,
       };
 
-      console.log("Sending event data to backend:", data); // Debug log
-      const response = await authorizedAPI.post("/events", data);
+      console.log("Sending event data to backend:", data);
+      const response = await authorizedAPI.post("/events/", data);
       return response.data;
    } catch (error: any) {
-      console.error("Error response:", error.response?.data); // Debug log
+      console.error("Full error:", error);
+      console.error("Error response:", error.response?.data);
       const message = error.response?.data?.detail || "Failed to create event";
       throw { message, status: error.response?.status || 500 } as EventError;
    }
@@ -117,6 +118,7 @@ export const useFetchEvents = (options?: {
       queryKey: ["events", options?.userId, options?.allEvents],
       queryFn: () => fetchEvents(options),
       staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchInterval: 10000, // added for realtime updates (10 seconds)
       retry: (failureCount, error) => {
          if (error.status === 404) return false;
          return failureCount < 3;
