@@ -1,15 +1,17 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  async rewrites() {
-    return [
-      {
-        source: "/ws/:path*",
-        destination: "http://localhost:8000/ws/:path*", // ✅ Proxy WebSocket traffic
-      },
-    ];
-  },
+const baseConfig: NextConfig = {
+   /* config options here */
+   async rewrites() {
+      return [
+         {
+            source: "/ws/:path*",
+            destination: "http://localhost:8000/ws/:path*", // ✅ Proxy WebSocket traffic
+         },
+      ];
+   },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+export default withNextIntl(baseConfig);

@@ -1,4 +1,7 @@
+//@ts-nocheck
+"use client";
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,19 +10,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FAQSection } from "@/components/home/faq";
 
 const ContactPage = () => {
+   const t = useTranslations("contact");
+
    return (
       <div className="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
          {/* Hero Section with Glassmorphism */}
-         <div className="bg-gradient-to-r from-main to-indigo-600 text-white py-20 relative overflow-hidden">
+         <div className="bg-gradient-to-r from-main to-indigo-600  text-white py-20 relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('/api/placeholder/1200/400')] opacity-10 bg-cover bg-center mix-blend-overlay"></div>
             <div className="container mx-auto px-4 relative z-10">
                <h1 className="text-4xl md:text-6xl font-bold text-center mb-6 tracking-tight">
-                  Get in Touch
+                  {t("hero.title")}
                </h1>
                <p className="text-center text-lg md:text-xl opacity-90 max-w-2xl mx-auto font-light">
-                  Have questions about our AI-driven learning platform or need
-                  support? We&apos;re here to help you achieve your educational
-                  goals.
+                  {t("hero.description")}
                </p>
             </div>
             <div className="absolute -bottom-16 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-gray-50"></div>
@@ -31,13 +34,13 @@ const ContactPage = () => {
                {/* Contact Form */}
                <div className="lg:col-span-7 bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
                   <h2 className="text-2xl font-bold mb-8 text-gray-800">
-                     Send us a Message
+                     {t("form.title")}
                   </h2>
                   <form className="space-y-6">
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-700">
-                              First Name
+                              {t("form.firstName")}
                            </label>
                            <Input
                               placeholder="John"
@@ -46,7 +49,7 @@ const ContactPage = () => {
                         </div>
                         <div className="space-y-2">
                            <label className="text-sm font-medium text-gray-700">
-                              Last Name
+                              {t("form.lastName")}
                            </label>
                            <Input
                               placeholder="Doe"
@@ -57,7 +60,7 @@ const ContactPage = () => {
 
                      <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">
-                           Email Address
+                           {t("form.email")}
                         </label>
                         <Input
                            type="email"
@@ -68,40 +71,52 @@ const ContactPage = () => {
 
                      <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">
-                           User Type
+                           {t("form.userType.label")}
                         </label>
                         <select className="w-full p-6 rounded-xl border-gray-200 bg-white">
-                           <option value="">Select your role</option>
-                           <option value="student">Student</option>
-                           <option value="parent">Parent</option>
-                           <option value="teacher">Teacher</option>
-                           <option value="administrator">Administrator</option>
-                           <option value="other">Other</option>
+                           <option value="">
+                              {t("form.userType.placeholder")}
+                           </option>
+                           <option value="student">
+                              {t("form.userType.student")}
+                           </option>
+                           <option value="parent">
+                              {t("form.userType.parent")}
+                           </option>
+                           <option value="teacher">
+                              {t("form.userType.teacher")}
+                           </option>
+                           <option value="administrator">
+                              {t("form.userType.administrator")}
+                           </option>
+                           <option value="other">
+                              {t("form.userType.other")}
+                           </option>
                         </select>
                      </div>
 
                      <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">
-                           Subject
+                           {t("form.subject")}
                         </label>
                         <Input
-                           placeholder="How can we help you with Smart EduHub?"
+                           placeholder={t("form.subjectPlaceholder")}
                            className="p-6 rounded-xl border-gray-200"
                         />
                      </div>
 
                      <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">
-                           Your Message
+                           {t("form.message")}
                         </label>
                         <Textarea
-                           placeholder="Please describe your query about our AI learning platform in detail..."
+                           placeholder={t("form.messagePlaceholder")}
                            className="p-6 rounded-xl border-gray-200 min-h-[180px]"
                         />
                      </div>
 
                      <Button className="bg-indigo-600 hover:bg-indigo-700 rounded-xl py-6 px-8 w-full md:w-auto transition-all duration-300 flex items-center justify-center gap-2 text-base">
-                        Send Message
+                        {t("form.sendButton")}
                         <Send className="h-4 w-4" />
                      </Button>
                   </form>
@@ -110,7 +125,7 @@ const ContactPage = () => {
                {/* Contact Information */}
                <div className="lg:col-span-5 space-y-8">
                   <h2 className="text-2xl font-bold mb-8 text-gray-800">
-                     Platform Support
+                     {t("support.title")}
                   </h2>
 
                   <div className="grid grid-cols-1 gap-4">
@@ -121,7 +136,7 @@ const ContactPage = () => {
                            </div>
                            <div>
                               <h3 className="font-semibold text-lg mb-2 text-gray-800">
-                                 Email Support
+                                 {t("support.email.title")}
                               </h3>
                               <p className="text-gray-600 hover:text-indigo-600 transition-colors">
                                  support@smarteduhub.com
@@ -140,11 +155,11 @@ const ContactPage = () => {
                            </div>
                            <div>
                               <h3 className="font-semibold text-lg mb-2 text-gray-800">
-                                 Phone Support
+                                 {t("support.phone.title")}
                               </h3>
                               <p className="text-gray-600">+1 (555) 123-4567</p>
                               <p className="text-gray-600 text-sm mt-1">
-                                 Available Mon-Fri: 9:00 - 18:00 ET
+                                 {t("support.phone.hours")}
                               </p>
                            </div>
                         </CardContent>
@@ -157,14 +172,13 @@ const ContactPage = () => {
                            </div>
                            <div>
                               <h3 className="font-semibold text-lg mb-2 text-gray-800">
-                                 Live Chat
+                                 {t("support.chat.title")}
                               </h3>
                               <p className="text-gray-600">
-                                 Connect with our support team in real-time
-                                 through the platform
+                                 {t("support.chat.description")}
                               </p>
                               <p className="text-gray-600 text-sm mt-1">
-                                 24/7 AI assistance available
+                                 {t("support.chat.availability")}
                               </p>
                            </div>
                         </CardContent>
@@ -177,17 +191,17 @@ const ContactPage = () => {
                            </div>
                            <div>
                               <h3 className="font-semibold text-lg mb-2 text-gray-800">
-                                 Knowledge Base
+                                 {t("support.knowledge.title")}
                               </h3>
                               <p className="text-gray-600">
-                                 Browse our comprehensive guides and tutorials
+                                 {t("support.knowledge.description")}
                               </p>
                               <p className="text-gray-600 text-sm mt-1">
                                  <a
                                     href="#"
                                     className="text-indigo-600 hover:underline"
                                  >
-                                    Visit our Help Center →
+                                    {t("support.knowledge.link")}
                                  </a>
                               </p>
                            </div>
@@ -198,7 +212,7 @@ const ContactPage = () => {
                   {/* Platform Features Summary */}
                   <Card className="mt-8 rounded-2xl overflow-hidden shadow-lg bg-white p-6 border-0">
                      <h3 className="font-bold text-xl mb-4 text-gray-800">
-                        Smart EduHub Platform
+                        {t("platform.title")}
                      </h3>
                      <div className="space-y-3">
                         <div className="flex items-center">
@@ -206,7 +220,7 @@ const ContactPage = () => {
                               <Book className="h-4 w-4 text-green-600" />
                            </div>
                            <p className="text-gray-700">
-                              Personalized AI Learning Paths
+                              {t("platform.features.learning")}
                            </p>
                         </div>
                         <div className="flex items-center">
@@ -214,7 +228,7 @@ const ContactPage = () => {
                               <Book className="h-4 w-4 text-green-600" />
                            </div>
                            <p className="text-gray-700">
-                              Real-time Progress Tracking
+                              {t("platform.features.tracking")}
                            </p>
                         </div>
                         <div className="flex items-center">
@@ -222,7 +236,7 @@ const ContactPage = () => {
                               <Book className="h-4 w-4 text-green-600" />
                            </div>
                            <p className="text-gray-700">
-                              Multi-role Access for Students, Parents & Teachers
+                              {t("platform.features.access")}
                            </p>
                         </div>
                         <div className="flex items-center">
@@ -230,7 +244,7 @@ const ContactPage = () => {
                               <Book className="h-4 w-4 text-green-600" />
                            </div>
                            <p className="text-gray-700">
-                              Comprehensive Administration Tools
+                              {t("platform.features.tools")}
                            </p>
                         </div>
                      </div>
@@ -241,7 +255,7 @@ const ContactPage = () => {
             {/* FAQ Section */}
             <div className="bg-white p-10 rounded-3xl shadow-lg mt-16 border border-gray-100">
                <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
-                  Frequently Asked Questions
+                  {t("faq.title")}
                </h2>
                <FAQSection />
             </div>

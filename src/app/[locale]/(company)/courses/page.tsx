@@ -24,6 +24,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 
 // Categories and levels arrays
 const categories = [
@@ -150,6 +151,7 @@ const CourseCard: React.FC<{ course: CourseData }> = ({ course }) => {
 };
 
 const CoursesPage = () => {
+   const t = useTranslations("courses");
    const { data: courses, isLoading, error } = useGetAllCourses();
    const [searchTerm, setSearchTerm] = useState("");
    const [selectedCategory, setSelectedCategory] = useState("All Categories");
@@ -196,11 +198,10 @@ const CoursesPage = () => {
             <div className="container relative mx-auto px-4 py-20">
                <div className="mb-12 text-center">
                   <h1 className="mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-5xl font-extrabold leading-tight text-transparent md:text-6xl">
-                     Discover Your Learning Path
+                     {t("hero.title")}
                   </h1>
                   <p className="mx-auto max-w-2xl text-lg font-medium text-blue-100">
-                     Unlock your potential with premium courses taught by
-                     industry experts
+                     {t("hero.description")}
                   </p>
                </div>
 

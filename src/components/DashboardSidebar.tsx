@@ -20,6 +20,7 @@ import {
    BookOpenCheck,
    MessageSquare,
    Brain,
+   NotebookText,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogoutUser } from "@/hooks/useAuth";
@@ -53,6 +54,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          { icon: <User />, label: "Profile", link: "/admin/profile" },
          { icon: <Book />, label: "Courses", link: "/admin/courses" },
          { icon: <User2 />, label: "Users", link: "/admin/users" },
+         { icon: <NotebookText />, label: "Assignments", link: "/admin/assignments" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/admin/chat" },
          {
             icon: <Bell />,
@@ -71,6 +73,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             label: "Enrolled Courses",
             link: "/student/enrolled-courses",
          },
+         { icon: <NotebookText />, label: "Assignments", link: "/student/assignments" },
          { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
          {
@@ -99,6 +102,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          { icon: <House />, label: "Dashboard", link: "/teacher" },
          { icon: <User />, label: "Profile", link: "/teacher/profile" },
          { icon: <Briefcase />, label: "Courses", link: "/teacher/courses" },
+         { icon: <NotebookText />, label: "Assignments", link: "/teacher/assignments" },
          { icon: <Users />, label: "Students", link: "/teacher/students" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/teacher/chat" },
          { icon: <Calendar />, label: "Schedule", link: "/teacher/schedule" },
@@ -107,7 +111,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
 
    return (
       <div
-         className={`hidden sticky top-0 rounded-lg p-3 border border-main bg-white md:flex flex-col justify-between gap-6 ${
+         className={`hidden sticky top-0 rounded-lg p-3 border border-submain shadow-lg bg-white md:flex flex-col justify-between gap-6 ${
             isCollapsed ? "w-fit" : "w-[240px]"
          } h-auto min-h-[400px] max-h-[90vh] overflow-y-auto`}
       >

@@ -6,10 +6,35 @@ import { Menu, X } from "lucide-react";
 import Logo from "@/images/logo.svg";
 import Image from "next/image";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter, usePathname } from "@/i18n/navigation";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 const Navbar = () => {
    const [isMenuOpen, setIsMenuOpen] = useState(false);
    const { isAuthenticated, user } = useAuthStore();
+   const router = useRouter();
+   const pathname = usePathname();
+   const locale = useLocale();
+   const t = useTranslations("navbar");
+
+   // Language options
+   const languages = [
+      { label: "EN", value: "en" },
+      { label: "FR", value: "fr" },
+      { label: "RW", value: "rw" },
+   ];
+
+   const handleLanguageChange = (newLocale: string) => {
+      router.replace("/" + pathname, { locale: newLocale });
+   };
 
    const getDashboardLink = () => {
       if (!user?.role) return "/";
@@ -18,8 +43,8 @@ const Navbar = () => {
 
    return (
       <>
-         <nav className=" px-4  bg-[#F8F9FE]">
-            <div className="container flex items-center justify-between h-[90px] mx-auto ">
+         <nav className="px-4 bg-[#F8F9FE]">
+            <div className="container flex items-center justify-between h-[90px] mx-auto">
                {/* Logo and Desktop Links */}
                <div className="flex items-center gap-8">
                   <Link
@@ -43,19 +68,19 @@ const Navbar = () => {
                         href="/courses"
                         className="hover:text-main"
                      >
-                        Courses
+                        {t("courses")}
                      </Link>
                      <Link
                         href="/about"
                         className="hover:text-main"
                      >
-                        About
+                        {t("about")}
                      </Link>
                      <Link
                         href="/contact"
                         className="hover:text-main"
                      >
-                        Contact
+                        {t("contact")}
                      </Link>
                   </div>
                </div>
@@ -79,34 +104,34 @@ const Navbar = () => {
                            onClick={() => setIsMenuOpen(false)}
                            className="hover:text-main"
                         >
-                           Courses
+                           {t("courses")}
                         </Link>
                         <Link
                            href="/about"
                            onClick={() => setIsMenuOpen(false)}
                            className="hover:text-main"
                         >
-                           About
+                           {t("about")}
                         </Link>
                         <Link
                            href="/contact"
                            onClick={() => setIsMenuOpen(false)}
                            className="hover:text-main"
                         >
-                           Contact
+                           {t("contact")}
                         </Link>
                         <div className="flex w-full gap-2 items-center justify-center">
                            {isAuthenticated ? (
                               <Link href={getDashboardLink()}>
                                  <Button className="bg-main rounded-full p-4 py-6 px-8">
-                                    Dashboard
+                                    {t("dashboard")}
                                  </Button>
                               </Link>
                            ) : (
                               <>
                                  <Link href="/login">
                                     <Button className="bg-main rounded-full p-4 py-6 px-8">
-                                       Login
+                                       {t("login")}
                                     </Button>
                                  </Link>
                                  <Link href="/register">
@@ -114,7 +139,7 @@ const Navbar = () => {
                                        className="border border-main rounded-full p-4 py-6 px-8"
                                        variant="outline"
                                     >
-                                       Register
+                                       {t("register")}
                                     </Button>
                                  </Link>
                               </>
@@ -125,18 +150,38 @@ const Navbar = () => {
                )}
 
                {/* Desktop Call-to-Action Buttons */}
-               <div className="hidden md:flex gap-4 xl:gap-6">
+               <div className="hidden md:flex items-center gap-4 xl:gap-6">
+                  {/* Language Switcher */}
+                  <Select
+                     value={locale}
+                     onValueChange={handleLanguageChange}
+                  >
+                     <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                        {languages.map((lang) => (
+                           <SelectItem
+                              key={lang.value}
+                              value={lang.value}
+                           >
+                              {lang.label}
+                           </SelectItem>
+                        ))}
+                     </SelectContent>
+                  </Select>
+
                   {isAuthenticated ? (
                      <Link href={getDashboardLink()}>
                         <Button className="bg-main rounded-full p-4 py-6 px-8">
-                           Dashboard
+                           {t("dashboard")}
                         </Button>
                      </Link>
                   ) : (
                      <>
                         <Link href="/login">
                            <Button className="bg-main rounded-full p-4 py-6 px-8">
-                              Login
+                              {t("login")}
                            </Button>
                         </Link>
                         <Link href="/register">
@@ -144,7 +189,7 @@ const Navbar = () => {
                               className="border border-main rounded-full p-4 py-6 px-8"
                               variant="outline"
                            >
-                              Register
+                              {t("register")}
                            </Button>
                         </Link>
                      </>

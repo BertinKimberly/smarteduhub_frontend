@@ -27,7 +27,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
 import Link from "next/link";
 import NotificationsDrawer, { Notification } from "./NotificationsDrawer";
 import NotificationBell from "./NotificationBell";
@@ -48,6 +56,7 @@ const DashboardNavbar = ({
    const router = useRouter();
    const pathname = usePathname();
    const logout = useLogoutUser();
+   const locale = useLocale();
 
    // Sample notifications data
    const [notifications, setNotifications] = useState<Notification[]>([
@@ -213,6 +222,17 @@ const DashboardNavbar = ({
       }
    };
 
+   // Language options with codes only
+   const languages = [
+      { code: "en", label: "EN" },
+      { code: "fr", label: "FR" },
+      { code: "rw", label: "RW" },
+   ];
+
+   const handleLanguageChange = (newLocale: string) => {
+      router.replace("/" + pathname, { locale: newLocale });
+   };
+
    return (
       <nav
          className={`w-full sticky top-0 z-50 transition-all duration-300 ${
@@ -246,6 +266,25 @@ const DashboardNavbar = ({
 
                {/* Right section */}
                <div className="hidden md:flex items-center gap-2">
+                  <Select
+                     value={locale}
+                     onValueChange={handleLanguageChange}
+                  >
+                     <SelectTrigger className="w-[100px]">
+                        <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                        {languages.map(({ code, label }) => (
+                           <SelectItem
+                              key={code}
+                              value={code}
+                           >
+                              <span>{label}</span>
+                           </SelectItem>
+                        ))}
+                     </SelectContent>
+                  </Select>
+
                   <NotificationBell
                      unreadCount={unreadCount}
                      onClick={() =>
@@ -323,6 +362,25 @@ const DashboardNavbar = ({
                            className="w-full pl-10 bg-white"
                         />
                      </div>
+
+                     <Select
+                        value={locale}
+                        onValueChange={handleLanguageChange}
+                     >
+                        <SelectTrigger className="w-full">
+                           <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {languages.map(({ code, label }) => (
+                              <SelectItem
+                                 key={code}
+                                 value={code}
+                              >
+                                 <span>{label}</span>
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
 
                      {/* Role-based navigation links */}
                      <div className="flex flex-col gap-2">

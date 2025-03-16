@@ -29,6 +29,7 @@ import {
 import { RoleSelectionModal } from "@/components/RoleSelectionModal";
 import { useInitiateOAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, Plus, Minus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 // Define the schema for the registration form
 const formSchema = z
@@ -55,7 +56,10 @@ const formSchema = z
                name: z.string().min(3, "Name must be at least 3 characters"),
                grade: z.string().min(1, "Grade is required"),
                email: z.string().email("Invalid email"),
-               age: z.number().min(1, "Age is required").max(150, "Invalid age"),
+               age: z
+                  .number()
+                  .min(1, "Age is required")
+                  .max(150, "Invalid age"),
             })
          )
          .optional(),
@@ -70,6 +74,7 @@ type FormData = z.infer<typeof formSchema>;
 const cookies = new Cookies();
 
 const RegisterPage = () => {
+   const t = useTranslations("auth");
    const [isSubmitting, setIsSubmitting] = useState(false);
    const [showRoleModal, setShowRoleModal] = useState(false);
    const [selectedProvider, setSelectedProvider] = useState<string>("");
@@ -192,7 +197,7 @@ const RegisterPage = () => {
                   />{" "}
                   <span className="text-main font-bold">Smart Eduhub</span>
                </Link>
-               <p>Register</p>
+               <p>{t("register")}</p>
 
                <Form {...form}>
                   <form
@@ -205,24 +210,26 @@ const RegisterPage = () => {
                         name="role"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Register As *</FormLabel>
+                              <FormLabel>{t("registerAs")} *</FormLabel>
                               <FormControl>
                                  <Select
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}
                                  >
                                     <SelectTrigger className="bg-white p-6 outline-none border border-main ">
-                                       <SelectValue placeholder="Select role" />
+                                       <SelectValue
+                                          placeholder={t("registerAs")}
+                                       />
                                     </SelectTrigger>
                                     <SelectContent>
                                        <SelectItem value="teacher">
-                                          Teacher
+                                          {t("roles.teacher")}
                                        </SelectItem>
                                        <SelectItem value="student">
-                                          Student
+                                          {t("roles.student")}
                                        </SelectItem>
                                        <SelectItem value="parent">
-                                          Parent
+                                          {t("roles.parent")}
                                        </SelectItem>
                                     </SelectContent>
                                  </Select>
@@ -241,7 +248,7 @@ const RegisterPage = () => {
                            name="name"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Full Name *</FormLabel>
+                                 <FormLabel>{t("fullName")} *</FormLabel>
                                  <FormControl>
                                     <Input
                                        className="bg-white p-6 outline-none border border-main "
@@ -262,7 +269,7 @@ const RegisterPage = () => {
                            name="email"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Email *</FormLabel>
+                                 <FormLabel>{t("email")} *</FormLabel>
                                  <FormControl>
                                     <Input
                                        className="bg-white p-6 outline-none border border-main "
@@ -283,7 +290,7 @@ const RegisterPage = () => {
                            name="username"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Username</FormLabel>
+                                 <FormLabel>{t("username")}</FormLabel>
                                  <FormControl>
                                     <Input
                                        className="bg-white p-6 outline-none border border-main"
@@ -299,7 +306,7 @@ const RegisterPage = () => {
                            name="phone"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Phone</FormLabel>
+                                 <FormLabel>{t("phone")}</FormLabel>
                                  <FormControl>
                                     <Input
                                        className="bg-white p-6 outline-none border border-main"
@@ -315,7 +322,7 @@ const RegisterPage = () => {
                            name="country"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Country</FormLabel>
+                                 <FormLabel>{t("country")}</FormLabel>
                                  <FormControl>
                                     <Input
                                        className="bg-white p-6 outline-none border border-main"
@@ -331,36 +338,40 @@ const RegisterPage = () => {
                            name="field_of_study"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Field of Study</FormLabel>
+                                 <FormLabel>{t("fieldOfStudy")}</FormLabel>
                                  <FormControl>
                                     <Select
                                        onValueChange={field.onChange}
                                        defaultValue={field.value}
                                     >
                                        <SelectTrigger className="bg-white p-6 outline-none border border-main">
-                                          <SelectValue placeholder="Select field of study" />
+                                          <SelectValue
+                                             placeholder={t(
+                                                "selectFieldOfStudy"
+                                             )}
+                                          />
                                        </SelectTrigger>
                                        <SelectContent>
                                           <SelectItem value="computer_science">
-                                             Computer Science
+                                             {t("fields.computerScience")}
                                           </SelectItem>
                                           <SelectItem value="engineering">
-                                             Engineering
+                                             {t("fields.engineering")}
                                           </SelectItem>
                                           <SelectItem value="mathematics">
-                                             Mathematics
+                                             {t("fields.mathematics")}
                                           </SelectItem>
                                           <SelectItem value="physics">
-                                             Physics
+                                             {t("fields.physics")}
                                           </SelectItem>
                                           <SelectItem value="biology">
-                                             Biology
+                                             {t("fields.biology")}
                                           </SelectItem>
                                           <SelectItem value="chemistry">
-                                             Chemistry
+                                             {t("fields.chemistry")}
                                           </SelectItem>
                                           <SelectItem value="other">
-                                             Other
+                                             {t("fields.other")}
                                           </SelectItem>
                                        </SelectContent>
                                     </Select>
@@ -373,7 +384,7 @@ const RegisterPage = () => {
                            name="password"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Password *</FormLabel>
+                                 <FormLabel>{t("password")} *</FormLabel>
                                  <FormControl>
                                     <div className="relative">
                                        <Input
@@ -412,7 +423,7 @@ const RegisterPage = () => {
                            name="confirmPassword"
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Confirm Password *</FormLabel>
+                                 <FormLabel>{t("confirmPassword")} *</FormLabel>
                                  <FormControl>
                                     <div className="relative">
                                        <Input
@@ -460,14 +471,15 @@ const RegisterPage = () => {
                         <div className="mt-6">
                            <div className="flex justify-between items-center mb-4">
                               <h3 className="text-lg font-medium">
-                                 Child Information
+                                 {t("childInfo.title")}
                               </h3>
                               <Button
                                  type="button"
                                  onClick={addChild}
                                  className="bg-main"
                               >
-                                 <Plus className="h-4 w-4 mr-2" /> Add Child
+                                 <Plus className="h-4 w-4 mr-2" />{" "}
+                                 {t("childInfo.addChild")}
                               </Button>
                            </div>
 
@@ -478,7 +490,7 @@ const RegisterPage = () => {
                               >
                                  <div className="flex justify-between items-center mb-4">
                                     <h4 className="font-medium">
-                                       Child {index + 1}
+                                       {t("childInfo.child")} {index + 1}
                                     </h4>
                                     <Button
                                        type="button"
@@ -496,7 +508,7 @@ const RegisterPage = () => {
                                        render={({ field }) => (
                                           <FormItem>
                                              <FormLabel>
-                                                Child&apos;s Name *
+                                                {t("childInfo.childName")} *
                                              </FormLabel>
                                              <FormControl>
                                                 <Input
@@ -513,7 +525,9 @@ const RegisterPage = () => {
                                        name={`children.${index}.grade`}
                                        render={({ field }) => (
                                           <FormItem>
-                                             <FormLabel>Grade *</FormLabel>
+                                             <FormLabel>
+                                                {t("childInfo.grade")} *
+                                             </FormLabel>
                                              <FormControl>
                                                 <Input
                                                    className="bg-white p-6"
@@ -530,7 +544,7 @@ const RegisterPage = () => {
                                        render={({ field }) => (
                                           <FormItem>
                                              <FormLabel>
-                                                Child&apos;s Email *
+                                                {t("childInfo.childEmail")} *
                                              </FormLabel>
                                              <FormControl>
                                                 <Input
@@ -548,7 +562,9 @@ const RegisterPage = () => {
                                        name={`children.${index}.age`}
                                        render={({ field }) => (
                                           <FormItem>
-                                             <FormLabel>Age *</FormLabel>
+                                             <FormLabel>
+                                                {t("childInfo.age")} *
+                                             </FormLabel>
                                              <FormControl>
                                                 <Input
                                                    className="bg-white p-6"
@@ -582,12 +598,12 @@ const RegisterPage = () => {
                         className="w-full bg-main py-6 mt-10"
                         disabled={isSubmitting}
                      >
-                        {isSubmitting ? "Registering..." : "Register"}
+                        {isSubmitting ? t("registering") : t("registerButton")}
                      </Button>
                   </form>
                </Form>
                <div className="flex flex-col items-center gap-4 py-6">
-                  <p className="text-center">Or</p>
+                  <p className="text-center">{t("or")}</p>
                   <div className="w-full flex items-center justify-center">
                      <div
                         className="w-full md:w-1/2 bg-white py-4 px-8 cursor-pointer hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors duration-200 flex items-center justify-center gap-3 shadow-sm"
@@ -599,7 +615,7 @@ const RegisterPage = () => {
                            className="w-6 h-6"
                         />
                         <span className="text-gray-600">
-                           Continue with Google
+                           {t("continueWithGoogle")}
                         </span>
                      </div>
                   </div>
@@ -613,12 +629,12 @@ const RegisterPage = () => {
 
                <div className="mt-6">
                   <p>
-                     Already have an account?
+                     {t("alreadyHaveAccount")}
                      <Link
                         className="ml-4 text-white"
                         href="/login"
                      >
-                        Login
+                        {t("login")}
                      </Link>
                   </p>
                </div>

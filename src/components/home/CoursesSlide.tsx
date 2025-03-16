@@ -20,6 +20,7 @@ import {
    Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations } from "next-intl";
 
 interface CourseData {
    id: string;
@@ -49,6 +50,7 @@ const categoryIconMap: Record<string, React.ReactNode> = {
 };
 
 const CourseCard: React.FC<{ course: CourseData }> = ({ course }) => {
+   const t = useTranslations("home.courses");
    const link = `/courses/${course.id}`;
 
    // Default category if not found
@@ -114,15 +116,11 @@ const CourseCard: React.FC<{ course: CourseData }> = ({ course }) => {
                      )}
 
                      <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-100">
-                        {course.teacher?.name ? (
-                           <span className="text-sm text-gray-600">
-                              By {course.teacher.name}
-                           </span>
-                        ) : (
-                           <span className="text-sm text-gray-600">
-                              Smart EduHub Course
-                           </span>
-                        )}
+                        <span className="text-sm text-gray-600">
+                           {course.teacher?.name
+                              ? t("byAuthor", { name: course.teacher.name })
+                              : t("smartEduHubCourse")}
+                        </span>
 
                         <span className="text-blue-600 flex items-center text-sm font-medium group">
                            View Course
@@ -138,12 +136,11 @@ const CourseCard: React.FC<{ course: CourseData }> = ({ course }) => {
 };
 
 const CoursesSection = () => {
+   const t = useTranslations("home.courses");
    const { data: courses, isLoading, error } = useGetAllCourses();
    const plugin = React.useRef(
       Autoplay({ delay: 4000, stopOnInteraction: true })
    );
-
- 
 
    const displayCourses = courses?.length ? courses : [];
 
@@ -155,15 +152,13 @@ const CoursesSection = () => {
          <div className="container mx-auto px-4">
             <div className="text-center mb-16">
                <h2 className="text-lg text-blue-600 text-center mb-2 tracking-wider font-medium">
-                  FEATURED COURSES
+                  {t("title")}
                </h2>
                <h2 className="text-3xl md:text-4xl text-center font-bold mb-4 text-gray-900">
-                  Discover Your Next Learning Adventure
+                  {t("subtitle")}
                </h2>
                <h3 className="md:w-3/4 lg:w-2/3 mx-auto text-xl text-center text-gray-600">
-                  Explore our AI-powered courses designed to adapt to your
-                  learning style and help you master new skills at your own
-                  pace.
+                  {t("description")}
                </h3>
             </div>
 
