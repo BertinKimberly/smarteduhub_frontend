@@ -20,6 +20,7 @@ import {
    MessageSquare,
    FileQuestion,
    ListChecks,
+   Send,
 } from "lucide-react";
 import {
    useAILearning,
@@ -27,6 +28,9 @@ import {
    useExplainConcept,
    useGenerateQuiz,
 } from "@/hooks/useAI";
+import { ChatHistory } from "@/components/ChatHistory";
+import { useChatHistory } from "@/hooks/useChatHistory";
+import MessageBubble from "@/components/MessageBubble";
 
 interface AIAnalysisPanelProps {
    materialId: string;
@@ -58,11 +62,12 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({
    const summarizeContent = useSummarizeContent();
    const explainConcept = useExplainConcept();
    const generateQuiz = useGenerateQuiz();
+   const { createSession } = useChatHistory();
 
    // Handle chat submission
    const handleChatSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!currentMessage.trim()) return;
+      if (!currentMessage.trim() || aiLearning.isPending) return;
 
       const newMessage = { role: "user", content: currentMessage };
       const updatedMessages = [...chatMessages, newMessage];
@@ -71,14 +76,29 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({
 
       try {
          const response = await aiLearning.mutateAsync({
-            messages: updatedMessages,
-            course_id: courseId,
+            messages: [
+               {
+                  role: "system",
+                  content: `You are analyzing the course material: ${materialTitle}. The content is:\n\n${content}\n\nPlease help the student understand this material.`,
+               },
+               ...updatedMessages,
+            ],
          });
 
-         setChatMessages([
-            ...updatedMessages,
-            { role: "assistant", content: response.response },
-         ]);
+         if (response && response.response) {
+            const newMessages = [
+               ...updatedMessages,
+               { role: "assistant", content: response.response },
+            ];
+            setChatMessages(newMessages);
+
+            // Create chat session
+            await createSession({
+               messages: newMessages,
+               session_type: "material_analysis",
+               title: `Analysis: ${materialTitle}`,
+            });
+         }
       } catch (error) {
          console.error("Error in AI chat:", error);
          setChatMessages([
@@ -95,34 +115,38 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({
    const handleSummarize = async () => {
       try {
          const response = await summarizeContent.mutateAsync({
-            content,
+            content: content,
             detail_level: detailLevel,
             focus_areas: focusArea ? [focusArea] : undefined,
          });
 
-         setChatMessages([
-            {
-               role: "user",
-               content: `Please summarize this material: ${materialTitle}`,
-            },
-            {
-               role: "assistant",
-               content: `
-# Summary of ${materialTitle}
+         // Format the response for chat display
+         const formattedSummary = `Here's a ${detailLevel} summary of ${materialTitle}:
 
 ${response.summary}
 
-## Key Points
-${response.key_points.map((point) => `- ${point}`).join("\n")}
+Key Points:
+${response.key_points.map((point) => `• ${point}`).join("\n")}
 
-## Suggested Topics to Explore
-${response.suggested_topics.map((topic) => `- ${topic}`).join("\n")}
-            `,
-            },
+Suggested Topics to Explore:
+${response.suggested_topics.map((topic) => `• ${topic}`).join("\n")}`;
+
+         setChatMessages([
+            { role: "user", content: `Please summarize this material.` },
+            { role: "assistant", content: formattedSummary },
          ]);
          setActiveTab("chat");
       } catch (error) {
          console.error("Error summarizing content:", error);
+         setChatMessages([
+            { role: "user", content: "Please summarize this material." },
+            {
+               role: "assistant",
+               content:
+                  "I apologize, but I encountered an error while trying to summarize the content. Please try again or try adjusting the detail level.",
+            },
+         ]);
+         setActiveTab("chat");
       }
    };
 
@@ -133,47 +157,56 @@ ${response.suggested_topics.map((topic) => `- ${topic}`).join("\n")}
       try {
          const response = await explainConcept.mutateAsync({
             concept,
-            context: materialTitle,
+            context: content, // Pass the full content for context
             difficulty_level: difficultyLevel,
          });
 
-         setChatMessages([
-            { role: "user", content: `Please explain the concept: ${concept}` },
-            {
-               role: "assistant",
-               content: `
-# ${concept}
+         const formattedExplanation = `Here's an explanation of "${concept}" at ${difficultyLevel} level:
 
 ${response.explanation}
 
-## Examples
-${response.examples.map((example) => `- ${example}`).join("\n")}
+Examples:
+${response.examples.map((ex) => `• ${ex}`).join("\n")}
 
-## Related Concepts
-${response.related_concepts.map((rc) => `- ${rc}`).join("\n")}
+Related Concepts:
+${response.related_concepts.map((rc) => `• ${rc}`).join("\n")}
 
 ${
-   response.practice_questions && response.practice_questions.length > 0
-      ? `
-## Practice Questions
-${response.practice_questions
-   .map(
-      (q, i) => `
+   response.practice_questions
+      ? `\nPractice Questions:\n${response.practice_questions
+           .map(
+              (q, i) => `
 ${i + 1}. ${q.question}
-${q.options ? q.options.map((opt) => `   - ${opt}`).join("\n") : ""}
-`
-   )
-   .join("\n")}
-`
+${
+   q.options
+      ? q.options
+           .map((opt, j) => `   ${String.fromCharCode(65 + j)}. ${opt}`)
+           .join("\n")
       : ""
 }
-            `,
-            },
+`
+           )
+           .join("\n")}`
+      : ""
+}`;
+
+         setChatMessages([
+            { role: "user", content: `Please explain the concept: ${concept}` },
+            { role: "assistant", content: formattedExplanation },
          ]);
          setActiveTab("chat");
          setConcept("");
       } catch (error) {
          console.error("Error explaining concept:", error);
+         setChatMessages([
+            { role: "user", content: `Please explain the concept: ${concept}` },
+            {
+               role: "assistant",
+               content:
+                  "I apologize, but I encountered an error while trying to explain this concept. Please try again or try with a different concept.",
+            },
+         ]);
+         setActiveTab("chat");
       }
    };
 
@@ -220,26 +253,33 @@ ${q.explanation ? `\nExplanation: ${q.explanation}` : ""}
    };
 
    return (
-      <Card className="w-full h-full flex flex-col">
-         <CardHeader className="pb-3">
+      <Card className="w-full h-full flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-xl">
+         <CardHeader className="pb-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
             <div className="flex justify-between items-center">
                <CardTitle className="text-xl">AI Learning Assistant</CardTitle>
-               <Button
-                  variant="outline"
-                  onClick={onClose}
-               >
-                  Close
-               </Button>
+               <div className="flex gap-2">
+                  <ChatHistory
+                     onSelectSession={(session) => {
+                        setChatMessages(session.messages);
+                        setActiveTab("chat");
+                     }}
+                  />
+                  <Button
+                     variant="ghost"
+                     onClick={onClose}
+                     className="text-white hover:text-gray-200 hover:bg-white/10"
+                  >
+                     Close
+                  </Button>
+               </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-               Analyzing: {materialTitle}
-            </p>
+            <p className="text-blue-100">Analyzing: {materialTitle}</p>
          </CardHeader>
-         <CardContent className="flex-1 overflow-hidden flex flex-col">
+         <CardContent className="flex-1 overflow-hidden flex flex-col p-0">
             <Tabs
                value={activeTab}
                onValueChange={setActiveTab}
-               className="flex-1 flex flex-col"
+               className="flex-1 flex flex-col p-6"
             >
                <TabsList className="mb-4">
                   <TabsTrigger
@@ -272,7 +312,7 @@ ${q.explanation ? `\nExplanation: ${q.explanation}` : ""}
                   </TabsTrigger>
                </TabsList>
 
-               <div className="flex-1 overflow-hidden">
+               <div className="flex-1 overflow-hidden bg-white rounded-lg shadow-sm">
                   <TabsContent
                      value="summarize"
                      className="h-full flex flex-col"
@@ -452,16 +492,21 @@ ${q.explanation ? `\nExplanation: ${q.explanation}` : ""}
 
                   <TabsContent
                      value="chat"
-                     className="h-full flex flex-col"
+                     className="h-full flex flex-col p-4"
                   >
-                     <div className="flex-1 overflow-y-auto mb-4 border rounded-md p-4">
+                     <div className="flex-1 overflow-y-auto mb-4 rounded-lg bg-gray-50 p-4">
                         {chatMessages.length === 0 ? (
-                           <div className="h-full flex items-center justify-center text-center p-4">
-                              <div className="space-y-2">
-                                 <MessageSquare className="h-8 w-8 mx-auto text-muted-foreground" />
-                                 <p className="text-sm text-muted-foreground">
-                                    No messages yet. Start a conversation or use
-                                    one of the AI tools.
+                           <div className="h-full flex items-center justify-center text-center">
+                              <div className="space-y-3 p-6 bg-white rounded-xl max-w-md shadow-sm">
+                                 <div className="bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
+                                    <MessageSquare className="h-8 w-8 text-blue-600" />
+                                 </div>
+                                 <h3 className="text-lg font-medium text-blue-800">
+                                    Start a conversation
+                                 </h3>
+                                 <p className="text-blue-600">
+                                    Ask questions about this material or use the
+                                    AI tools above to analyze the content.
                                  </p>
                               </div>
                            </div>
@@ -476,17 +521,7 @@ ${q.explanation ? `\nExplanation: ${q.explanation}` : ""}
                                           : "justify-start"
                                     }`}
                                  >
-                                    <div
-                                       className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                                          msg.role === "user"
-                                             ? "bg-primary text-primary-foreground"
-                                             : "bg-muted"
-                                       }`}
-                                    >
-                                       <div className="whitespace-pre-line">
-                                          {msg.content}
-                                       </div>
-                                    </div>
+                                    <MessageBubble message={msg} />
                                  </div>
                               ))}
                            </div>
@@ -494,24 +529,25 @@ ${q.explanation ? `\nExplanation: ${q.explanation}` : ""}
                      </div>
                      <form
                         onSubmit={handleChatSubmit}
-                        className="flex gap-2"
+                        className="relative"
                      >
                         <Textarea
                            placeholder="Ask a question about this material..."
                            value={currentMessage}
                            onChange={(e) => setCurrentMessage(e.target.value)}
-                           className="min-h-[60px] flex-1"
+                           className="min-h-[60px] pr-12 rounded-xl border-gray-200 focus:border-blue-400 focus:ring focus:ring-blue-100 resize-none"
                         />
                         <Button
                            type="submit"
                            disabled={
                               !currentMessage.trim() || aiLearning.isPending
                            }
+                           className="absolute right-2 bottom-2 rounded-full w-10 h-10 p-0 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                         >
                            {aiLearning.isPending ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                            ) : (
-                              "Send"
+                              <Send className="h-4 w-4" />
                            )}
                         </Button>
                      </form>

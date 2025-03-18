@@ -3,6 +3,7 @@ import React from "react";
 import { useGetAllAssignments } from "@/hooks/useAssignments";
 import { DataTable } from "@/components/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
+import DashboardNavbar from "@/components/DashboardNavbar";
 
 interface Assignment {
    id: string;
@@ -52,13 +53,16 @@ const AdminAssignmentsPage = () => {
    if (error) return <div>Error loading assignments</div>;
 
    return (
-      <div className="p-6">
+      <>
+      <DashboardNavbar title="Assignments"/>
+      <div className="p-2">
          <h1 className="text-2xl font-bold mb-4">Admin Assignments</h1>
          <DataTable
             columns={columns}
             data={data || []}
          />
       </div>
+      </>
    );
 };
 

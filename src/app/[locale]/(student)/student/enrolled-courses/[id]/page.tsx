@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
    ArrowLeft,
@@ -13,22 +13,31 @@ import {
    Maximize2,
    Minimize2,
    Brain,
+   Check,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DashboardNavbar from "@/components/DashboardNavbar";
-import { useGetCourseById, useGetMaterials } from "@/hooks/useCourses";
+import {
+   useGetCourseById,
+   useGetMaterials,
+   useMarkMaterialComplete,
+} from "@/hooks/useCourses";
 import DocumentViewer from "@/components/DocumentViewer";
 import { CourseRatings } from "@/components/CourseRatings";
 import AIAnalysisPanel from "@/components/AIAnalysisPanel";
 import { useExtractDocumentText } from "@/hooks/useAI";
 
+import { toast } from "react-toastify";
+
 interface Material {
    id: string;
    title: string;
    file_path: string;
+   viewed?: boolean; // Add this property
+   course_id?: string;
 }
 
 interface DocumentAnalysisResponse {
@@ -49,6 +58,8 @@ const CourseDetailPage = () => {
    const params = useParams();
    const router = useRouter();
    const courseId = params.id as string;
+
+   // Group all useState hooks at the top
    const [activeTab, setActiveTab] = useState("overview");
    const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(
       null
@@ -57,11 +68,46 @@ const CourseDetailPage = () => {
    const [showAIPanel, setShowAIPanel] = useState(false);
    const [selectedMaterialForAI, setSelectedMaterialForAI] =
       useState<DocumentAnalysisResponse | null>(null);
-   const extractDocumentText = useExtractDocumentText();
+   const [materialCompleted, setMaterialCompleted] = useState(false);
 
+   // Group all queries
+   const extractDocumentText = useExtractDocumentText();
    const { data: course, isLoading, error } = useGetCourseById(courseId);
    const { data: materials, isLoading: materialsLoading } =
       useGetMaterials(courseId);
+   const { mutate: markComplete, isPending: marking } =
+      useMarkMaterialComplete();
+
+   // Move useEffect to top level
+   useEffect(() => {
+      if (selectedMaterialId && materials) {
+         const selectedMaterial = materials.find(
+            (m) => m.id === selectedMaterialId
+         );
+         if (selectedMaterial) {
+            setMaterialCompleted(selectedMaterial.viewed || false);
+         }
+      }
+   }, [selectedMaterialId, materials]);
+
+   // Handle mark complete function
+   const handleMarkComplete = () => {
+      if (!materialCompleted && selectedMaterialId) {
+         markComplete(
+            { materialId: selectedMaterialId },
+            {
+               onSuccess: () => {
+                  setMaterialCompleted(true);
+                  toast.success("Material marked as completed!");
+               },
+               onError: (error) => {
+                  console.error("Failed to mark as completed", error);
+                  toast.error("Failed to mark material as completed");
+               },
+            }
+         );
+      }
+   };
 
    // Function to get file URL
    const getFileUrl = (filePath: string) => {
@@ -76,11 +122,15 @@ const CourseDetailPage = () => {
    // Function to handle AI analysis
    const handleAIAnalysis = async (material: Material) => {
       try {
+         setShowAIPanel(true); // Show panel immediately with loading state
          const response = await extractDocumentText.mutateAsync(material.id);
-         setSelectedMaterialForAI(response);
-         setShowAIPanel(true);
+         if (response) {
+            setSelectedMaterialForAI(response);
+         }
       } catch (error) {
          console.error("Error extracting document text:", error);
+         toast.error("Could not analyze the document. Please try again later.");
+         setShowAIPanel(false);
       }
    };
 
@@ -152,53 +202,114 @@ const CourseDetailPage = () => {
                <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                   <Button
                      variant="ghost"
-                     onClick={() => setSelectedMaterialId(null)}
+                     onClick={() => {
+                        setSelectedMaterialId(null);
+                        setShowAIPanel(false);
+                     }}
                      className="text-gray-700"
                   >
                      <ChevronLeft className="mr-2 h-4 w-4" />
                      Back to Course
                   </Button>
 
-                  {!isFullscreen && (
-                     <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                     {!showAIPanel && (
                         <Button
-                           variant="outline"
-                           size="icon"
-                           onClick={() => setIsFullscreen(true)}
-                           className="bg-white shadow-sm hover:bg-gray-100"
+                           variant="secondary"
+                           onClick={() => handleAIAnalysis(selectedMaterial)}
+                           disabled={extractDocumentText.isPending}
+                           className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
                         >
-                           <Maximize2 className="h-4 w-4 text-gray-700" />
+                           {extractDocumentText.isPending ? (
+                              <>
+                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                 Analyzing...
+                              </>
+                           ) : (
+                              <>
+                                 <Brain className="h-4 w-4 mr-2" />
+                                 AI Analysis
+                              </>
+                           )}
                         </Button>
-                        <Button
-                           variant="outline"
-                           onClick={() => window.open(fileUrl, "_blank")}
-                        >
-                           <Download className="h-4 w-4 mr-2" />
-                           Download
-                        </Button>
-                     </div>
-                  )}
+                     )}
+                     {!isFullscreen && !showAIPanel && (
+                        <>
+                           <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => setIsFullscreen(true)}
+                              className="bg-white shadow-sm hover:bg-gray-100"
+                           >
+                              <Maximize2 className="h-4 w-4 text-gray-700" />
+                           </Button>
+                           <Button
+                              variant="outline"
+                              onClick={() => window.open(fileUrl, "_blank")}
+                           >
+                              <Download className="h-4 w-4 mr-2" />
+                              Download
+                           </Button>
+                        </>
+                     )}
+                  </div>
                </div>
             </div>
 
-            <div className="flex-1 flex items-stretch justify-center bg-gray-100">
-               <div className="w-full max-w-6xl mx-auto p-6 flex gap-6">
-                  <div className="w-2/3 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
-                     <DocumentViewer
-                        fileUrl={fileUrl}
-                        isFullscreen={isFullscreen}
-                        onToggleFullscreen={() => setIsFullscreen(false)}
-                     />
-                  </div>
-                  {showAIPanel && selectedMaterialForAI && (
-                     <div className="w-1/3">
-                        <AIAnalysisPanel
-                           materialId={selectedMaterialForAI.material_id}
-                           materialTitle={selectedMaterialForAI.title}
-                           courseId={selectedMaterialForAI.course_id}
-                           content={selectedMaterialForAI.content}
-                           onClose={() => setShowAIPanel(false)}
+            <div className="flex-1 flex flex-col bg-gray-100">
+               <div className="container mx-auto p-6">
+                  {showAIPanel ? (
+                     <>
+                        {extractDocumentText.isPending ? (
+                           <div className="bg-white rounded-lg p-8 text-center">
+                              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+                              <h3 className="text-lg font-medium mb-2">
+                                 Analyzing Document
+                              </h3>
+                              <p className="text-gray-500">
+                                 Please wait while AI analyzes{" "}
+                                 {selectedMaterial.title}
+                              </p>
+                           </div>
+                        ) : selectedMaterialForAI ? (
+                           <AIAnalysisPanel
+                              materialId={selectedMaterialForAI.material_id}
+                              materialTitle={selectedMaterialForAI.title}
+                              courseId={selectedMaterialForAI.course_id}
+                              content={selectedMaterialForAI.content}
+                              onClose={() => {
+                                 setShowAIPanel(false);
+                                 setSelectedMaterialForAI(null);
+                              }}
+                           />
+                        ) : null}
+                     </>
+                  ) : (
+                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <DocumentViewer
+                           fileUrl={fileUrl}
+                           isFullscreen={isFullscreen}
+                           onToggleFullscreen={() => setIsFullscreen(false)}
                         />
+                        {/* Mark as Completed Button */}
+                        <div className="p-4 border-t">
+                           {!materialCompleted ? (
+                              <Button
+                                 onClick={handleMarkComplete}
+                                 disabled={marking}
+                                 className="w-full"
+                              >
+                                 {marking
+                                    ? "Marking as completed..."
+                                    : "Mark as Completed"}
+                              </Button>
+                           ) : (
+                              <div className="flex items-center justify-center text-green-600 gap-2">
+                                 <Check className="h-4 w-4" />
+                                 <span>Material completed!</span>
+                              </div>
+                           )}
+                        </div>
                      </div>
                   )}
                </div>
@@ -367,9 +478,10 @@ const CourseDetailPage = () => {
                                           Download
                                        </Button>
                                        <Button
-                                          onClick={() =>
-                                             handleAIAnalysis(material)
-                                          }
+                                          onClick={() => {
+                                             handleAIAnalysis(material);
+                                             setSelectedMaterialId(material.id); // Ensure material is selected
+                                          }}
                                           variant="secondary"
                                        >
                                           <Brain className="h-4 w-4 mr-2" />

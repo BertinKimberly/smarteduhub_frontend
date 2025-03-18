@@ -1,6 +1,7 @@
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // Fetch all channels
 const getAllChannels = (): Promise<any> => {
@@ -130,13 +131,51 @@ const uploadFile = (file: File): Promise<any> => {
    );
 };
 
+// Add function to invite users to a channel
+const inviteToChannel = (data: {
+   channelId: string;
+   userIds: string[];
+}): Promise<any> => {
+   return handleApiRequest(() =>
+      authorizedAPI.post(`/chat/channels/${data.channelId}/invite`, {
+         user_ids: data.userIds,
+      })
+   );
+};
+
 // React Query Hooks
-export const useGetAllChannels = () =>
-   useQuery<any, Error>({ queryKey: ["channels"], queryFn: getAllChannels });
+export const useGetAllChannels = () => {
+   const queryClient = useQueryClient();
+
+   return useQuery<any, Error>({
+      queryKey: ["channels"],
+      queryFn: getAllChannels,
+      // Add onSuccess handler to store the channels
+      onSuccess: (data) => {
+         queryClient.setQueryData(["channels"], data);
+      },
+   });
+};
 
 export const useCreateChannel = () => {
+   const queryClient = useQueryClient();
+
    return useMutation<any, Error, any>({
       mutationFn: createChannel,
+      // Add onSuccess handler to update channels list
+      onSuccess: async (newChannel) => {
+         // Get current channels
+         const currentChannels = queryClient.getQueryData(["channels"]) || [];
+
+         // Update cache with new channel
+         queryClient.setQueryData(
+            ["channels"],
+            [...currentChannels, newChannel]
+         );
+
+         // Invalidate and refetch to ensure consistency
+         await queryClient.invalidateQueries({ queryKey: ["channels"] });
+      },
    });
 };
 
@@ -193,4 +232,40 @@ export const useUploadFile = () => {
    return useMutation<any, Error, any>({
       mutationFn: uploadFile,
    });
+};
+
+// Add the new mutation hook
+export const useInviteToChannel = () => {
+   return useMutation<any, Error, any>({
+      mutationFn: inviteToChannel,
+   });
+};
+
+// Add this new hook for handling real-time channel updates
+export const useChannelWebSocket = () => {
+   const queryClient = useQueryClient();
+
+   useEffect(() => {
+      const ws = new WebSocket(`ws://localhost:8000/chat/ws/channels`);
+
+      ws.onmessage = (event) => {
+         const data = JSON.parse(event.data);
+
+         if (data.type === "channel_created") {
+            // Get current channels
+            const currentChannels =
+               queryClient.getQueryData(["channels"]) || [];
+
+            // Update cache with new channel
+            queryClient.setQueryData(
+               ["channels"],
+               [...currentChannels, data.data]
+            );
+         }
+      };
+
+      return () => {
+         ws.close();
+      };
+   }, [queryClient]);
 };

@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { authorizedAPI } from "@/lib/api";
 import handleApiRequest from "@/utils/handleApiRequest";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Course, CourseFormData, Material } from "@/types/course";
 import React from "react";
 
@@ -65,7 +65,6 @@ const getCourseById = ({
 const deleteCourseById = (id: string): Promise<void> => {
    return handleApiRequest(() => authorizedAPI.delete(`/courses/${id}`));
 };
-
 
 const getEnrolledCourses = (): Promise<Course[]> => {
    return handleApiRequest(() => authorizedAPI.get("/courses/enrolled/me"));
@@ -251,4 +250,50 @@ export const useGetAllCoursesWithEnrollment = () => {
       data: mergedCourses,
       isLoading: isLoadingAll || isLoadingEnrolled,
    };
+};
+
+export const useUpdateCourseProgress = () => {
+   const queryClient = useQueryClient();
+
+   return useMutation<
+      { progress: number },
+      Error,
+      { courseId: string; progress: number }
+   >({
+      mutationFn: async ({ courseId, progress }) => {
+         const response = await authorizedAPI.put(
+            `/courses/${courseId}/progress`,
+            { progress }
+         );
+         return response.data;
+      },
+      onSuccess: () => {
+         // Invalidate and refetch enrolled courses
+         queryClient.invalidateQueries({ queryKey: ["enrolledCourses"] });
+      },
+   });
+};
+
+// Add function to calculate course progress
+export const calculateCourseProgress = (course: Course): number => {
+   if (!course.materials || course.materials.length === 0) return 0;
+
+   const materialsViewed = course.materials.filter((m) => m.viewed).length;
+   return (materialsViewed / course.materials.length) * 100;
+};
+
+export const useMarkMaterialComplete = () => {
+   const queryClient = useQueryClient();
+   return useMutation<any, Error, { materialId: string }>({
+      mutationFn: async ({ materialId }) => {
+         const response = await authorizedAPI.patch(
+            `/courses/materials/${materialId}/complete`
+         );
+         return response.data;
+      },
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["materials"] });
+         queryClient.invalidateQueries({ queryKey: ["enrolledCourses"] });
+      },
+   });
 };

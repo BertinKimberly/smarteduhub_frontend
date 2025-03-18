@@ -8,48 +8,71 @@ import { Progress } from "@/components/ui/progress";
 import { Book, Pen, Star, Users, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { useGetEnrolledCourses } from "@/hooks/useCourses";
+import { useGetAllCourses, useGetEnrolledCourses } from "@/hooks/useCourses";
+import { useGetStudentAssignments } from "@/hooks/useAssignments";
+import { useGetStudents } from "@/hooks/useStudents";
 import { EnrolledCourseCard } from "@/components/student/EnrolledCourseCard";
-
-const cardData = [
-   {
-      icon: Book,
-      desc: "Total Available Courses",
-      title: `${20} Courses`,
-      color: "#979205",
-   },
-   {
-      icon: Star,
-      desc: "Total Completed Projects",
-      title: `${20} Courses`,
-      color: "#FEB185",
-   },
-   {
-      icon: Pen,
-      desc: "Total Completed Assignments",
-      title: `${30} assignments`,
-      color: "#8495B2",
-   },
-   {
-      icon: Users,
-      desc: "All Students enrolled in same courses",
-      title: `${40} Students`,
-      color: "#311D4A",
-   },
-];
+import ChatBot from "@/components/ChatBot";
 
 const StudentHome = () => {
-   const { data: courses, isLoading, error } = useGetEnrolledCourses();
+   const {
+      data: enrolledCourses,
+      isLoading: isLoadingCourses,
+      error,
+   } = useGetEnrolledCourses();
+   const { data: allCourses } = useGetAllCourses();
+   const { data: assignments } = useGetStudentAssignments();
+   const { data: students } = useGetStudents();
+
+   const completedAssignments =
+      assignments?.filter((a: { status: string; }) => a.status === "completed")?.length || 0;
+   const completedCourses =
+      enrolledCourses?.filter((c) => c.progress === 100)?.length || 0;
+   const totalProgress =
+      enrolledCourses?.reduce(
+         (acc, course) => acc + (course.progress || 0),
+         0
+      ) || 0;
+   const averageProgress = enrolledCourses?.length
+      ? totalProgress / enrolledCourses.length
+      : 0;
+
+   const cardData = [
+      {
+         icon: Book,
+         desc: "Total Available Courses",
+         title: `${allCourses?.length || 0} Courses`,
+         color: "#979205",
+      },
+      {
+         icon: Star,
+         desc: "Completed Courses",
+         title: `${completedCourses} Courses`,
+         color: "#FEB185",
+      },
+      {
+         icon: Pen,
+         desc: "Completed Assignments",
+         title: `${completedAssignments} assignments`,
+         color: "#8495B2",
+      },
+      {
+         icon: Users,
+         desc: "Fellow Students",
+         title: `${students?.length || 0} Students`,
+         color: "#311D4A",
+      },
+   ];
 
    // Take only first 3 courses for preview
-   const previewCourses = courses?.slice(0, 3) || [];
+   const previewCourses = enrolledCourses?.slice(0, 3) || [];
 
    return (
       <div>
          <DashboardNavbar title="Dashboard" />
          <div className="flex flex-col gap-2 w-[40%] my-6">
             <h4>Curriculum Progress</h4>
-            <Progress value={40} />
+            <Progress value={averageProgress} />
          </div>
 
          <section className="grid w-full grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4 mb-6">
@@ -81,6 +104,12 @@ const StudentHome = () => {
                </p>
 
                <AssignmentChart />
+               <Link
+                  href="/student/assignments"
+                  className="text-main"
+               >
+                  View All Assignments
+               </Link>
             </div>
          </section>
 
@@ -100,7 +129,7 @@ const StudentHome = () => {
 
             {/* courses  */}
             <div className="flex flex-wrap -mx-4">
-               {isLoading ? (
+               {isLoadingCourses ? (
                   <div className="w-full flex items-center justify-center py-12">
                      <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
                      <span className="ml-3 text-gray-600">
@@ -132,6 +161,7 @@ const StudentHome = () => {
                )}
             </div>
          </section>
+         <ChatBot />
       </div>
    );
 };

@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Minimize2 } from "lucide-react";
 import { Button } from "./ui/button";
-
-// Set the worker source for PDF.js
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 
 interface DocumentViewerProps {
    fileUrl: string;
@@ -22,144 +17,149 @@ const DocumentViewer = ({
    onToggleFullscreen,
 }: DocumentViewerProps) => {
    const [docxContent, setDocxContent] = useState<string>("");
-   const [error, setError] = useState<boolean>(false);
-   const [numPages, setNumPages] = useState<number | null>(null);
-   const [pageNumber, setPageNumber] = useState<number>(1);
-   const [pdfLoading, setPdfLoading] = useState<boolean>(true);
-
+   const [processedFileUrl, setProcessedFileUrl] = useState<string>("");
+   const [isLoading, setIsLoading] = useState(true);
+   const [errorMessage, setErrorMessage] = useState<string | null>(null);
    const fileExtension = fileUrl.split(".").pop()?.toLowerCase();
-   const isPdf = fileExtension === "pdf";
    const isDocx = fileExtension === "docx";
-   const isSupportedByBrowser = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'txt'].includes(fileExtension || '');
+   const isPdf = fileExtension === "pdf";
 
    useEffect(() => {
+      setIsLoading(true);
+      setErrorMessage(null);
+      
       if (isDocx) {
          handleDocxConversion();
+      } else if (isPdf) {
+         handlePdfFile();
+      } else {
+         // For other file types, use directly
+         setProcessedFileUrl(fileUrl);
+         setIsLoading(false);
       }
    }, [fileUrl]);
 
    const handleDocxConversion = async () => {
       try {
-         // Import mammoth dynamically only when needed
-         const mammoth = await import('mammoth');
+         const mammoth = await import("mammoth");
          const response = await fetch(fileUrl);
          const arrayBuffer = await response.arrayBuffer();
          const result = await mammoth.default.convertToHtml({ arrayBuffer });
          setDocxContent(result.value);
-         setError(false);
+         setIsLoading(false);
       } catch (err) {
          console.error("Error converting DOCX:", err);
-         setError(true);
+         setErrorMessage("Failed to load DOCX file. Please try downloading it instead.");
+         setIsLoading(false);
       }
    };
 
-   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-      setNumPages(numPages);
-      setPdfLoading(false);
+   const handlePdfFile = async () => {
+      try {
+         // Use fetch with a proxy approach to avoid ad blocker issues
+         // First, try to fetch using the original URL
+         const fetchWithTimeout = async (url: string, options = {}, timeout = 5000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(id);
+            return response;
+         };
+
+         // Try direct fetch first
+         try {
+            const response = await fetchWithTimeout(fileUrl, { 
+               method: 'GET',
+               mode: 'cors',
+               cache: 'no-cache',
+               credentials: 'same-origin',
+               headers: {
+                  'Accept': 'application/pdf',
+                  'X-Requested-With': 'XMLHttpRequest', // Some servers check for this
+               },
+            });
+
+            if (!response.ok) {
+               throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            setProcessedFileUrl(url);
+            setIsLoading(false);
+            return;
+         } catch (directError) {
+            console.warn("Direct fetch failed, trying alternative approach:", directError);
+            // Continue to fallback approaches
+         }
+
+         // Fallback: Try to use a data URL approach (works for smaller PDFs)
+         try {
+            // Use a server-side proxy endpoint if available
+            const proxyUrl = `/api/proxy-file?url=${encodeURIComponent(fileUrl)}`;
+            const response = await fetch(proxyUrl);
+            
+            if (!response.ok) {
+               throw new Error(`Proxy HTTP error! status: ${response.status}`);
+            }
+            
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            setProcessedFileUrl(url);
+         } catch (proxyError) {
+            console.error("All PDF fetch approaches failed:", proxyError);
+            
+            // Last resort: use the original URL and let the component handle it
+            setProcessedFileUrl(fileUrl);
+            setErrorMessage("The PDF may be blocked by your browser. Try disabling ad blockers or download the file.");
+         }
+      } finally {
+         setIsLoading(false);
+      }
    };
+
+   useEffect(() => {
+      return () => {
+         // Cleanup URL object when component unmounts
+         if (processedFileUrl && processedFileUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(processedFileUrl);
+         }
+      };
+   }, [processedFileUrl]);
 
    const containerClasses = isFullscreen
       ? "fixed inset-0 z-[100] bg-white"
       : `relative ${className}`;
 
-   const MinimizeButton = isFullscreen && (
-      <Button
-         variant="outline"
-         size="icon"
-         onClick={onToggleFullscreen}
-         className="fixed top-4 right-4 z-[101] bg-white shadow-lg hover:bg-gray-100 border"
-      >
-         <Minimize2 className="h-5 w-5 text-gray-700" />
-      </Button>
-   );
-
-   // DOCX handling
-   if (isDocx && !error) {
+   if (isDocx) {
       return (
          <div className={containerClasses}>
-            {MinimizeButton}
+            {isFullscreen && (
+               <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={onToggleFullscreen}
+                  className="fixed top-4 right-4 z-[101]"
+               >
+                  <Minimize2 className="h-5 w-5" />
+               </Button>
+            )}
             <div
                className={`w-full h-full overflow-auto bg-white p-8 ${
                   isFullscreen ? "p-12" : ""
                }`}
             >
-               <div
-                  className="prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: docxContent }}
-               />
-            </div>
-         </div>
-      );
-   }
-
-   // PDF handling with react-pdf
-   if (isPdf) {
-      return (
-         <div className={containerClasses}>
-            {MinimizeButton}
-            <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center overflow-auto p-4">
-               {pdfLoading && (
-                  <div className="text-center">
-                     <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4 mx-auto"></div>
-                     <p className="text-gray-600">Loading PDF...</p>
+               {isLoading ? (
+                  <div className="flex items-center justify-center h-full">
+                     <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                        <p className="mt-2">Loading document...</p>
+                     </div>
                   </div>
-               )}
-               <Document
-                  file={fileUrl}
-                  onLoadSuccess={onDocumentLoadSuccess}
-                  onLoadError={(error) => {
-                     console.error("Failed to load PDF:", error);
-                     setError(true);
-                  }}
-               >
-                  <Page
-                     pageNumber={pageNumber}
-                     width={isFullscreen ? window.innerWidth * 0.9 : 800}
-                  />
-               </Document>
-               {numPages && (
-                  <div className="mt-4 flex items-center justify-center space-x-4">
-                     <Button
-                        variant="outline"
-                        onClick={() => setPageNumber((prev) => Math.max(prev - 1, 1))}
-                        disabled={pageNumber <= 1}
-                     >
-                        Previous
-                     </Button>
-                     <span className="text-gray-600">
-                        Page {pageNumber} of {numPages}
-                     </span>
-                     <Button
-                        variant="outline"
-                        onClick={() => setPageNumber((prev) => Math.min(prev + 1, numPages))}
-                        disabled={pageNumber >= numPages}
-                     >
-                        Next
-                     </Button>
-                  </div>
-               )}
-            </div>
-         </div>
-      );
-   }
-
-   // For simple browser-supported files like images
-   if (isSupportedByBrowser) {
-      return (
-         <div className={containerClasses}>
-            {MinimizeButton}
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 overflow-auto">
-               {(['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(fileExtension || '')) ? (
-                  <img 
-                     src={fileUrl} 
-                     alt="Document preview" 
-                     className="max-w-full max-h-full object-contain"
-                  />
                ) : (
-                  <iframe 
-                     src={fileUrl} 
-                     className="w-full h-full border-0" 
-                     title="Document preview"
+                  <div
+                     className="prose max-w-none"
+                     dangerouslySetInnerHTML={{ __html: docxContent }}
                   />
                )}
             </div>
@@ -167,12 +167,70 @@ const DocumentViewer = ({
       );
    }
 
-   // For unsupported file types
+   if (isLoading) {
+      return (
+         <div className={containerClasses}>
+            <div className="flex items-center justify-center h-full">
+               <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                  <p className="mt-2">Loading document...</p>
+               </div>
+            </div>
+         </div>
+      );
+   }
+
+   // For PDF and other file types, use DocViewer
+   const docs = [{ 
+      uri: isPdf ? processedFileUrl : fileUrl,
+      fileType: fileExtension || undefined
+   }];
+
    return (
       <div className={containerClasses}>
-         {MinimizeButton}
-         <div className="w-full h-full flex items-center justify-center bg-gray-100">
-            <p className="text-gray-600">Unsupported file type.</p>
+         {isFullscreen && (
+            <Button
+               variant="outline"
+               size="icon"
+               onClick={onToggleFullscreen}
+               className="fixed top-4 right-4 z-[101]"
+            >
+               <Minimize2 className="h-5 w-5" />
+            </Button>
+         )}
+         <div className="w-full h-full bg-gray-100 overflow-auto">
+            {errorMessage ? (
+               <div className="flex items-center justify-center h-full">
+                  <div className="text-center max-w-md p-6 bg-white rounded-lg shadow">
+                     <div className="text-red-500 mb-4">⚠️</div>
+                     <h3 className="text-lg font-medium mb-2">Document Loading Error</h3>
+                     <p className="text-gray-600 mb-4">{errorMessage}</p>
+                     <Button
+                        onClick={() => window.open(fileUrl, "_blank")}
+                        variant="outline"
+                     >
+                        Download Document Instead
+                     </Button>
+                  </div>
+               </div>
+            ) : (
+               <DocViewer
+                  documents={docs}
+                  pluginRenderers={DocViewerRenderers}
+                  style={{ height: "100%" }}
+                  config={{
+                     header: {
+                        disableHeader: true,
+                        disableFileName: true,
+                     },
+                     pdfZoom: {
+                        defaultZoom: 1.0,
+                        zoomJump: 0.2,
+                     },
+                     pdfVerticalScrollByDefault: true,
+                  }}
+               />
+            )}
          </div>
       </div>
    );

@@ -34,9 +34,40 @@ interface DocumentAnalysisResponse {
    course_id: string;
 }
 
+interface AIResponse {
+   response: string;
+   session_id: string;
+}
+
+interface ContentSummaryResponse {
+   summary: string;
+   key_points: string[];
+   suggested_topics: string[];
+}
+
+interface ConceptExplanationResponse {
+   explanation: string;
+   examples: string[];
+   related_concepts: string[];
+   practice_questions?: Array<{
+      question: string;
+      options?: string[];
+      answer?: string;
+      explanation?: string;
+   }>;
+}
+
 // API call functions
-const chatWithAI = (request: ChatRequest): Promise<any> => {
-   return handleApiRequest(() => authorizedAPI.post("/ai/chat", request));
+const chatWithAI = async (request: ChatRequest): Promise<AIResponse> => {
+   try {
+      const response = await handleApiRequest(() =>
+         authorizedAPI.post("/ai/chat", request)
+      );
+      return response.data;
+   } catch (error) {
+      console.error("AI Chat Error:", error);
+      throw new Error("Failed to get AI response");
+   }
 };
 
 const generateQuiz = (courseId: string): Promise<any> => {
@@ -72,9 +103,7 @@ const studyChat = (request: StudyRequest): Promise<any> => {
 };
 
 const aiLearning = (request: LearningRequest): Promise<any> => {
-   return handleApiRequest(() =>
-      authorizedAPI.post("/ai/ai-learning", request)
-   );
+   return handleApiRequest(() => authorizedAPI.post("/ai/chat", request));
 };
 
 const extractDocumentText = (
@@ -87,8 +116,11 @@ const extractDocumentText = (
 
 // React Query Hooks
 export const useChatWithAI = () => {
-   return useMutation<any, Error, ChatRequest>({
+   return useMutation<AIResponse, Error, ChatRequest>({
       mutationFn: chatWithAI,
+      onError: (error) => {
+         console.error("Chat mutation error:", error);
+      },
    });
 };
 

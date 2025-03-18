@@ -4,6 +4,7 @@ import Tilt from "react-parallax-tilt";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, GraduationCap, Clock, ChevronRight } from "lucide-react";
+import { CourseProgressTracker } from "@/components/CourseProgressTracker";
 
 export interface CourseData {
    id: string;
@@ -54,6 +55,8 @@ export const EnrolledCourseCard: React.FC<{ course: CourseData }> = ({
    // Format the progress
    const progress = course.progress || 0;
    const formattedProgress = Math.round(progress);
+
+   const enrollment = course.enrollments?.[0];
 
    return (
       <div className="w-full sm:w-1/2 lg:w-1/3 p-4">
@@ -115,6 +118,11 @@ export const EnrolledCourseCard: React.FC<{ course: CourseData }> = ({
                            className="h-2"
                         />
                      </div>
+
+                     <CourseProgressTracker
+                        course={course}
+                        currentProgress={enrollment?.progress || 0}
+                     />
 
                      <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-100">
                         {course.lastAccessed ? (

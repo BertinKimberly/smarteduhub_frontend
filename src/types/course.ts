@@ -7,12 +7,15 @@ export interface Material {
    file_path: string;
    course_id: string;
    created_at: string;
+   viewed?: boolean; // added to track if material is completed
 }
 
 export interface Enrollment {
    id: string;
    student_id: string;
    course_id: string;
+   progress: number;
+   last_accessed: string;
    created_at: string;
 }
 

@@ -724,6 +724,27 @@ const ChatArea = () => {
       );
    };
 
+   // Add a helper function to check channel access
+   const canAccessChannel = (channel: any) => {
+      if (!user) return false;
+      if (user.role === "admin") return true;
+      if (channel.name.toLowerCase() === "general") return true;
+
+      if (user.role === "student" && channel.name.toLowerCase() === "students")
+         return true;
+      if (user.role === "parent" && channel.name.toLowerCase() === "parents")
+         return true;
+      if (user.role === "teacher" && channel.name.toLowerCase() === "teachers")
+         return true;
+
+      return channel.members?.includes(user.id);
+   };
+
+   // Update the channels list filtering
+   const accessibleChannels = filteredChannels?.filter((channel) =>
+      canAccessChannel(channel)
+   );
+
    return (
       <>
          <ResizablePanelGroup
@@ -899,7 +920,7 @@ const ChatArea = () => {
                               </div>
 
                               <div className="space-y-1">
-                                 {filteredChannels?.map((channel: any) => (
+                                 {accessibleChannels?.map((channel: any) => (
                                     <button
                                        key={channel.id}
                                        onClick={() =>
@@ -965,116 +986,131 @@ const ChatArea = () => {
 
                   {/* Messages Area - Scrollable */}
                   <div className="flex-1 overflow-hidden">
-                     <ScrollArea className="h-full p-4">
-                        <div className="space-y-4">
-                           {isDMMode
-                              ? groupedDirectMessages.map(
-                                   (group, groupIndex) => (
-                                      <div key={`group-${groupIndex}`}>
-                                         <DateSeparator date={group.date} />
-                                         <div className="space-y-4">
-                                            {group.messages.map(
-                                               (msg: any, index: number) => (
-                                                  <MessageBubble
-                                                     key={
-                                                        msg.id ||
-                                                        `dm-${groupIndex}-${index}`
-                                                     }
-                                                     message={msg}
-                                                     isOwnMessage={
-                                                        msg.sender_id ===
-                                                        user?.id
-                                                     }
-                                                     showName={true}
-                                                  />
-                                               )
-                                            )}
-                                         </div>
-                                      </div>
-                                   )
-                                )
-                              : groupedChannelMessages.map(
-                                   (group, groupIndex) => (
-                                      <div key={`group-${groupIndex}`}>
-                                         <DateSeparator date={group.date} />
-                                         <div className="space-y-4">
-                                            {group.messages.map(
-                                               (msg: any, index: number) => (
-                                                  <MessageBubble
-                                                     key={
-                                                        msg.id ||
-                                                        `ch-${groupIndex}-${index}`
-                                                     }
-                                                     message={msg}
-                                                     isOwnMessage={
-                                                        msg.user_id === user?.id
-                                                     }
-                                                     showName={true}
-                                                  />
-                                               )
-                                            )}
-                                         </div>
-                                      </div>
-                                   )
-                                )}
-                           <div ref={messagesEndRef} />
+                     {!selectedChannel && !selectedUser ? (
+                        <div className="h-full flex items-center justify-center">
+                           <div className="text-center text-muted-foreground">
+                              <MessageSquare className="h-10 w-10 mx-auto mb-4" />
+                              <h3 className="text-lg font-medium mb-2">
+                                 Welcome to Chat
+                              </h3>
+                              <p>Select a channel or user to start messaging</p>
+                           </div>
                         </div>
-                     </ScrollArea>
+                     ) : (
+                        <ScrollArea className="h-full p-4">
+                           <div className="space-y-4">
+                              {isDMMode
+                                 ? groupedDirectMessages.map(
+                                      (group, groupIndex) => (
+                                         <div key={`group-${groupIndex}`}>
+                                            <DateSeparator date={group.date} />
+                                            <div className="space-y-4">
+                                               {group.messages.map(
+                                                  (msg: any, index: number) => (
+                                                     <MessageBubble
+                                                        key={
+                                                           msg.id ||
+                                                           `dm-${groupIndex}-${index}`
+                                                        }
+                                                        message={msg}
+                                                        isOwnMessage={
+                                                           msg.sender_id ===
+                                                           user?.id
+                                                        }
+                                                        showName={true}
+                                                     />
+                                                  )
+                                               )}
+                                            </div>
+                                         </div>
+                                      )
+                                   )
+                                 : groupedChannelMessages.map(
+                                      (group, groupIndex) => (
+                                         <div key={`group-${groupIndex}`}>
+                                            <DateSeparator date={group.date} />
+                                            <div className="space-y-4">
+                                               {group.messages.map(
+                                                  (msg: any, index: number) => (
+                                                     <MessageBubble
+                                                        key={
+                                                           msg.id ||
+                                                           `ch-${groupIndex}-${index}`
+                                                        }
+                                                        message={msg}
+                                                        isOwnMessage={
+                                                           msg.user_id ===
+                                                           user?.id
+                                                        }
+                                                        showName={true}
+                                                     />
+                                                  )
+                                               )}
+                                            </div>
+                                         </div>
+                                      )
+                                   )}
+                              <div ref={messagesEndRef} />
+                           </div>
+                        </ScrollArea>
+                     )}
                   </div>
 
                   {/* Message Input - Fixed */}
-                  <div className="border-t border-submain flex-shrink-0">
-                     {uploadedFile && <FilePreview />}
-                     <div className="p-4 flex items-center gap-2">
-                        <input
-                           type="file"
-                           id="file-upload"
-                           className="hidden"
-                           onChange={handleFileUpload}
-                        />
-                        <Button
-                           variant="ghost"
-                           size="icon"
-                           className="hover:bg-background hover:text-main"
-                           onClick={() =>
-                              document.getElementById("file-upload")?.click()
-                           }
-                        >
-                           <File className="h-5 w-5" />
-                        </Button>
-                        <Button
-                           variant="ghost"
-                           size="icon"
-                           className="hover:bg-background hover:text-main"
-                           onClick={() => setShowMessageEmojiPicker(true)}
-                        >
-                           <Smile className="h-5 w-5" />
-                        </Button>
-                        <div className="relative flex-1">
-                           <Input
-                              className="pr-12 focus:border-main"
-                              placeholder={
-                                 uploadedFile
-                                    ? "Add a caption..."
-                                    : "Type a message..."
-                              }
-                              value={message}
-                              onChange={(e) => setMessage(e.target.value)}
-                              onKeyPress={(e) =>
-                                 e.key === "Enter" && handleSendMessage()
-                              }
+                  {(selectedChannel || selectedUser) && (
+                     <div className="border-t border-submain flex-shrink-0">
+                        {uploadedFile && <FilePreview />}
+                        <div className="p-4 flex items-center gap-2">
+                           <input
+                              type="file"
+                              id="file-upload"
+                              className="hidden"
+                              onChange={handleFileUpload}
                            />
                            <Button
-                              size="icon"
                               variant="ghost"
-                              className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-background hover:text-main"
-                              onClick={handleSendMessage}
+                              size="icon"
+                              className="hover:bg-background hover:text-main"
+                              onClick={() =>
+                                 document.getElementById("file-upload")?.click()
+                              }
                            >
-                              <Send className="h-5 w-5" />
+                              <File className="h-5 w-5" />
                            </Button>
+                           <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-background hover:text-main"
+                              onClick={() => setShowMessageEmojiPicker(true)}
+                           >
+                              <Smile className="h-5 w-5" />
+                           </Button>
+                           <div className="relative flex-1">
+                              <Input
+                                 className="pr-12 focus:border-main"
+                                 placeholder={
+                                    uploadedFile
+                                       ? "Add a caption..."
+                                       : "Type a message..."
+                                 }
+                                 value={message}
+                                 onChange={(e) => setMessage(e.target.value)}
+                                 onKeyPress={(e) =>
+                                    e.key === "Enter" && handleSendMessage()
+                                 }
+                              />
+                              <Button
+                                 size="icon"
+                                 variant="ghost"
+                                 className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-background hover:text-main"
+                                 onClick={handleSendMessage}
+                              >
+                                 <Send className="h-5 w-5" />
+                              </Button>
+                           </div>
                         </div>
                      </div>
-                  </div>
+                  )}
                </div>
             </ResizablePanel>
             {/* Add Dialog for emoji picker */}
