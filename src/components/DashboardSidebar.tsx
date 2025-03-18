@@ -76,11 +76,11 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
          { icon: <NotebookText />, label: "Assignments", link: "/student/assignments" },
          { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
          { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
-         {
-            icon: <Brain />,
-            label: "AI Chat",
-            link: "/student/ai-chat",
-         },
+         // {
+         //    icon: <Brain />,
+         //    label: "AI Chat",
+         //    link: "/student/ai-chat",
+         // },
       ],
       parent: [
          { icon: <House />, label: "Dashboard", link: "/parent" },

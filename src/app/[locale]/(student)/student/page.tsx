@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 "use client";
 import { AssignmentChart } from "@/components/AssignmentChart";
 import CustomCard from "@/components/CustomCard";
@@ -66,6 +68,8 @@ const StudentHome = () => {
 
    // Take only first 3 courses for preview
    const previewCourses = enrolledCourses?.slice(0, 3) || [];
+   console.log("Ndashima",enrolledCourses);
+   
 
    return (
       <div>
@@ -161,7 +165,7 @@ const StudentHome = () => {
                )}
             </div>
          </section>
-         <ChatBot />
+         {/* <ChatBot /> */}
       </div>
    );
 };

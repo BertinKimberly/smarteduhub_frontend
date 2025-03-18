@@ -174,14 +174,14 @@ export const useLogoutUser = () => {
          // Clear React Query cache
          queryClient.clear();
          // Redirect to login
-         router.push("/login");
+         location.replace("/login");
       },
       onError: (error) => {
          console.error("Logout error:", error);
          // Even if the API call fails, clear local data
          clearUser();
          localStorage.removeItem("auth-storage");
-         router.push("/login");
+         location.replace("/login");
       },
    });
 };
@@ -246,7 +246,7 @@ export const useOAuthCallback = () => {
             return response;
          } catch (error) {
             console.error("OAuth callback error:", error);
-            router.push("/login");
+            location.replace("/login");
             throw error;
          }
       },
