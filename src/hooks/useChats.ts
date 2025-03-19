@@ -143,6 +143,36 @@ const inviteToChannel = (data: {
    );
 };
 
+// Add these new functions and hooks
+const getChannelMembers = (channelId: string): Promise<any> => {
+   return handleApiRequest(() => 
+      authorizedAPI.get(`/chat/channels/${channelId}/members`)
+   );
+};
+
+export const useGetChannelMembers = (channelId: string | null) => {
+   return useQuery({
+      queryKey: ['channelMembers', channelId],
+      queryFn: () => getChannelMembers(channelId!),
+      enabled: !!channelId,
+   });
+};
+
+export const useInviteMembers = () => {
+   const queryClient = useQueryClient();
+
+   return useMutation({
+      mutationFn: ({ channelId, userIds }: { channelId: string; userIds: string[] }) => 
+         authorizedAPI.post(`/chat/channels/${channelId}/invite`, { user_ids: userIds }),
+      onSuccess: (_, variables) => {
+         // Invalidate channel members query
+         queryClient.invalidateQueries({ 
+            queryKey: ['channelMembers', variables.channelId] 
+         });
+      },
+   });
+};
+
 // React Query Hooks
 export const useGetAllChannels = () => {
    const queryClient = useQueryClient();

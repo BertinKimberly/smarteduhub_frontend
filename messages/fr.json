@@ -246,5 +246,37 @@
     "faq": {
       "title": "Questions Fréquemment Posées"
     }
+  },
+  "dashboard": {
+    "search": "Rechercher...",
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Tout marquer comme lu",
+      "noNotifications": "Aucune notification",
+      "assignmentDue": "Devoir à rendre",
+      "quizResult": "Résultat du quiz",
+      "newCourse": "Nouveau cours disponible"
+    },
+    "profile": "Profil",
+    "helpSupport": "Aide & Support",
+    "logout": "Déconnexion",
+    "menu": {
+      "dashboard": "Tableau de bord",
+      "home": "Accueil",
+      "profile": "Profil",
+      "courses": "Cours",
+      "enrolledCourses": "Cours inscrits",
+      "users": "Utilisateurs",
+      "assignments": "Devoirs",
+      "chat": "Discussion",
+      "schedule": "Emploi du temps",
+      "settings": "Paramètres",
+      "timetable": "Emploi du temps",
+      "students": "Étudiants",
+      "myChild": "Mon enfant",
+      "performance": "Performance",
+      "messages": "Messages",
+      "notifications": "Notifications"
+    }
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import Logo from "@/images/logo.svg";
@@ -24,6 +24,16 @@ const Navbar = () => {
    const pathname = usePathname();
    const locale = useLocale();
    const t = useTranslations("navbar");
+   const [hasMounted, setHasMounted] = useState(false);
+
+useEffect(() => {
+  setHasMounted(true);
+}, []);
+
+// Skip rendering any dynamic content until client-side hydration is complete
+if (!hasMounted) {
+  return <div className="h-[90px]"></div>; // Or appropriate placeholder
+}
 
    // Language options
    const languages = [

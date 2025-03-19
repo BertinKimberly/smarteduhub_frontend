@@ -246,5 +246,37 @@
     "faq": {
       "title": "Ibibazo Bibazwa Kenshi"
     }
+  },
+  "dashboard": {
+    "search": "Shakisha...",
+    "notifications": {
+      "title": "Ubutumwa",
+      "markAllRead": "Gushyira byose nk'ibyasomwe",
+      "noNotifications": "Nta butumwa",
+      "assignmentDue": "Umukoro ugomba gukorwa",
+      "quizResult": "Amanota y'ikizamini",
+      "newCourse": "Isomo rishya riraboneka"
+    },
+    "profile": "Umwirondoro",
+    "helpSupport": "Ubufasha",
+    "logout": "Sohoka",
+    "menu": {
+      "dashboard": "Ibiro",
+      "home": "Ahabanza",
+      "profile": "Umwirondoro",
+      "courses": "Amasomo",
+      "enrolledCourses": "Amasomo yanditsemo",
+      "users": "Abakoresha",
+      "assignments": "Imikoro",
+      "chat": "Kuganira",
+      "schedule": "Gahunda",
+      "settings": "Igenamiterere",
+      "timetable": "Gahunda y'amasomo",
+      "students": "Abanyeshuri",
+      "myChild": "Umwana wanjye",
+      "performance": "Imikorere",
+      "messages": "Ubutumwa",
+      "notifications": "Ubutumwa"
+    }
   }
 }

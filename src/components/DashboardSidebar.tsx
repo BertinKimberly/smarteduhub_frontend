@@ -24,12 +24,14 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogoutUser } from "@/hooks/useAuth";
+import { useTranslations } from "next-intl";
 
 interface SidebarProps {
    role: "admin" | "student" | "parent" | "teacher";
 }
 
 const DashboardSidebar = ({ role }: SidebarProps) => {
+   const t = useTranslations("dashboard");
    const { user } = useAuthStore();
    const [isCollapsed, setIsCollapsed] = useState(false);
    const pathname = usePathname();
@@ -50,62 +52,104 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
    // Define navigation links based on the role
    const links = {
       admin: [
-         { icon: <House />, label: "Dashboard", link: "/admin" },
-         { icon: <User />, label: "Profile", link: "/admin/profile" },
-         { icon: <Book />, label: "Courses", link: "/admin/courses" },
-         { icon: <User2 />, label: "Users", link: "/admin/users" },
-         { icon: <NotebookText />, label: "Assignments", link: "/admin/assignments" },
-         { icon: <MessageCircleCode />, label: "Chat", link: "/admin/chat" },
+         { icon: <House />, label: t("menu.dashboard"), link: "/admin" },
+         { icon: <User />, label: t("menu.profile"), link: "/admin/profile" },
+         { icon: <Book />, label: t("menu.courses"), link: "/admin/courses" },
+         { icon: <User2 />, label: t("menu.users"), link: "/admin/users" },
          {
-            icon: <Bell />,
-            label: "Notifications",
-            link: "/admin/notifications",
+            icon: <NotebookText />,
+            label: t("menu.assignments"),
+            link: "/admin/assignments",
          },
-         { icon: <Calendar />, label: "Schedule", link: "/admin/schedule" },
-         { icon: <Settings />, label: "Settings", link: "/admin/settings" },
-      ],
-      student: [
-         { icon: <House />, label: "Home", link: "/student" },
-         { icon: <User />, label: "Profile", link: "/student/profile" },
-         { icon: <Book />, label: "Courses", link: "/student/courses" },
-         {
-            icon: <BookOpenCheck />,
-            label: "Enrolled Courses",
-            link: "/student/enrolled-courses",
-         },
-         { icon: <NotebookText />, label: "Assignments", link: "/student/assignments" },
-         { icon: <Calendar />, label: "Timetable", link: "/student/timetable" },
-         { icon: <MessageCircleCode />, label: "Chat", link: "/student/chat" },
-         // {
-         //    icon: <Brain />,
-         //    label: "AI Chat",
-         //    link: "/student/ai-chat",
-         // },
-      ],
-      parent: [
-         { icon: <House />, label: "Dashboard", link: "/parent" },
-         { icon: <User />, label: "Profile", link: "/parent/profile" },
-         { icon: <User2 />, label: "My Child", link: "/parent/child" },
-         {
-            icon: <ChartArea />,
-            label: "Performance",
-            link: "/parent/performance",
-         },
-
          {
             icon: <MessageCircleCode />,
-            label: "Messages",
+            label: t("menu.chat"),
+            link: "/admin/chat",
+         },
+         {
+            icon: <Bell />,
+            label: t("menu.notifications"),
+            link: "/admin/notifications",
+         },
+         {
+            icon: <Calendar />,
+            label: t("menu.schedule"),
+            link: "/admin/schedule",
+         },
+         {
+            icon: <Settings />,
+            label: t("menu.settings"),
+            link: "/admin/settings",
+         },
+      ],
+      student: [
+         { icon: <House />, label: t("menu.home"), link: "/student" },
+         { icon: <User />, label: t("menu.profile"), link: "/student/profile" },
+         { icon: <Book />, label: t("menu.courses"), link: "/student/courses" },
+         {
+            icon: <BookOpenCheck />,
+            label: t("menu.enrolledCourses"),
+            link: "/student/enrolled-courses",
+         },
+         {
+            icon: <NotebookText />,
+            label: t("menu.assignments"),
+            link: "/student/assignments",
+         },
+         {
+            icon: <Calendar />,
+            label: t("menu.timetable"),
+            link: "/student/timetable",
+         },
+         {
+            icon: <MessageCircleCode />,
+            label: t("menu.chat"),
+            link: "/student/chat",
+         },
+      ],
+      parent: [
+         { icon: <House />, label: t("menu.dashboard"), link: "/parent" },
+         { icon: <User />, label: t("menu.profile"), link: "/parent/profile" },
+         { icon: <User2 />, label: t("menu.myChild"), link: "/parent/child" },
+         {
+            icon: <ChartArea />,
+            label: t("menu.performance"),
+            link: "/parent/performance",
+         },
+         {
+            icon: <MessageCircleCode />,
+            label: t("menu.messages"),
             link: "/parent/messages",
          },
       ],
       teacher: [
-         { icon: <House />, label: "Dashboard", link: "/teacher" },
-         { icon: <User />, label: "Profile", link: "/teacher/profile" },
-         { icon: <Briefcase />, label: "Courses", link: "/teacher/courses" },
-         { icon: <NotebookText />, label: "Assignments", link: "/teacher/assignments" },
-         { icon: <Users />, label: "Students", link: "/teacher/students" },
-         { icon: <MessageCircleCode />, label: "Chat", link: "/teacher/chat" },
-         { icon: <Calendar />, label: "Schedule", link: "/teacher/schedule" },
+         { icon: <House />, label: t("menu.dashboard"), link: "/teacher" },
+         { icon: <User />, label: t("menu.profile"), link: "/teacher/profile" },
+         {
+            icon: <Briefcase />,
+            label: t("menu.courses"),
+            link: "/teacher/courses",
+         },
+         {
+            icon: <NotebookText />,
+            label: t("menu.assignments"),
+            link: "/teacher/assignments",
+         },
+         {
+            icon: <Users />,
+            label: t("menu.students"),
+            link: "/teacher/students",
+         },
+         {
+            icon: <MessageCircleCode />,
+            label: t("menu.chat"),
+            link: "/teacher/chat",
+         },
+         {
+            icon: <Calendar />,
+            label: t("menu.schedule"),
+            link: "/teacher/schedule",
+         },
       ],
    };
 
@@ -170,7 +214,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
                onClick={handleLogout}
             >
                <LogOut />
-               {!isCollapsed && <span>Logout</span>}
+               {!isCollapsed && <span>{t("logout")}</span>}
             </button>
          </div>
       </div>

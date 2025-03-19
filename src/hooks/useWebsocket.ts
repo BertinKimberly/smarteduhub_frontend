@@ -8,10 +8,18 @@ interface ChatMessage {
    timestamp: string;
 }
 
+interface WebSocketMessage {
+   type: string;
+   data: any;
+}
+
 export const useWebSocket = (channelId: string | null) => {
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [socket, setSocket] = useState<WebSocket | null>(null);
    const [isConnected, setIsConnected] = useState(false);
+   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(
+      null
+   );
 
    useEffect(() => {
       let ws: WebSocket | null = null;
@@ -31,6 +39,7 @@ export const useWebSocket = (channelId: string | null) => {
             ws.onmessage = (event) => {
                try {
                   const data = JSON.parse(event.data);
+                  setLastMessage(data);
 
                   if (data.type) {
                      switch (data.type) {
@@ -109,7 +118,7 @@ export const useWebSocket = (channelId: string | null) => {
       }
    };
 
-   return { sendMessage, messages, isConnected };
+   return { sendMessage, messages, isConnected, lastMessage };
 };
 
 export const useDMWebSocket = (userId: string | null) => {
