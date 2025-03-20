@@ -37,6 +37,8 @@ import {
    useEditDirectMessage,
    useDeleteMessage,
    useDeleteDirectMessage,
+   useGetChannelMembers,
+   useInviteMembers,
 } from "@/hooks/useChats";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -745,6 +747,30 @@ const ChatArea = () => {
       canAccessChannel(channel)
    );
 
+   const [showMembersDialog, setShowMembersDialog] = useState(false);
+   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+   const { data: channelMembers } = useGetChannelMembers(selectedChannel);
+   const { mutate: inviteMembers } = useInviteMembers();
+   const { data: allUsers } = useFetchUsers();
+
+   const handleInviteMembers = () => {
+      if (selectedChannel && selectedUsers.length > 0) {
+         inviteMembers(
+            { channelId: selectedChannel, userIds: selectedUsers },
+            {
+               onSuccess: () => {
+                  toast.success("Members invited successfully");
+                  setShowMembersDialog(false);
+                  setSelectedUsers([]);
+               },
+               onError: () => {
+                  toast.error("Failed to invite members");
+               },
+            }
+         );
+      }
+   };
+
    return (
       <>
          <ResizablePanelGroup
@@ -956,30 +982,42 @@ const ChatArea = () => {
                <div className="flex flex-col h-full">
                   {/* Chat Header - Fixed */}
                   <div className="border-b border-submain p-4 bg-background flex-shrink-0">
-                     <div className="flex items-center gap-2">
-                        {isDMMode ? (
-                           selectedUser && (
+                     <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                           {isDMMode ? (
+                              selectedUser && (
+                                 <>
+                                    <Avatar className="h-8 w-8">
+                                       <AvatarImage src={selectedUser.avatar} />
+                                       <AvatarFallback>
+                                          {selectedUser.name[0]}
+                                       </AvatarFallback>
+                                    </Avatar>
+                                    <span className="font-medium">
+                                       {selectedUser.name}
+                                    </span>
+                                 </>
+                              )
+                           ) : (
                               <>
-                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={selectedUser.avatar} />
-                                    <AvatarFallback>
-                                       {selectedUser.name[0]}
-                                    </AvatarFallback>
-                                 </Avatar>
+                                 <Hash className="h-5 w-5" />
                                  <span className="font-medium">
-                                    {selectedUser.name}
+                                    {channels?.find(
+                                       (c: any) => c.id === selectedChannel
+                                    )?.name || "general"}
                                  </span>
                               </>
-                           )
-                        ) : (
-                           <>
-                              <Hash className="h-5 w-5" />
-                              <span className="font-medium">
-                                 {channels?.find(
-                                    (c: any) => c.id === selectedChannel
-                                 )?.name || "general"}
-                              </span>
-                           </>
+                           )}
+                        </div>
+                        {!isDMMode && selectedChannel && (
+                           <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowMembersDialog(true)}
+                           >
+                              <Users className="h-4 w-4 mr-2" />
+                              Members
+                           </Button>
                         )}
                      </div>
                   </div>
@@ -1156,6 +1194,99 @@ const ChatArea = () => {
                         Create Channel
                      </Button>
                   </DialogFooter>
+               </DialogContent>
+            </Dialog>
+            {/* Add Dialog for channel members */}
+            <Dialog
+               open={showMembersDialog}
+               onOpenChange={setShowMembersDialog}
+            >
+               <DialogContent>
+                  <DialogHeader>
+                     <DialogTitle>Channel Members</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                     <div>
+                        <h4 className="text-sm font-medium mb-2">
+                           Current Members
+                        </h4>
+                        <div className="space-y-2">
+                           {channelMembers?.map((member: any) => (
+                              <div
+                                 key={member.id}
+                                 className="flex items-center gap-2 p-2 rounded-lg bg-background"
+                              >
+                                 <Avatar className="h-6 w-6">
+                                    <AvatarFallback>
+                                       {member.name[0]}
+                                    </AvatarFallback>
+                                 </Avatar>
+                                 <span className="text-sm">{member.name}</span>
+                                 <span className="text-xs text-muted-foreground ml-auto">
+                                    {member.role}
+                                 </span>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+
+                     <div>
+                        <h4 className="text-sm font-medium mb-2">
+                           Invite Members
+                        </h4>
+                        <div className="space-y-2">
+                           {allUsers
+                              ?.filter(
+                                 (u: any) =>
+                                    !channelMembers?.find(
+                                       (m: any) => m.id === u.id
+                                    )
+                              )
+                              .map((user: any) => (
+                                 <div
+                                    key={user.id}
+                                    className="flex items-center gap-2 p-2 rounded-lg bg-background"
+                                 >
+                                    <input
+                                       type="checkbox"
+                                       checked={selectedUsers.includes(user.id)}
+                                       onChange={(e) => {
+                                          if (e.target.checked) {
+                                             setSelectedUsers([
+                                                ...selectedUsers,
+                                                user.id,
+                                             ]);
+                                          } else {
+                                             setSelectedUsers(
+                                                selectedUsers.filter(
+                                                   (id) => id !== user.id
+                                                )
+                                             );
+                                          }
+                                       }}
+                                    />
+                                    <Avatar className="h-6 w-6">
+                                       <AvatarFallback>
+                                          {user.name[0]}
+                                       </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-sm">{user.name}</span>
+                                    <span className="text-xs text-muted-foreground ml-auto">
+                                       {user.role}
+                                    </span>
+                                 </div>
+                              ))}
+                        </div>
+                     </div>
+
+                     <Button
+                        className="w-full"
+                        disabled={selectedUsers.length === 0}
+                        onClick={handleInviteMembers}
+                     >
+                        Invite Selected Members
+                     </Button>
+                  </div>
                </DialogContent>
             </Dialog>
          </ResizablePanelGroup>

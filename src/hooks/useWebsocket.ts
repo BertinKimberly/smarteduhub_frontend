@@ -1,5 +1,6 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query"; // Add this import
 
 interface ChatMessage {
    channel_id: string;
@@ -125,6 +126,7 @@ export const useDMWebSocket = (userId: string | null) => {
    const [messages, setMessages] = useState<any[]>([]);
    const [socket, setSocket] = useState<WebSocket | null>(null);
    const [isConnected, setIsConnected] = useState(false);
+   const queryClient = useQueryClient(); // Now this will work
 
    useEffect(() => {
       let ws: WebSocket | null = null;
@@ -144,66 +146,33 @@ export const useDMWebSocket = (userId: string | null) => {
             ws.onmessage = (event) => {
                try {
                   const data = JSON.parse(event.data);
+                  // Always update messages state for real-time updates
+                  setMessages((prev) => {
+                     const isDuplicate = prev.some(
+                        (msg) =>
+                           msg.id === data.id ||
+                           (msg.message === data.message &&
+                              msg.timestamp === data.timestamp)
+                     );
+                     if (isDuplicate) return prev;
+                     return [...prev, data];
+                  });
 
-                  if (data.type) {
-                     switch (data.type) {
-                        case "message_edited":
-                           setMessages((prev) =>
-                              prev.map((msg) =>
-                                 msg.id === data.data.id ? data.data : msg
-                              )
+                  // Update React Query cache if it's a direct message
+                  if (data.sender_id && data.recipient_id) {
+                     queryClient.setQueryData(
+                        ["dm_history", data.sender_id, data.recipient_id],
+                        (oldMessages: any[] = []) => {
+                           const isDuplicate = oldMessages.some(
+                              (msg) =>
+                                 msg.id === data.id ||
+                                 (msg.message === data.message &&
+                                    msg.timestamp === data.timestamp)
                            );
-                           break;
-
-                        case "message_deleted":
-                           setMessages((prev) =>
-                              prev.filter(
-                                 (msg) => msg.id !== data.data.message_id
-                              )
-                           );
-                           break;
-
-                        case "message_reacted":
-                           setMessages((prev) =>
-                              prev.map((msg) =>
-                                 msg.id === data.data.message_id
-                                    ? {
-                                         ...msg,
-                                         reactions: [
-                                            ...(msg.reactions || []),
-                                            data.data.reaction,
-                                         ],
-                                      }
-                                    : msg
-                              )
-                           );
-                           break;
-
-                        default:
-                           // Handle regular messages with duplicate check
-                           setMessages((prev) => {
-                              const isDuplicate = prev.some(
-                                 (msg) =>
-                                    msg.id === data.id ||
-                                    (msg.message === data.message &&
-                                       msg.timestamp === data.timestamp)
-                              );
-                              if (isDuplicate) return prev;
-                              return [...prev, data];
-                           });
-                     }
-                  } else {
-                     // Handle regular messages with duplicate check
-                     setMessages((prev) => {
-                        const isDuplicate = prev.some(
-                           (msg) =>
-                              msg.id === data.id ||
-                              (msg.message === data.message &&
-                                 msg.timestamp === data.timestamp)
-                        );
-                        if (isDuplicate) return prev;
-                        return [...prev, data];
-                     });
+                           if (isDuplicate) return oldMessages;
+                           return [...oldMessages, data];
+                        }
+                     );
                   }
                } catch (e) {
                   console.error("Error parsing DM:", e);
@@ -230,19 +199,17 @@ export const useDMWebSocket = (userId: string | null) => {
             ws.close();
          }
       };
-   }, [userId]);
+   }, [userId, queryClient]);
 
-   const sendMessage = (messageData: {
-      sender_id: string;
-      recipient_id: string;
-      message: string;
-   }) => {
+   const sendMessage = (messageData: any) => {
       if (socket?.readyState === WebSocket.OPEN) {
-         const messageWithTimestamp = {
-            ...messageData,
-            timestamp: new Date().toISOString(),
-         };
-         socket.send(JSON.stringify(messageWithTimestamp));
+         socket.send(
+            JSON.stringify({
+               type: "direct_message",
+               ...messageData,
+               timestamp: new Date().toISOString(),
+            })
+         );
       } else {
          console.error("DM WebSocket is not connected");
       }

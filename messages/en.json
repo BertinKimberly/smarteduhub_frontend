@@ -48,7 +48,7 @@
   "home": {
     "hero": {
       "badge": "AI-Driven Education",
-      "title": "Smart EduHub: The Future of Personalized Learning",
+      "title": "Smart Eduhub: The Future of Personalized Learning",
       "description": "Revolutionize your learning journey with our AI-powered platform that adapts to your unique pace and style. Unlock your full potential with personalized content for students, parents, teachers, and administrators.",
       "searchPlaceholder": "Search for courses...",
       "exploreButton": "Explore",
@@ -59,7 +59,7 @@
     "features": {
       "title": "Platform Features",
       "subtitle": "Technology That Transforms Learning",
-      "description": "Smart EduHub combines cutting-edge artificial intelligence with proven educational methodologies to create an adaptive learning environment that meets the unique needs of every student.",
+      "description": "Smart Eduhub combines cutting-edge artificial intelligence with proven educational methodologies to create an adaptive learning environment that meets the unique needs of every student.",
       "aiLearning": {
         "title": "AI-Powered Learning",
         "description": "Advanced algorithms analyze each student's learning patterns to deliver personalized content that adapts in real-time to their progress and needs."
@@ -86,9 +86,9 @@
       }
     },
     "benefits": {
-      "title": "Why Choose Smart EduHub",
+      "title": "Why Choose Smart Eduhub",
       "subtitle": "Transforming Education Through Technology",
-      "description": "Smart EduHub combines cutting-edge AI with proven educational methodologies to deliver personalized learning experiences that help students achieve their full potential while giving educators powerful tools to maximize their impact.",
+      "description": "Smart Eduhub combines cutting-edge AI with proven educational methodologies to deliver personalized learning experiences that help students achieve their full potential while giving educators powerful tools to maximize their impact.",
       "personalized": {
         "title": "Personalized Learning",
         "description": "Our AI technology adapts to each student's learning style, pace, and preferences, creating truly customized educational experiences that improve retention and results."
@@ -114,7 +114,7 @@
       "error": "There was an error loading courses. Please try again later.",
       "viewCourse": "View Course",
       "byAuthor": "By {name}",
-      "smartEduHubCourse": "Smart EduHub Course",
+      "smartEduHubCourse": "Smart Eduhub Course",
       "browseAll": "Browse All Courses"
     },
     "sponsors": {
@@ -206,7 +206,7 @@
         "other": "Other"
       },
       "subject": "Subject",
-      "subjectPlaceholder": "How can we help you with Smart EduHub?",
+      "subjectPlaceholder": "How can we help you with Smart Eduhub?",
       "message": "Your Message",
       "messagePlaceholder": "Please describe your query about our AI learning platform in detail...",
       "sendButton": "Send Message"
@@ -235,7 +235,7 @@
       }
     },
     "platform": {
-      "title": "Smart EduHub Platform",
+      "title": "Smart Eduhub Platform",
       "features": {
         "learning": "Personalized AI Learning Paths",
         "tracking": "Real-time Progress Tracking",
@@ -268,6 +268,7 @@
       "enrolledCourses": "Enrolled Courses",
       "users": "Users",
       "assignments": "Assignments",
+      "games": "Games",
       "chat": "Chat",
       "schedule": "Schedule",
       "settings": "Settings",

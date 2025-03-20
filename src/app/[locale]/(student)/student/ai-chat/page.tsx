@@ -65,7 +65,7 @@ const AIChatPage = () => {
 
    return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col">
-         <DashboardNavbar title="AI Assistant">
+         <DashboardNavbar title="Eduh AI">
             <ChatHistory
                onSelectSession={(session) => {
                   setMessages(session.messages);
@@ -96,7 +96,7 @@ const AIChatPage = () => {
                                  <p className="text-blue-600">
                                     Ask questions about your courses, get help
                                     with assignments, or explore any topic
-                                    you're curious about!
+                                    you&apos;re curious about!
                                  </p>
                               </div>
                            </div>

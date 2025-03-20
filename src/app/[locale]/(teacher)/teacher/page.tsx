@@ -62,8 +62,8 @@ const TeacherDashboardPage = () => {
 
    const deleteCourseMutation = useDeleteCourse();
 
-     // Status badge styling
-     const getStatusStyle = (status: string) => {
+   // Status badge styling
+   const getStatusStyle = (status: string) => {
       switch (status) {
          case "Active":
             return "bg-green-100 text-green-800";
@@ -75,7 +75,7 @@ const TeacherDashboardPage = () => {
             return "bg-blue-100 text-blue-800";
       }
    };
-   
+
    // Handle course deletion
    const handleDeleteCourse = async (courseId: string) => {
       try {
@@ -394,10 +394,10 @@ const TeacherDashboardPage = () => {
                   <Link href="/teacher/courses">
                      <Button variant="outline">View All Courses</Button>
                   </Link>
-                  <Link href="/teacher/courses/create">
-                     <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                  <Link href="/teacher/courses/new">
+                     <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700">
                         <Plus className="h-4 w-4 mr-2" />
-                        Create New Course
+                        Create Course
                      </Button>
                   </Link>
                </div>

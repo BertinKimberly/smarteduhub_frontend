@@ -48,7 +48,7 @@
   "home": {
     "hero": {
       "badge": "Éducation basée sur l'IA",
-      "title": "Smart EduHub : L'avenir de l'apprentissage personnalisé",
+      "title": "Smart Eduhub : L'avenir de l'apprentissage personnalisé",
       "description": "Révolutionnez votre parcours d'apprentissage avec notre plateforme alimentée par l'IA qui s'adapte à votre rythme et style uniques. Libérez votre plein potentiel avec du contenu personnalisé pour les étudiants, les parents, les enseignants et les administrateurs.",
       "searchPlaceholder": "Rechercher des cours...",
       "exploreButton": "Explorer",
@@ -59,7 +59,7 @@
     "features": {
       "title": "Fonctionnalités de la Plateforme",
       "subtitle": "La Technologie qui Transforme l'Apprentissage",
-      "description": "Smart EduHub combine l'intelligence artificielle de pointe avec des méthodologies éducatives éprouvées pour créer un environnement d'apprentissage adaptatif qui répond aux besoins uniques de chaque étudiant.",
+      "description": "Smart Eduhub combine l'intelligence artificielle de pointe avec des méthodologies éducatives éprouvées pour créer un environnement d'apprentissage adaptatif qui répond aux besoins uniques de chaque étudiant.",
       "aiLearning": {
         "title": "Apprentissage par IA",
         "description": "Des algorithmes avancés analysent les modèles d'apprentissage de chaque étudiant pour fournir un contenu personnalisé qui s'adapte en temps réel à leurs progrès et besoins."
@@ -86,9 +86,9 @@
       }
     },
     "benefits": {
-      "title": "Pourquoi Choisir Smart EduHub",
+      "title": "Pourquoi Choisir Smart Eduhub",
       "subtitle": "Transformer l'Éducation par la Technologie",
-      "description": "Smart EduHub combine l'IA de pointe avec des méthodologies éducatives éprouvées pour offrir des expériences d'apprentissage personnalisées qui aident les étudiants à atteindre leur plein potentiel tout en donnant aux éducateurs des outils puissants pour maximiser leur impact.",
+      "description": "Smart Eduhub combine l'IA de pointe avec des méthodologies éducatives éprouvées pour offrir des expériences d'apprentissage personnalisées qui aident les étudiants à atteindre leur plein potentiel tout en donnant aux éducateurs des outils puissants pour maximiser leur impact.",
       "personalized": {
         "title": "Apprentissage Personnalisé",
         "description": "Notre technologie IA s'adapte au style d'apprentissage, au rythme et aux préférences de chaque étudiant, créant des expériences éducatives vraiment personnalisées qui améliorent la rétention et les résultats."
@@ -114,7 +114,7 @@
       "error": "Une erreur s'est produite lors du chargement des cours. Veuillez réessayer plus tard.",
       "viewCourse": "Voir le Cours",
       "byAuthor": "Par {name}",
-      "smartEduHubCourse": "Cours Smart EduHub",
+      "smartEduHubCourse": "Cours Smart Eduhub",
       "browseAll": "Parcourir Tous les Cours"
     },
     "sponsors": {
@@ -206,7 +206,7 @@
         "other": "Autre"
       },
       "subject": "Sujet",
-      "subjectPlaceholder": "Comment pouvons-nous vous aider avec Smart EduHub ?",
+      "subjectPlaceholder": "Comment pouvons-nous vous aider avec Smart Eduhub ?",
       "message": "Votre Message",
       "messagePlaceholder": "Veuillez décrire en détail votre question concernant notre plateforme d'apprentissage IA...",
       "sendButton": "Envoyer le Message"
@@ -235,7 +235,7 @@
       }
     },
     "platform": {
-      "title": "Plateforme Smart EduHub",
+      "title": "Plateforme Smart Eduhub",
       "features": {
         "learning": "Parcours d'Apprentissage IA Personnalisés",
         "tracking": "Suivi des Progrès en Temps Réel",
@@ -268,6 +268,7 @@
       "enrolledCourses": "Cours inscrits",
       "users": "Utilisateurs",
       "assignments": "Devoirs",
+      "games":"jeux",
       "chat": "Discussion",
       "schedule": "Emploi du temps",
       "settings": "Paramètres",

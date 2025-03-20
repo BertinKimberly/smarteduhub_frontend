@@ -94,7 +94,15 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
       if (!validateBasicInfo()) return;
 
       try {
-         const course = await createCourseMutation.mutateAsync(formData);
+         // Ensure prerequisites is an array
+         const courseData = {
+            ...formData,
+            prerequisites: formData.prerequisites || [],
+            description: formData.description || "",
+            long_description: formData.long_description || "",
+         };
+
+         const course = await createCourseMutation.mutateAsync(courseData);
          setCourseId(course.id);
          setActiveTab("materials");
       } catch (error) {
@@ -185,22 +193,22 @@ const CourseCreateForm: FC<CourseCreateFormProps> = ({ onSuccess }) => {
    };
 
    return (
-      <div className="space-y-6 max-h-[80vh] overflow-y-auto">
+      <div className="space-y-6">
          <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
             className="w-full"
          >
-            <TabsList className="grid grid-cols-2 mb-8">
+            <TabsList className="inline-flex h-14 items-center justify-center rounded-lg bg-blue-50 p-1 text-blue-600 mb-8">
                <TabsTrigger
                   value="basic-info"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm h-10"
                >
                   1. Basic Information
                </TabsTrigger>
                <TabsTrigger
                   value="materials"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-3 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm h-10"
                   disabled={!courseId}
                >
                   2. Course Materials

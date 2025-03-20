@@ -21,6 +21,7 @@ import {
    MessageSquare,
    Brain,
    NotebookText,
+   GamepadIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogoutUser } from "@/hooks/useAuth";
@@ -47,6 +48,16 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
       } catch (error) {
          console.error("Logout failed:", error);
       }
+   };
+
+   // Add this helper function
+   const isActiveLink = (link: string) => {
+      // For home routes like /student, /admin, etc, require exact match
+      if (link === `/${role}`) {
+         return pathname.replace(/^\/[a-z]{2}/, '') === link;
+      }
+      // For other routes, use includes
+      return pathname.includes(link);
    };
 
    // Define navigation links based on the role
@@ -95,6 +106,11 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
             icon: <NotebookText />,
             label: t("menu.assignments"),
             link: "/student/assignments",
+         },
+         {
+            icon: <GamepadIcon/>,
+            label: t("menu.games"),
+            link: "/student/gamified-learning",
          },
          {
             icon: <Calendar />,
@@ -187,7 +203,7 @@ const DashboardSidebar = ({ role }: SidebarProps) => {
                <Link
                   key={label}
                   className={`flex gap-4 p-2 rounded-lg cursor-pointer hover:bg-background hover:text-main ${
-                     pathname === link ? "bg-background text-main" : ""
+                     isActiveLink(link) ? "bg-background text-main font-medium" : ""
                   }`}
                   href={link}
                >

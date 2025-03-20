@@ -1,4 +1,5 @@
 import { authorizedAPI } from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
 import handleApiRequest from "@/utils/handleApiRequest";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -145,14 +146,14 @@ const inviteToChannel = (data: {
 
 // Add these new functions and hooks
 const getChannelMembers = (channelId: string): Promise<any> => {
-   return handleApiRequest(() => 
+   return handleApiRequest(() =>
       authorizedAPI.get(`/chat/channels/${channelId}/members`)
    );
 };
 
 export const useGetChannelMembers = (channelId: string | null) => {
    return useQuery({
-      queryKey: ['channelMembers', channelId],
+      queryKey: ["channelMembers", channelId],
       queryFn: () => getChannelMembers(channelId!),
       enabled: !!channelId,
    });
@@ -162,25 +163,66 @@ export const useInviteMembers = () => {
    const queryClient = useQueryClient();
 
    return useMutation({
-      mutationFn: ({ channelId, userIds }: { channelId: string; userIds: string[] }) => 
-         authorizedAPI.post(`/chat/channels/${channelId}/invite`, { user_ids: userIds }),
+      mutationFn: ({
+         channelId,
+         userIds,
+      }: {
+         channelId: string;
+         userIds: string[];
+      }) =>
+         authorizedAPI.post(`/chat/channels/${channelId}/invite`, {
+            user_ids: userIds,
+         }),
       onSuccess: (_, variables) => {
          // Invalidate channel members query
-         queryClient.invalidateQueries({ 
-            queryKey: ['channelMembers', variables.channelId] 
+         queryClient.invalidateQueries({
+            queryKey: ["channelMembers", variables.channelId],
          });
       },
    });
 };
 
 // React Query Hooks
+const checkChannelAccess = (channel: any, user: any): boolean => {
+   if (!user) return false;
+
+   // Admin can access special channels
+   if (user.role === "admin") {
+      return true;
+   }
+
+   // Check special channels access
+   const channelName = channel.name.toLowerCase();
+   if (channelName === "students" && user.role === "student") return true;
+   if (channelName === "teachers" && user.role === "teacher") return true;
+   if (channelName === "parents" && user.role === "parent") return true;
+   if (
+      channelName === "parents-teachers" &&
+      (user.role === "parent" || user.role === "teacher")
+   )
+      return true;
+
+   // Check if user created the channel or is a member
+   return (
+      String(channel.creator_id) === String(user.id) ||
+      (Array.isArray(channel.members) &&
+         channel.members.includes(String(user.id)))
+   );
+};
+
 export const useGetAllChannels = () => {
    const queryClient = useQueryClient();
+   const { user } = useAuthStore(); // Add this line to get current user
 
    return useQuery<any, Error>({
       queryKey: ["channels"],
       queryFn: getAllChannels,
-      // Add onSuccess handler to store the channels
+      select: (data) => {
+         // Filter channels based on user access
+         return data.filter((channel: any) =>
+            checkChannelAccess(channel, user)
+         );
+      },
       onSuccess: (data) => {
          queryClient.setQueryData(["channels"], data);
       },
@@ -189,21 +231,22 @@ export const useGetAllChannels = () => {
 
 export const useCreateChannel = () => {
    const queryClient = useQueryClient();
+   const { user } = useAuthStore();
 
    return useMutation<any, Error, any>({
-      mutationFn: createChannel,
-      // Add onSuccess handler to update channels list
+      mutationFn: (channelData) =>
+         createChannel({
+            ...channelData,
+            creator_id: user?.id,
+            members: [user?.id], // Initialize members array with creator
+         }),
       onSuccess: async (newChannel) => {
-         // Get current channels
+         // Update local cache
          const currentChannels = queryClient.getQueryData(["channels"]) || [];
-
-         // Update cache with new channel
          queryClient.setQueryData(
             ["channels"],
-            [...currentChannels, newChannel]
+            [...currentChannels, { ...newChannel, creator_id: user?.id }]
          );
-
-         // Invalidate and refetch to ensure consistency
          await queryClient.invalidateQueries({ queryKey: ["channels"] });
       },
    });

@@ -15,7 +15,7 @@ interface FAQProps {
 const FAQList: FAQProps[] = [
    {
       question:
-         "How does Smart EduHub's AI personalize learning for each student?",
+         "How does Smart Eduhub's AI personalize learning for each student?",
       answer:
          "Our AI analyzes each student's learning patterns, strengths, and areas for improvement through continuous assessment. It then customizes content delivery, adjusts difficulty levels, and recommends specific resources that match the student's learning style. As students progress, the system evolves with them, ensuring they're always challenged at the right level.",
       value: "item-1",
@@ -28,7 +28,7 @@ const FAQList: FAQProps[] = [
       value: "item-2",
    },
    {
-      question: "How does Smart EduHub align with educational standards?",
+      question: "How does Smart Eduhub align with educational standards?",
       answer:
          "Our curriculum is mapped to national and state educational standards including Common Core, Next Generation Science Standards, and others. Content is regularly updated to reflect changes in standards, and our assessment system provides clear tracking of standards mastery to ensure students are meeting grade-level expectations.",
       value: "item-3",
@@ -73,8 +73,8 @@ export const FAQSection = () => {
                   Have Questions? We&apos;re Here to Help
                </h2>
                <h3 className="md:w-3/4 lg:w-2/3 mx-auto text-xl text-center text-gray-600 mb-8">
-                  Get answers to commonly asked questions about Smart EduHub&apos;s
-                  features, implementation, and support.
+                  Get answers to commonly asked questions about Smart
+                  Eduhub&apos;s features, implementation, and support.
                </h3>
             </div>
 

@@ -40,7 +40,7 @@ const AdminSettings = () => {
             <div className="mb-6">
                <h3 className=" font-bold">Platform Settings</h3>
                <p className="text-gray-600">
-                  Manage your Smart EduHub platform configurations
+                  Manage your Smart Eduhub platform configurations
                </p>
             </div>
 
@@ -74,7 +74,7 @@ const AdminSettings = () => {
                               </div>
                               <Input
                                  className="w-48"
-                                 defaultValue="Smart EduHub"
+                                 defaultValue="Smart Eduhub"
                               />
                            </div>
                            <div className="flex justify-between items-center">

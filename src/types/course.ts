@@ -19,28 +19,29 @@ export interface Enrollment {
    created_at: string;
 }
 
-export interface Course {
-   id: string;
-   title: string;
-   description: string | null;
-   long_description: string | null;
-   prerequisites: string[] | null;
-   category: string;
-   level: string;
-   created_at: string;
-   teacher: User;
-   materials: Material[];
-   ratings: Rating[];
-   isEnrolled?: boolean;
-   enrollments: Enrollment[];
-   duration?: string;
-}
-
 export interface CourseFormData {
    title: string;
-   description?: string;
+   description: string;
    long_description?: string;
    prerequisites?: string[];
    category: string;
    level: string;
+}
+
+export interface Course extends CourseFormData {
+   id: string;
+   teacher: {
+      id: string;
+      name: string;
+      email: string;
+   };
+   materials: Array<{
+      id: string;
+      title: string;
+      file_path: string;
+   }>;
+   ratings: any[];
+   enrollments: any[];
+   is_enrolled: boolean;
+   progress?: number;
 }

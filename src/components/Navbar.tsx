@@ -26,14 +26,14 @@ const Navbar = () => {
    const t = useTranslations("navbar");
    const [hasMounted, setHasMounted] = useState(false);
 
-useEffect(() => {
-  setHasMounted(true);
-}, []);
+   useEffect(() => {
+      setHasMounted(true);
+   }, []);
 
-// Skip rendering any dynamic content until client-side hydration is complete
-if (!hasMounted) {
-  return <div className="h-[90px]"></div>; // Or appropriate placeholder
-}
+   // Skip rendering any dynamic content until client-side hydration is complete
+   if (!hasMounted) {
+      return <div className="h-[90px]"></div>; // Or appropriate placeholder
+   }
 
    // Language options
    const languages = [

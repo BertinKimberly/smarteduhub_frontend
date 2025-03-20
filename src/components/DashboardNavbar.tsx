@@ -37,18 +37,17 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
-import NotificationsDrawer, { Notification } from "./NotificationsDrawer";
+import NotificationsSheet from "./NotificationsSheet";
 import NotificationBell from "./NotificationBell";
 import { useLogoutUser } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface DashboardNavbarProps {
    title: string;
    userName?: string;
 }
 
-const DashboardNavbar = ({
-   title,
-}: DashboardNavbarProps) => {
+const DashboardNavbar = ({ title }: DashboardNavbarProps) => {
    const [isScrolled, setIsScrolled] = useState(false);
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -56,36 +55,10 @@ const DashboardNavbar = ({
    const pathname = usePathname();
    const logout = useLogoutUser();
    const locale = useLocale();
+   const { notifications } = useNotifications();
 
-   // Sample notifications data
-   const [notifications, setNotifications] = useState<Notification[]>([
-      {
-         id: "1",
-         title: "Assignment Due",
-         message: "Your Math assignment is due in 2 hours",
-         time: "2 hours ago",
-         read: false,
-         type: "warning",
-      },
-      {
-         id: "2",
-         title: "Quiz Result",
-         message: "You scored 85% in your Science quiz",
-         time: "Yesterday",
-         read: false,
-         type: "success",
-      },
-      {
-         id: "3",
-         title: "New Course Available",
-         message: "Introduction to AI is now available",
-         time: "2 days ago",
-         read: true,
-         type: "info",
-      },
-   ]);
-
-   const unreadCount = notifications.filter((n) => !n.read).length;
+   // Calculate unread count
+   const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
 
    const getUserRole = (): "admin" | "student" | "teacher" | "parent" => {
       const path = pathname.split("/")[1];
@@ -190,28 +163,6 @@ const DashboardNavbar = ({
          document.removeEventListener("mousedown", handleClickOutside);
       };
    }, [isNotificationsOpen]);
-
-   const markAsRead = (id: string) => {
-      setNotifications(
-         notifications.map((notification) =>
-            notification.id === id
-               ? { ...notification, read: true }
-               : notification
-         )
-      );
-   };
-
-   const markAllAsRead = () => {
-      setNotifications(
-         notifications.map((notification) => ({ ...notification, read: true }))
-      );
-   };
-
-   const deleteNotification = (id: string) => {
-      setNotifications(
-         notifications.filter((notification) => notification.id !== id)
-      );
-   };
 
    const handleLogout = async () => {
       try {
@@ -419,14 +370,10 @@ const DashboardNavbar = ({
                </div>
             )}
 
-            {/* Notifications Drawer Component */}
-            <NotificationsDrawer
-               isOpen={isNotificationsOpen}
-               onClose={() => setIsNotificationsOpen(false)}
-               notifications={notifications}
-               onMarkAsRead={markAsRead}
-               onMarkAllAsRead={markAllAsRead}
-               onDelete={deleteNotification}
+            {/* Notifications Sheet Component */}
+            <NotificationsSheet
+               open={isNotificationsOpen}
+               onOpenChange={setIsNotificationsOpen}
             />
          </div>
       </nav>

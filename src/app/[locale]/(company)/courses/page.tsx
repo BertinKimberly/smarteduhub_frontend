@@ -134,7 +134,7 @@ const CourseCard: React.FC<{ course: CourseData }> = ({ course }) => {
                         </span>
                      ) : (
                         <span className="text-sm text-gray-600">
-                           Smart EduHub Course
+                           Smart Eduhub Course
                         </span>
                      )}
 

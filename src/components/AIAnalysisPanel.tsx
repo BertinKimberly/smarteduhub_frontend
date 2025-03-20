@@ -312,7 +312,7 @@ ${q.explanation ? `\nExplanation: ${q.explanation}` : ""}
                   </TabsTrigger>
                </TabsList>
 
-               <div className="flex-1 overflow-hidden bg-white rounded-lg shadow-sm">
+               <div className="flex-1 overflow-hidden bg-white p-2 xl:p-6 rounded-lg shadow-sm ">
                   <TabsContent
                      value="summarize"
                      className="h-full flex flex-col"

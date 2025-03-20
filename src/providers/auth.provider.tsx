@@ -84,8 +84,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return (
          <div className="items-center justify-center flex min-h-screen">
             <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-main mx-auto"></div>
-         </div>
+               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-main mx-auto"></div>
+               <p className="mt-4 text-main">Loading...</p>
+            </div>
          </div>
       );
    }

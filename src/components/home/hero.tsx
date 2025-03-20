@@ -79,7 +79,7 @@ export const HeroSection = () => {
                      <div className="relative bg-white rounded-lg shadow-xl overflow-hidden p-1">
                         <Image
                            src={HeroImg}
-                           alt="Smart EduHub Platform"
+                           alt="Smart Eduhub Platform"
                            className="w-full h-auto"
                            priority
                         />

@@ -1,20 +1,13 @@
-//@ts-nocheck
-
 "use client";
-
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useGetAllCourses, useDeleteCourse } from "@/hooks/useCourses";
 import { useState } from "react";
-import {
-   Search,
-   Plus,
-   MoreHorizontal,
-   Filter,
-   BookOpen,
-   Loader2,
-} from "lucide-react";
+import { Search, MoreHorizontal, BookOpen, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -28,17 +21,8 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogHeader,
-   DialogTitle,
-   DialogTrigger,
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import DashboardNavbar from "@/components/DashboardNavbar";
-import CourseCreateForm from "@/components/CourseCreateForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuthStore } from "@/store/useAuthStore";
 import Tilt from "react-parallax-tilt";
@@ -57,7 +41,6 @@ const CoursesPage = () => {
 
    // States
    const [searchQuery, setSearchQuery] = useState("");
-   const [isDialogOpen, setIsDialogOpen] = useState(false);
    const [activeFilter, setActiveFilter] = useState("all");
 
    // Filter courses based on search query, active filter, and teacher ID
@@ -140,30 +123,12 @@ const CoursesPage = () => {
                         />
                      </div>
                   </div>
-                  <Dialog
-                     open={isDialogOpen}
-                     onOpenChange={setIsDialogOpen}
-                  >
-                     <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-                           <Plus className="mr-2 h-4 w-4" /> Create Course
-                        </Button>
-                     </DialogTrigger>
-                     <DialogContent className="sm:max-w-2xl">
-                        <DialogHeader>
-                           <DialogTitle className="text-2xl">
-                              Create New Course
-                           </DialogTitle>
-                           <DialogDescription>
-                              Fill in the course details and add materials to
-                              publish your course.
-                           </DialogDescription>
-                        </DialogHeader>
-                        <CourseCreateForm
-                           onSuccess={() => setIsDialogOpen(false)}
-                        />
-                     </DialogContent>
-                  </Dialog>
+                  <Link href="/teacher/courses/new">
+                     <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Course
+                     </Button>
+                  </Link>
                </div>
             </div>
 
@@ -275,7 +240,9 @@ const CoursesPage = () => {
                               <Badge
                                  variant="outline"
                                  className={`${
-                                    levelColorMap[course.level?.toLowerCase()] ||
+                                    levelColorMap[
+                                       course.level?.toLowerCase()
+                                    ] ||
                                     "bg-blue-100 text-blue-700 border-blue-200"
                                  }`}
                               >

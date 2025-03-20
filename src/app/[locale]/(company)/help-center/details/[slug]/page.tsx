@@ -30,7 +30,7 @@ const HelpCenterDetail = () => {
       content: [
          {
             type: "paragraph",
-            text: "Resetting your password on Smart EduHub is a simple process designed to help you regain access to your account while maintaining security. Whether you've forgotten your password or simply want to update it for security reasons, follow the steps below.",
+            text: "Resetting your password on Smart Eduhub is a simple process designed to help you regain access to your account while maintaining security. Whether you've forgotten your password or simply want to update it for security reasons, follow the steps below.",
          },
          {
             type: "heading",
@@ -39,7 +39,7 @@ const HelpCenterDetail = () => {
          {
             type: "steps",
             items: [
-               "Go to the Smart EduHub login page",
+               "Go to the Smart Eduhub login page",
                "Click on the 'Forgot Password?' link below the login form",
                "Enter the email address associated with your account",
                "Check your email for a password reset link",
@@ -57,7 +57,7 @@ const HelpCenterDetail = () => {
          {
             type: "steps",
             items: [
-               "Log in to your Smart EduHub account",
+               "Log in to your Smart Eduhub account",
                "Click on your profile icon in the top right corner",
                "Select 'Settings' from the dropdown menu",
                "Navigate to the 'Security' tab",

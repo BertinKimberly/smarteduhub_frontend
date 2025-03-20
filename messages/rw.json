@@ -48,7 +48,7 @@
   "home": {
     "hero": {
       "badge": "Kwiga Gushingiye ku Bwenge Bwite",
-      "title": "Smart EduHub: Ejo Hazaza h'Uburyo bwo Kwiga Bwihariye",
+      "title": "Smart Eduhub: Ejo Hazaza h'Uburyo bwo Kwiga Bwihariye",
       "description": "Hindura urugendo rwawe rwo kwiga n'urubuga rwacu rushingiye ku bwenge bwite buhinduka hakurikijwe imbaraga n'uburyo bwawe bwihariye. Kora ibishoboka byose ufite ibikoresho byihariye ku banyeshuri, ababyeyi, abarimu n'abayobozi.",
       "searchPlaceholder": "Shakisha amasomo...",
       "exploreButton": "Reba",
@@ -59,7 +59,7 @@
     "features": {
       "title": "Ibiranga Urubuga",
       "subtitle": "Ikoranabuhanga Rihindura Kwiga",
-      "description": "Smart EduHub ihuriza hamwe ubwenge bw'ikoranabuhanga n'uburyo bwo kwiga bwageragejwe kugira ngo habeho uburyo bwo kwiga bwihariye buhura n'ibyo buri munyeshuri akeneye.",
+      "description": "Smart Eduhub ihuriza hamwe ubwenge bw'ikoranabuhanga n'uburyo bwo kwiga bwageragejwe kugira ngo habeho uburyo bwo kwiga bwihariye buhura n'ibyo buri munyeshuri akeneye.",
       "aiLearning": {
         "title": "Kwiga Gushingiye ku Bwenge Bwite",
         "description": "Uburyo bw'imibare bushingiye ku buryo buri munyeshuri yiga kugira ngo habeho inyigisho zihariye zihinduka mu gihe nyacyo hakurikijwe uko agenda ateye imbere n'ibyo akeneye."
@@ -86,9 +86,9 @@
       }
     },
     "benefits": {
-      "title": "Kuki Wahitamo Smart EduHub",
+      "title": "Kuki Wahitamo Smart Eduhub",
       "subtitle": "Guhindura Uburezi Binyuze mu Ikoranabuhanga",
-      "description": "Smart EduHub ihuriza hamwe ikoranabuhanga ryihuta n'uburyo bwo kwigisha bwageragejwe kugira ngo itange uburyo bwo kwiga bwihariye bufasha abanyeshuri kugera ku ntego zabo ndetse igaha n'abarimu ibikoresho bikomeye byo kongera ubushobozi bwabo.",
+      "description": "Smart Eduhub ihuriza hamwe ikoranabuhanga ryihuta n'uburyo bwo kwigisha bwageragejwe kugira ngo itange uburyo bwo kwiga bwihariye bufasha abanyeshuri kugera ku ntego zabo ndetse igaha n'abarimu ibikoresho bikomeye byo kongera ubushobozi bwabo.",
       "personalized": {
         "title": "Kwiga ku Giti Cyawe",
         "description": "Ikoranabuhanga ryacu rihinduka n'uburyo buri munyeshuri yiga, umuvuduko we n'ibyo akunda, bigatanga uburyo bwo kwiga bwihariye buteza imbere kwiga no kuger ku ntego."
@@ -114,7 +114,7 @@
       "error": "Hari ikibazo mu gutangiza amasomo. Nyamuneka ongera ugerageze nyuma.",
       "viewCourse": "Reba Isomo",
       "byAuthor": "Na {name}",
-      "smartEduHubCourse": "Isomo rya Smart EduHub",
+      "smartEduHubCourse": "Isomo rya Smart Eduhub",
       "browseAll": "Reba Amasomo Yose"
     },
     "sponsors": {
@@ -206,7 +206,7 @@
         "other": "Ibindi"
       },
       "subject": "Icyo Birebana",
-      "subjectPlaceholder": "Twagufasha ute kuri Smart EduHub?",
+      "subjectPlaceholder": "Twagufasha ute kuri Smart Eduhub?",
       "message": "Ubutumwa Bwawe",
       "messagePlaceholder": "Nyamuneka sobanura mu buryo burambuye ikibazo cyawe ku bijyanye n'urubuga rwacu rw'inyigisho rwa AI...",
       "sendButton": "Ohereza Ubutumwa"
@@ -235,7 +235,7 @@
       }
     },
     "platform": {
-      "title": "Urubuga rwa Smart EduHub",
+      "title": "Urubuga rwa Smart Eduhub",
       "features": {
         "learning": "Inzira zo Kwiga zishingiye kuri AI",
         "tracking": "Gukurikirana Iterambere mu Gihe Nyacyo",
@@ -268,6 +268,7 @@
       "enrolledCourses": "Amasomo yanditsemo",
       "users": "Abakoresha",
       "assignments": "Imikoro",
+      "games":"Imikino",
       "chat": "Kuganira",
       "schedule": "Gahunda",
       "settings": "Igenamiterere",
