@@ -7,7 +7,7 @@ const baseConfig: NextConfig = {
       return [
          {
             source: "/ws/:path*",
-            destination: "http://localhost:8000/ws/:path*", // ✅ Proxy WebSocket traffic
+            destination: "https://smarteduhub-server.onrender.com/wss/:path*", // ✅ Proxy WebSocket traffic
          },
       ];
    },
