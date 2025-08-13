@@ -1,0 +1,283 @@
+{
+  "auth": {
+    "register": "Register",
+    "registerAs": "Register As",
+    "login": "Login",
+    "loading": "Loading...",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "registering": "Registering...",
+    "fullName": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "username": "Username",
+    "phone": "Phone",
+    "country": "Country",
+    "fieldOfStudy": "Field of Study",
+    "selectFieldOfStudy": "Choose Field of Study",
+    "or": "Or",
+    "continueWithGoogle": "Continue with Google",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "signup": "Signup",
+    "roles": {
+      "teacher": "Teacher",
+      "student": "Student",
+      "parent": "Parent"
+    },
+    "childInfo": {
+      "title": "Child Information",
+      "addChild": "Add Child",
+      "child": "Child",
+      "childName": "Child's Name",
+      "grade": "Grade",
+      "childEmail": "Child's Email",
+      "age": "Age"
+    },
+    "fields": {
+      "computerScience": "Computer Science",
+      "engineering": "Engineering",
+      "mathematics": "Mathematics",
+      "physics": "Physics",
+      "biology": "Biology",
+      "chemistry": "Chemistry",
+      "other": "Other"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "AI-Driven Education",
+      "title": "Smart Eduhub: The Future of Personalized Learning",
+      "description": "Revolutionize your learning journey with our AI-powered platform that adapts to your unique pace and style. Unlock your full potential with personalized content for students, parents, teachers, and administrators.",
+      "searchPlaceholder": "Search for courses...",
+      "exploreButton": "Explore",
+      "students": "Students",
+      "teachers": "Teachers",
+      "parents": "Parents"
+    },
+    "features": {
+      "title": "Platform Features",
+      "subtitle": "Technology That Transforms Learning",
+      "description": "Smart Eduhub combines cutting-edge artificial intelligence with proven educational methodologies to create an adaptive learning environment that meets the unique needs of every student.",
+      "aiLearning": {
+        "title": "AI-Powered Learning",
+        "description": "Advanced algorithms analyze each student's learning patterns to deliver personalized content that adapts in real-time to their progress and needs."
+      },
+      "analytics": {
+        "title": "Comprehensive Analytics",
+        "description": "Detailed dashboards provide actionable insights into performance, highlighting strengths and identifying areas that need additional attention."
+      },
+      "multiRole": {
+        "title": "Multi-Role Platform",
+        "description": "Specialized interfaces for students, parents, teachers, and administrators with features designed specifically for each user's needs."
+      },
+      "curriculum": {
+        "title": "Curriculum Aligned",
+        "description": "Content mapped to national education standards ensuring students receive comprehensive instruction that prepares them for standardized testing and beyond."
+      },
+      "feedback": {
+        "title": "Instant Feedback",
+        "description": "Real-time assessment and feedback during learning activities help students understand concepts immediately rather than waiting for traditional grading."
+      },
+      "scheduling": {
+        "title": "Flexible Scheduling",
+        "description": "Learn anytime, anywhere with on-demand access to lessons, allowing students to progress at their own pace while maintaining accountability."
+      }
+    },
+    "benefits": {
+      "title": "Why Choose Smart Eduhub",
+      "subtitle": "Transforming Education Through Technology",
+      "description": "Smart Eduhub combines cutting-edge AI with proven educational methodologies to deliver personalized learning experiences that help students achieve their full potential while giving educators powerful tools to maximize their impact.",
+      "personalized": {
+        "title": "Personalized Learning",
+        "description": "Our AI technology adapts to each student's learning style, pace, and preferences, creating truly customized educational experiences that improve retention and results."
+      },
+      "analytics": {
+        "title": "Performance Analytics",
+        "description": "Get comprehensive insights into academic progress with detailed analytics dashboards for students, parents, teachers, and administrators to track growth in real-time."
+      },
+      "content": {
+        "title": "Engaging Content",
+        "description": "Access interactive lessons, videos, quizzes, and simulations designed by educational experts to make learning enjoyable while achieving better academic outcomes."
+      },
+      "improvement": {
+        "title": "Continuous Improvement",
+        "description": "Our platform evolves with each student, constantly refining recommendations and learning pathways based on performance data and the latest educational research."
+      }
+    },
+    "courses": {
+      "title": "FEATURED COURSES",
+      "subtitle": "Discover Your Next Learning Adventure",
+      "description": "Explore our AI-powered courses designed to adapt to your learning style and help you master new skills at your own pace.",
+      "loading": "Loading courses...",
+      "error": "There was an error loading courses. Please try again later.",
+      "viewCourse": "View Course",
+      "byAuthor": "By {name}",
+      "smartEduHubCourse": "Smart Eduhub Course",
+      "browseAll": "Browse All Courses"
+    },
+    "sponsors": {
+      "title": "Our Platinum Sponsors",
+      "subtitle": "We are grateful for the support of our sponsors.",
+      "thankYou": "Thank you for your support!"
+    }
+  },
+  "navbar": {
+    "courses": "Courses",
+    "about": "About",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "language": {
+      "english": "EN",
+      "french": "FR",
+      "kinyarwanda": "RW"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Empowering Lives Through Education",
+      "description": "Smart Eduhub is revolutionizing online education by making high-quality learning accessible to everyone, everywhere.",
+      "cta": "Start Learning Today"
+    },
+    "stats": {
+      "courses": "Courses",
+      "students": "Students",
+      "successRate": "Success Rate",
+      "countries": "Countries"
+    },
+    "story": {
+      "title": "Our Story",
+      "part1": "Founded in 2020, Smart Eduhub emerged from a simple yet powerful vision: to democratize education and make quality learning accessible to everyone. We recognized that traditional education systems weren't adapting quickly enough to meet the needs of today's rapidly evolving world.",
+      "part2": "What started as a small collection of online courses has grown into a global learning platform, serving students from over 100 countries. Our success is built on our commitment to excellence, innovation in education technology, and most importantly, our dedication to student success.",
+      "part3": "Today, we continue to expand our course offerings, enhance our learning platform, and forge partnerships with industry leaders to ensure our students receive the most relevant and up-to-date education possible."
+    },
+    "values": {
+      "title": "Our Core Values",
+      "quality": {
+        "title": "Quality Education",
+        "description": "We deliver high-quality, industry-relevant education that prepares students for real-world success."
+      },
+      "success": {
+        "title": "Student Success",
+        "description": "Our primary focus is on student achievement and helping them reach their full potential."
+      },
+      "access": {
+        "title": "Global Access",
+        "description": "Making quality education accessible to students worldwide through our digital platform."
+      },
+      "learning": {
+        "title": "Lifetime Learning",
+        "description": "Supporting continuous learning and professional development throughout your career."
+      }
+    },
+    "cta": {
+      "title": "Join Our Learning Community",
+      "description": "Start your learning journey today and join thousands of students who are transforming their lives through education.",
+      "browseCourses": "Browse Courses",
+      "contactUs": "Contact Us"
+    }
+  },
+  "courses": {
+    "hero": {
+      "title": "Discover Your Learning Path",
+      "description": "Unlock your potential with premium courses taught by industry experts"
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Get in Touch",
+      "description": "Have questions about our AI-driven learning platform or need support? We're here to help you achieve your educational goals."
+    },
+    "form": {
+      "title": "Send us a Message",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "userType": {
+        "label": "User Type",
+        "placeholder": "Select your role",
+        "student": "Student",
+        "parent": "Parent",
+        "teacher": "Teacher",
+        "administrator": "Administrator",
+        "other": "Other"
+      },
+      "subject": "Subject",
+      "subjectPlaceholder": "How can we help you with Smart Eduhub?",
+      "message": "Your Message",
+      "messagePlaceholder": "Please describe your query about our AI learning platform in detail...",
+      "sendButton": "Send Message"
+    },
+    "support": {
+      "title": "Platform Support",
+      "email": {
+        "title": "Email Support",
+        "support": "support@smarteduhub.com",
+        "info": "info@smarteduhub.com"
+      },
+      "phone": {
+        "title": "Phone Support",
+        "number": "+1 (555) 123-4567",
+        "hours": "Available Mon-Fri: 9:00 - 18:00 ET"
+      },
+      "chat": {
+        "title": "Live Chat",
+        "description": "Connect with our support team in real-time through the platform",
+        "availability": "24/7 AI assistance available"
+      },
+      "knowledge": {
+        "title": "Knowledge Base",
+        "description": "Browse our comprehensive guides and tutorials",
+        "link": "Visit our Help Center →"
+      }
+    },
+    "platform": {
+      "title": "Smart Eduhub Platform",
+      "features": {
+        "learning": "Personalized AI Learning Paths",
+        "tracking": "Real-time Progress Tracking",
+        "access": "Multi-role Access for Students, Parents & Teachers",
+        "tools": "Comprehensive Administration Tools"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions"
+    }
+  },
+  "dashboard": {
+    "search": "Search...",
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Mark all as read",
+      "noNotifications": "No notifications",
+      "assignmentDue": "Assignment Due",
+      "quizResult": "Quiz Result",
+      "newCourse": "New Course Available"
+    },
+    "profile": "Profile",
+    "helpSupport": "Help & Support",
+    "logout": "Log out",
+    "menu": {
+      "dashboard": "Dashboard",
+      "home": "Home",
+      "profile": "Profile",
+      "courses": "Courses",
+      "enrolledCourses": "Enrolled Courses",
+      "users": "Users",
+      "assignments": "Assignments",
+      "games": "Games",
+      "chat": "Chat",
+      "schedule": "Schedule",
+      "settings": "Settings",
+      "timetable": "Timetable",
+      "students": "Students",
+      "myChild": "My Child",
+      "performance": "Performance",
+      "messages": "Messages",
+      "notifications": "Notifications"
+    }
+  }
+}

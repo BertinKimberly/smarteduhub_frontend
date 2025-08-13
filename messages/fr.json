@@ -1,0 +1,283 @@
+{
+  "auth": {
+    "register": "S'inscrire",
+    "registerAs": "S'inscrire en tant que",
+    "login": "Connexion",
+    "loading": "Chargement...",
+    "loginButton": "Se connecter",
+    "registerButton": "S'inscrire",
+    "registering": "Inscription en cours...",
+    "fullName": "Nom complet",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "username": "Nom d'utilisateur",
+    "phone": "Téléphone",
+    "country": "Pays",
+    "fieldOfStudy": "Domaine d'études",
+    "selectFieldOfStudy": "Domaine d'études",
+    "or": "Ou",
+    "continueWithGoogle": "Continuer avec Google",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "signup": "S'inscrire",
+    "roles": {
+      "teacher": "Professeur",
+      "student": "Étudiant",
+      "parent": "Parent"
+    },
+    "childInfo": {
+      "title": "Informations sur l'enfant",
+      "addChild": "Ajouter un enfant",
+      "child": "Enfant",
+      "childName": "Nom de l'enfant",
+      "grade": "Classe",
+      "childEmail": "Email de l'enfant",
+      "age": "Âge"
+    },
+    "fields": {
+      "computerScience": "Informatique",
+      "engineering": "Ingénierie",
+      "mathematics": "Mathématiques",
+      "physics": "Physique",
+      "biology": "Biologie",
+      "chemistry": "Chimie",
+      "other": "Autre"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Éducation basée sur l'IA",
+      "title": "Smart Eduhub : L'avenir de l'apprentissage personnalisé",
+      "description": "Révolutionnez votre parcours d'apprentissage avec notre plateforme alimentée par l'IA qui s'adapte à votre rythme et style uniques. Libérez votre plein potentiel avec du contenu personnalisé pour les étudiants, les parents, les enseignants et les administrateurs.",
+      "searchPlaceholder": "Rechercher des cours...",
+      "exploreButton": "Explorer",
+      "students": "Étudiants",
+      "teachers": "Enseignants",
+      "parents": "Parents"
+    },
+    "features": {
+      "title": "Fonctionnalités de la Plateforme",
+      "subtitle": "La Technologie qui Transforme l'Apprentissage",
+      "description": "Smart Eduhub combine l'intelligence artificielle de pointe avec des méthodologies éducatives éprouvées pour créer un environnement d'apprentissage adaptatif qui répond aux besoins uniques de chaque étudiant.",
+      "aiLearning": {
+        "title": "Apprentissage par IA",
+        "description": "Des algorithmes avancés analysent les modèles d'apprentissage de chaque étudiant pour fournir un contenu personnalisé qui s'adapte en temps réel à leurs progrès et besoins."
+      },
+      "analytics": {
+        "title": "Analyses Complètes",
+        "description": "Des tableaux de bord détaillés fournissent des aperçus exploitables des performances, mettant en évidence les forces et identifiant les domaines nécessitant une attention supplémentaire."
+      },
+      "multiRole": {
+        "title": "Plateforme Multi-rôles",
+        "description": "Des interfaces spécialisées pour les étudiants, les parents, les enseignants et les administrateurs avec des fonctionnalités conçues spécifiquement pour les besoins de chaque utilisateur."
+      },
+      "curriculum": {
+        "title": "Aligné sur le Programme",
+        "description": "Contenu adapté aux normes éducatives nationales assurant que les étudiants reçoivent une instruction complète qui les prépare aux tests standardisés et au-delà."
+      },
+      "feedback": {
+        "title": "Retour Instantané",
+        "description": "L'évaluation et le retour en temps réel pendant les activités d'apprentissage aident les étudiants à comprendre les concepts immédiatement plutôt que d'attendre une notation traditionnelle."
+      },
+      "scheduling": {
+        "title": "Planification Flexible",
+        "description": "Apprenez n'importe quand, n'importe où avec un accès à la demande aux leçons, permettant aux étudiants de progresser à leur propre rythme tout en maintenant leur responsabilité."
+      }
+    },
+    "benefits": {
+      "title": "Pourquoi Choisir Smart Eduhub",
+      "subtitle": "Transformer l'Éducation par la Technologie",
+      "description": "Smart Eduhub combine l'IA de pointe avec des méthodologies éducatives éprouvées pour offrir des expériences d'apprentissage personnalisées qui aident les étudiants à atteindre leur plein potentiel tout en donnant aux éducateurs des outils puissants pour maximiser leur impact.",
+      "personalized": {
+        "title": "Apprentissage Personnalisé",
+        "description": "Notre technologie IA s'adapte au style d'apprentissage, au rythme et aux préférences de chaque étudiant, créant des expériences éducatives vraiment personnalisées qui améliorent la rétention et les résultats."
+      },
+      "analytics": {
+        "title": "Analyses de Performance",
+        "description": "Obtenez des aperçus complets des progrès académiques avec des tableaux de bord d'analyse détaillés pour les étudiants, les parents, les enseignants et les administrateurs pour suivre la croissance en temps réel."
+      },
+      "content": {
+        "title": "Contenu Engageant",
+        "description": "Accédez à des leçons interactives, des vidéos, des quiz et des simulations conçus par des experts en éducation pour rendre l'apprentissage agréable tout en obtenant de meilleurs résultats académiques."
+      },
+      "improvement": {
+        "title": "Amélioration Continue",
+        "description": "Notre plateforme évolue avec chaque étudiant, affinant constamment les recommandations et les parcours d'apprentissage basés sur les données de performance et les dernières recherches éducatives."
+      }
+    },
+    "courses": {
+      "title": "COURS EN VEDETTE",
+      "subtitle": "Découvrez Votre Prochaine Aventure d'Apprentissage",
+      "description": "Explorez nos cours alimentés par l'IA conçus pour s'adapter à votre style d'apprentissage et vous aider à maîtriser de nouvelles compétences à votre rythme.",
+      "loading": "Chargement des cours...",
+      "error": "Une erreur s'est produite lors du chargement des cours. Veuillez réessayer plus tard.",
+      "viewCourse": "Voir le Cours",
+      "byAuthor": "Par {name}",
+      "smartEduHubCourse": "Cours Smart Eduhub",
+      "browseAll": "Parcourir Tous les Cours"
+    },
+    "sponsors": {
+      "title": "Nos Sponsors Platine",
+      "subtitle": "Nous sommes reconnaissants du soutien de nos sponsors.",
+      "thankYou": "Merci pour votre soutien !"
+    }
+  },
+  "navbar": {
+    "courses": "Cours",
+    "about": "À propos",
+    "contact": "Contact",
+    "dashboard": "Tableau de bord",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "language": {
+      "english": "EN",
+      "french": "FR",
+      "kinyarwanda": "RW"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Transformer des Vies par l'Éducation",
+      "description": "Smart Eduhub révolutionne l'éducation en ligne en rendant l'apprentissage de qualité accessible à tous, partout.",
+      "cta": "Commencez à Apprendre"
+    },
+    "stats": {
+      "courses": "Cours",
+      "students": "Étudiants",
+      "successRate": "Taux de Réussite",
+      "countries": "Pays"
+    },
+    "story": {
+      "title": "Notre Histoire",
+      "part1": "Fondé en 2020, Smart Eduhub est né d'une vision simple mais puissante : démocratiser l'éducation et rendre l'apprentissage de qualité accessible à tous. Nous avons reconnu que les systèmes éducatifs traditionnels ne s'adaptaient pas assez rapidement aux besoins du monde en rapide évolution.",
+      "part2": "Ce qui a commencé comme une petite collection de cours en ligne est devenu une plateforme d'apprentissage mondiale, servant des étudiants de plus de 100 pays. Notre succès repose sur notre engagement envers l'excellence, l'innovation dans la technologie éducative et, surtout, notre dévouement à la réussite des étudiants.",
+      "part3": "Aujourd'hui, nous continuons d'élargir notre offre de cours, d'améliorer notre plateforme d'apprentissage et de forger des partenariats avec des leaders de l'industrie pour garantir que nos étudiants reçoivent l'éducation la plus pertinente et la plus à jour possible."
+    },
+    "values": {
+      "title": "Nos Valeurs Fondamentales",
+      "quality": {
+        "title": "Éducation de Qualité",
+        "description": "Nous fournissons une éducation de haute qualité, pertinente pour l'industrie, qui prépare les étudiants au succès dans le monde réel."
+      },
+      "success": {
+        "title": "Réussite des Étudiants",
+        "description": "Notre objectif principal est la réussite des étudiants et les aider à atteindre leur plein potentiel."
+      },
+      "access": {
+        "title": "Accès Mondial",
+        "description": "Rendre l'éducation de qualité accessible aux étudiants du monde entier grâce à notre plateforme numérique."
+      },
+      "learning": {
+        "title": "Apprentissage Continu",
+        "description": "Soutenir l'apprentissage continu et le développement professionnel tout au long de votre carrière."
+      }
+    },
+    "cta": {
+      "title": "Rejoignez Notre Communauté d'Apprentissage",
+      "description": "Commencez votre parcours d'apprentissage aujourd'hui et rejoignez des milliers d'étudiants qui transforment leur vie grâce à l'éducation.",
+      "browseCourses": "Parcourir les Cours",
+      "contactUs": "Contactez-nous"
+    }
+  },
+  "courses": {
+    "hero": {
+      "title": "Découvrez Votre Parcours d'Apprentissage",
+      "description": "Libérez votre potentiel avec des cours premium dispensés par des experts de l'industrie"
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Contactez-nous",
+      "description": "Vous avez des questions sur notre plateforme d'apprentissage basée sur l'IA ou besoin d'aide ? Nous sommes là pour vous aider à atteindre vos objectifs éducatifs."
+    },
+    "form": {
+      "title": "Envoyez-nous un Message",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse Email",
+      "userType": {
+        "label": "Type d'Utilisateur",
+        "placeholder": "Sélectionnez votre rôle",
+        "student": "Étudiant",
+        "parent": "Parent",
+        "teacher": "Professeur",
+        "administrator": "Administrateur",
+        "other": "Autre"
+      },
+      "subject": "Sujet",
+      "subjectPlaceholder": "Comment pouvons-nous vous aider avec Smart Eduhub ?",
+      "message": "Votre Message",
+      "messagePlaceholder": "Veuillez décrire en détail votre question concernant notre plateforme d'apprentissage IA...",
+      "sendButton": "Envoyer le Message"
+    },
+    "support": {
+      "title": "Support Plateforme",
+      "email": {
+        "title": "Support Email",
+        "support": "support@smarteduhub.com",
+        "info": "info@smarteduhub.com"
+      },
+      "phone": {
+        "title": "Support Téléphonique",
+        "number": "+1 (555) 123-4567",
+        "hours": "Disponible Lun-Ven : 9:00 - 18:00 ET"
+      },
+      "chat": {
+        "title": "Chat en Direct",
+        "description": "Connectez-vous avec notre équipe de support en temps réel via la plateforme",
+        "availability": "Assistance IA disponible 24/7"
+      },
+      "knowledge": {
+        "title": "Base de Connaissances",
+        "description": "Parcourez nos guides et tutoriels complets",
+        "link": "Visitez notre Centre d'Aide →"
+      }
+    },
+    "platform": {
+      "title": "Plateforme Smart Eduhub",
+      "features": {
+        "learning": "Parcours d'Apprentissage IA Personnalisés",
+        "tracking": "Suivi des Progrès en Temps Réel",
+        "access": "Accès Multi-rôles pour Étudiants, Parents et Professeurs",
+        "tools": "Outils d'Administration Complets"
+      }
+    },
+    "faq": {
+      "title": "Questions Fréquemment Posées"
+    }
+  },
+  "dashboard": {
+    "search": "Rechercher...",
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Tout marquer comme lu",
+      "noNotifications": "Aucune notification",
+      "assignmentDue": "Devoir à rendre",
+      "quizResult": "Résultat du quiz",
+      "newCourse": "Nouveau cours disponible"
+    },
+    "profile": "Profil",
+    "helpSupport": "Aide & Support",
+    "logout": "Déconnexion",
+    "menu": {
+      "dashboard": "Tableau de bord",
+      "home": "Accueil",
+      "profile": "Profil",
+      "courses": "Cours",
+      "enrolledCourses": "Cours inscrits",
+      "users": "Utilisateurs",
+      "assignments": "Devoirs",
+      "games":"jeux",
+      "chat": "Discussion",
+      "schedule": "Emploi du temps",
+      "settings": "Paramètres",
+      "timetable": "Emploi du temps",
+      "students": "Étudiants",
+      "myChild": "Mon enfant",
+      "performance": "Performance",
+      "messages": "Messages",
+      "notifications": "Notifications"
+    }
+  }
+}

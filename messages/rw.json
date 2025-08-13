@@ -1,0 +1,283 @@
+{
+  "auth": {
+    "register": "Iyandikishe",
+    "registerAs": "Iyandikishe nka",
+    "login": "Injira",
+    "loading": "Tegereza...",
+    "loginButton": "Injira",
+    "registerButton": "Iyandikishe",
+    "registering": "Kwiyandikisha...",
+    "fullName": "Amazina yombi",
+    "email": "Imeyili",
+    "password": "Ijambo ry'ibanga",
+    "confirmPassword": "Emeza ijambo ry'ibanga",
+    "username": "Izina ryo kwinjira",
+    "phone": "Telefoni",
+    "country": "Igihugu",
+    "fieldOfStudy": "Icyo wiga",
+    "selectFieldOfStudy": "Hotamo Icyo wiga",
+    "or": "Cyangwa",
+    "continueWithGoogle": "Komeza na Google",
+    "alreadyHaveAccount": "Usanzwe ufite konti?",
+    "dontHaveAccount": "Nta konti ufite?",
+    "signup": "Iyandikishe",
+    "roles": {
+      "teacher": "Mwarimu",
+      "student": "Umunyeshuri",
+      "parent": "Umubyeyi"
+    },
+    "childInfo": {
+      "title": "Amakuru y'umwana",
+      "addChild": "Ongeraho umwana",
+      "child": "Umwana",
+      "childName": "Izina ry'umwana",
+      "grade": "Umwaka",
+      "childEmail": "Imeyili y'umwana",
+      "age": "Imyaka"
+    },
+    "fields": {
+      "computerScience": "Informatiki",
+      "engineering": "Ubuhanga",
+      "mathematics": "Imibare",
+      "physics": "Ubugenge",
+      "biology": "Ibinyabuzima",
+      "chemistry": "Ubutabire",
+      "other": "Ibindi"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Kwiga Gushingiye ku Bwenge Bwite",
+      "title": "Smart Eduhub: Ejo Hazaza h'Uburyo bwo Kwiga Bwihariye",
+      "description": "Hindura urugendo rwawe rwo kwiga n'urubuga rwacu rushingiye ku bwenge bwite buhinduka hakurikijwe imbaraga n'uburyo bwawe bwihariye. Kora ibishoboka byose ufite ibikoresho byihariye ku banyeshuri, ababyeyi, abarimu n'abayobozi.",
+      "searchPlaceholder": "Shakisha amasomo...",
+      "exploreButton": "Reba",
+      "students": "Abanyeshuri",
+      "teachers": "Abarimu",
+      "parents": "Ababyeyi"
+    },
+    "features": {
+      "title": "Ibiranga Urubuga",
+      "subtitle": "Ikoranabuhanga Rihindura Kwiga",
+      "description": "Smart Eduhub ihuriza hamwe ubwenge bw'ikoranabuhanga n'uburyo bwo kwiga bwageragejwe kugira ngo habeho uburyo bwo kwiga bwihariye buhura n'ibyo buri munyeshuri akeneye.",
+      "aiLearning": {
+        "title": "Kwiga Gushingiye ku Bwenge Bwite",
+        "description": "Uburyo bw'imibare bushingiye ku buryo buri munyeshuri yiga kugira ngo habeho inyigisho zihariye zihinduka mu gihe nyacyo hakurikijwe uko agenda ateye imbere n'ibyo akeneye."
+      },
+      "analytics": {
+        "title": "Isesengura Ryuzuye",
+        "description": "Imbonerahamwe zirambuye zitanga amakuru y'ingenzi ku mikorere, zigaragaza imbaraga n'ahantu hakeneye kwitabwaho byisumbuye."
+      },
+      "multiRole": {
+        "title": "Urubuga rw'Inzego Nyinshi",
+        "description": "Uburyo bwihariye ku banyeshuri, ababyeyi, abarimu n'abayobozi bafite ibiranga byihariye byateguwe ku byo buri mukoresha akeneye."
+      },
+      "curriculum": {
+        "title": "Ihuzwa n'Integanyanyigisho",
+        "description": "Ibiri mu nyigisho bihuje n'amahame y'igihugu mu burezi byemeza ko abanyeshuri bahabwa inyigisho zuzuye zibategura ku bizamini n'ibindi."
+      },
+      "feedback": {
+        "title": "Isubizabitebereye",
+        "description": "Isuzuma n'ibisubizo mu gihe nyacyo mu bikorwa byo kwiga bifasha abanyeshuri gusobanukirwa vuba ibitekerezo aho gutegereza isuzuma risanzwe."
+      },
+      "scheduling": {
+        "title": "Guteganya Igihe Cyawe",
+        "description": "Iga igihe cyose, aho ari ho hose ushobora kubona amasomo, biha abanyeshuri uburyo bwo gutera imbere ku kigero cyabo bari kuri gahunda."
+      }
+    },
+    "benefits": {
+      "title": "Kuki Wahitamo Smart Eduhub",
+      "subtitle": "Guhindura Uburezi Binyuze mu Ikoranabuhanga",
+      "description": "Smart Eduhub ihuriza hamwe ikoranabuhanga ryihuta n'uburyo bwo kwigisha bwageragejwe kugira ngo itange uburyo bwo kwiga bwihariye bufasha abanyeshuri kugera ku ntego zabo ndetse igaha n'abarimu ibikoresho bikomeye byo kongera ubushobozi bwabo.",
+      "personalized": {
+        "title": "Kwiga ku Giti Cyawe",
+        "description": "Ikoranabuhanga ryacu rihinduka n'uburyo buri munyeshuri yiga, umuvuduko we n'ibyo akunda, bigatanga uburyo bwo kwiga bwihariye buteza imbere kwiga no kuger ku ntego."
+      },
+      "analytics": {
+        "title": "Isuzuma ry'Imikorere",
+        "description": "Kubona amakuru yuzuye ku iterambere mu myigire hamwe n'imbonerahamwe z'isesengura zirambuye ku banyeshuri, ababyeyi, abarimu n'abayobozi kugira ngo bakurikirane iterambere mu gihe nyacyo."
+      },
+      "content": {
+        "title": "Ibiri mo Bishimisha",
+        "description": "Kubona amasomo y'amajwi n'amashusho, ibibazo, n'ibiganiro byateguwe n'impuguke mu burezi kugira ngo kwiga bibe bishimishije kandi bigere ku ntego nziza mu myigire."
+      },
+      "improvement": {
+        "title": "Gukomeza Guteza Imbere",
+        "description": "Urubuga rwacu rutera imbere na buri munyeshuri, rukomeza gutunganya inama n'inzira zo kwiga bishingiye ku mikorere n'ubushakashatsi bushya mu burezi."
+      }
+    },
+    "courses": {
+      "title": "AMASOMO YATORANIJWE",
+      "subtitle": "Bumbura Urugendo Rugufi rwo Kwiga",
+      "description": "Reba amasomo yacu ashingiye ku bwenge bwite yateguwe kugira ngo ahure n'uburyo bwawe bwo kwiga kandi akugufashe kwiga ubumenyi bushya ku kigero cyawe.",
+      "loading": "Amasomo arimo gutangira...",
+      "error": "Hari ikibazo mu gutangiza amasomo. Nyamuneka ongera ugerageze nyuma.",
+      "viewCourse": "Reba Isomo",
+      "byAuthor": "Na {name}",
+      "smartEduHubCourse": "Isomo rya Smart Eduhub",
+      "browseAll": "Reba Amasomo Yose"
+    },
+    "sponsors": {
+      "title": "Abafatanyabikorwa bacu ba Platinum",
+      "subtitle": "Turashimira inkunga y'abafatanyabikorwa bacu.",
+      "thankYou": "Murakoze ku nkunga yanyu!"
+    }
+  },
+  "navbar": {
+    "courses": "Amasomo",
+    "about": "Turi Ba Nde",
+    "contact": "Twandikire",
+    "dashboard": "Ibiro",
+    "login": "Injira",
+    "register": "Iyandikishe",
+    "language": {
+      "english": "EN",
+      "french": "FR",
+      "kinyarwanda": "RW"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Guteza Imbere Ubuzima Binyuze mu Burezi",
+      "description": "Smart Eduhub irimo guhindura uburezi bwo kuri murandasi ituma kwiga kw'ireme kuboneka kuri buri wese, hose.",
+      "cta": "Tangira Kwiga Uyu Munsi"
+    },
+    "stats": {
+      "courses": "Amasomo",
+      "students": "Abanyeshuri",
+      "successRate": "Urwego rwo Gutsinda",
+      "countries": "Ibihugu"
+    },
+    "story": {
+      "title": "Amateka Yacu",
+      "part1": "Yashinzwe mu 2020, Smart Eduhub yavuye ku nyota yoroshye ariko ikomeye: gukwirakwiza uburezi no gutuma kwiga kw'ireme kuboneka kuri buri wese. Twamenye ko uburyo busanzwe bw'uburezi butihuta bihagije mu guhura n'ibikenewe mu isi ihinduka vuba.",
+      "part2": "Icyatangiye nk'amasomo make yo kuri murandasi ubu yahindutse urubuga rwo kwiga mpuzamahanga, rukora ku banyeshuri baturuka mu bihugu birenga 100. Gutsinda kwacu bishingiye ku bwitange bwacu mu kugera ku ntego, guhanga udushya mu ikoranabuhanga ry'uburezi, kandi by'ingenzi cyane, ukwiyemeza kwacu ku gutsinda kw'abanyeshuri.",
+      "part3": "Uyu munsi, turakomeza kwagura amasomo yacu, guteza imbere urubuga rwo kwiga, no gushyiraho ubufatanye n'abayobozi b'ingeri kugirango twemeze ko abanyeshuri bacu babona uburezi bukwiye kandi bw'igihe."
+    },
+    "values": {
+      "title": "Indangagaciro Zacu z'Ibanze",
+      "quality": {
+        "title": "Uburezi bw'Ireme",
+        "description": "Dutanga uburezi bw'ireme, bukwiye mu ngeri, butegura abanyeshuri gutsinda mu buzima nyabwo."
+      },
+      "success": {
+        "title": "Gutsinda kw'Abanyeshuri",
+        "description": "Intego yacu y'ibanze ni gutsinda kw'abanyeshuri no kubafasha kugera ku bushobozi bwabo bwose."
+      },
+      "access": {
+        "title": "Kugera kw'Isi Yose",
+        "description": "Gutuma uburezi bw'ireme buboneka ku banyeshuri bo ku isi yose binyuze ku rubuga rwacu rwa numeriki."
+      },
+      "learning": {
+        "title": "Kwiga Kudashira",
+        "description": "Gushyigikira kwiga gukomeza no guteza imbere umwuga mu buzima bwawe bwose."
+      }
+    },
+    "cta": {
+      "title": "Injira mu Muryango Wacu wo Kwiga",
+      "description": "Tangira urugendo rwawe rwo kwiga none maze wifatanye n'ibihumbi by'abanyeshuri bahindura ubuzima bwabo binyuze mu burezi.",
+      "browseCourses": "Reba Amasomo",
+      "contactUs": "Twandikire"
+    }
+  },
+  "courses": {
+    "hero": {
+      "title": "Bumbura Inzira Yawe yo Kwiga",
+      "description": "Kora ibishoboka byose hamwe n'amasomo ya premium yigishwa n'impuguke mu nganda"
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Twandikire",
+      "description": "Ufite ibibazo ku rubuga rwacu rw'Inyigisho rushingiye kuri AI cyangwa ukeneye ubufasha? Turi hano kugufasha kugera ku ntego zawe z'uburezi."
+    },
+    "form": {
+      "title": "Twoherereze Ubutumwa",
+      "firstName": "Izina rya Mbere",
+      "lastName": "Izina rya Nyuma",
+      "email": "Imeyili",
+      "userType": {
+        "label": "Ubwoko bw'Ukoresha",
+        "placeholder": "Hitamo uruhare rwawe",
+        "student": "Umunyeshuri",
+        "parent": "Umubyeyi",
+        "teacher": "Mwarimu",
+        "administrator": "Umuyobozi",
+        "other": "Ibindi"
+      },
+      "subject": "Icyo Birebana",
+      "subjectPlaceholder": "Twagufasha ute kuri Smart Eduhub?",
+      "message": "Ubutumwa Bwawe",
+      "messagePlaceholder": "Nyamuneka sobanura mu buryo burambuye ikibazo cyawe ku bijyanye n'urubuga rwacu rw'inyigisho rwa AI...",
+      "sendButton": "Ohereza Ubutumwa"
+    },
+    "support": {
+      "title": "Ubufasha bw'Urubuga",
+      "email": {
+        "title": "Ubufasha bwa Imeyili",
+        "support": "support@smarteduhub.com",
+        "info": "info@smarteduhub.com"
+      },
+      "phone": {
+        "title": "Ubufasha kuri Telefoni",
+        "number": "+1 (555) 123-4567",
+        "hours": "Tuboneka Kuwa Mbere-Kuwa Gatanu: 9:00 - 18:00 ET"
+      },
+      "chat": {
+        "title": "Ibiganiro Bihuza",
+        "description": "Vugana n'ikipe yacu y'ubufasha mu gihe nyacyo binyuze ku rubuga",
+        "availability": "Ubufasha bwa AI buhari amasaha 24/7"
+      },
+      "knowledge": {
+        "title": "Isoko ry'Ubumenyi",
+        "description": "Reba amabwiriza yacu yuzuye n'amasomo",
+        "link": "Sura Ikigo cyacu cy'Ubufasha →"
+      }
+    },
+    "platform": {
+      "title": "Urubuga rwa Smart Eduhub",
+      "features": {
+        "learning": "Inzira zo Kwiga zishingiye kuri AI",
+        "tracking": "Gukurikirana Iterambere mu Gihe Nyacyo",
+        "access": "Uburyo bwo Kwinjira Butandukanye ku Banyeshuri, Ababyeyi na Mwarimu",
+        "tools": "Ibikoresho Byuzuye by'Ubuyobozi"
+      }
+    },
+    "faq": {
+      "title": "Ibibazo Bibazwa Kenshi"
+    }
+  },
+  "dashboard": {
+    "search": "Shakisha...",
+    "notifications": {
+      "title": "Ubutumwa",
+      "markAllRead": "Gushyira byose nk'ibyasomwe",
+      "noNotifications": "Nta butumwa",
+      "assignmentDue": "Umukoro ugomba gukorwa",
+      "quizResult": "Amanota y'ikizamini",
+      "newCourse": "Isomo rishya riraboneka"
+    },
+    "profile": "Umwirondoro",
+    "helpSupport": "Ubufasha",
+    "logout": "Sohoka",
+    "menu": {
+      "dashboard": "Ibiro",
+      "home": "Ahabanza",
+      "profile": "Umwirondoro",
+      "courses": "Amasomo",
+      "enrolledCourses": "Amasomo yanditsemo",
+      "users": "Abakoresha",
+      "assignments": "Imikoro",
+      "games":"Imikino",
+      "chat": "Kuganira",
+      "schedule": "Gahunda",
+      "settings": "Igenamiterere",
+      "timetable": "Gahunda y'amasomo",
+      "students": "Abanyeshuri",
+      "myChild": "Umwana wanjye",
+      "performance": "Imikorere",
+      "messages": "Ubutumwa",
+      "notifications": "Ubutumwa"
+    }
+  }
+}
